@@ -1,1 +1,111 @@
-index
+
+<style>
+*{
+	padding:0;
+	margin:0;
+}
+button{
+	margin:0 5px;
+}
+#mainContent{
+	position:relative;
+	margin-left: 5%;
+}
+#title1{
+	margin:1% 5%;
+	font-size: 2em;
+}
+#title1 input{
+	height:5%;
+	min-height:30px;
+	font-size: 0.7em;
+	width:20%;
+}
+#title1 button{
+	height:5%;
+	min-height:30px;
+	font-size: 0.4em;
+	width:10%;
+}
+.keyboard{
+	width: 25%;
+	height: 10%;
+	line-height: 50px;
+	border: 1px black solid;
+	text-align: center;
+	font-size: 2em;
+	transition:0.2s;	
+    display: inline-block;
+	cursor: pointer;
+}
+#keyboard{
+	display:none;
+	margin: 5% 10% 0 10%;
+}
+#Keyboard_up{
+	display: block;
+	margin-left:25%;
+}
+.Gound-Part{
+	width: 10%;
+	height: 10%;
+	line-height: 10%;
+	border: 1px black solid;
+	position: absolute;	
+	text-align: center;
+	font-size: 2em;
+	transition:0.2s;
+}
+.Gound-Part[num='0']{background:#fff;}
+.Gound-Part[num='2']{background:#eee;}
+.Gound-Part[num='4']{background:#ddd;}
+.Gound-Part[num='8']{background:#ccc;}
+.Gound-Part[num='16']{background:#bbb;}
+.Gound-Part[num='32']{background:#aaa;}
+.Gound-Part[num='64']{background:#999;}
+.Gound-Part[num='128']{background:#888;}
+.Gound-Part[num='256']{background:#777;}
+.Gound-Part[num='512']{background:#666;}
+.Gound-Part[num='1024']{background:#555;}
+.Gound-Part[num='2048']{background:#444;color:#fff;}
+.Gound-Part[num='4096']{background:#333;color:#fff;}
+.Gound-Part[num='8192']{background:#222;color:#fff;}
+
+.Gound-Part.new{
+	background:green;
+}
+#scroe{
+	display: block;
+	font-size: 3em;
+	font-weight: bolder;
+	margin:2% 10%
+}
+
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<html lang="ch"><head>	
+	<title>2048</title>
+	<meta charset="utf-8">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?9c17c795644a15169513f7dd69ffd9a7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+	<div id="title1">
+		Size：<input type="text" id="inLevel"></input>
+		<button id="btnLevel" ></button>
+	</div>	
+	<span id="scroe">0</span>
+	<div id="mainContent">
+	</div>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="2048.js"></script>
+	
+</body>	
+
