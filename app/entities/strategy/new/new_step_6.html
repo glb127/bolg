@@ -1,0 +1,40 @@
+<div ng-cloak class="rm_modal" id="createStrategy_step6">
+    <div class="rm_modal_header">
+        <h3>创建攻略</h3>
+    </div>
+    <div class="rm_modal_nav">
+        <span class="rm_modal_nav_item">业务选择</span>
+        <span class="glyphicon glyphicon-menu-right"></span>
+        <span class="rm_modal_nav_item">应用平台</span>
+        <span class="glyphicon glyphicon-menu-right"></span>
+        <span class="rm_modal_nav_item">攻略命名</span>
+        <span class="glyphicon glyphicon-menu-right"></span>
+        <span class="rm_modal_nav_item">选择场景和锦囊</span>
+        <span class="glyphicon glyphicon-menu-right"></span>
+        <span class="rm_modal_nav_item">确认选中规则</span>
+        <span class="glyphicon glyphicon-menu-right"></span>
+        <span class="rm_modal_nav_item active">完成</span>
+    </div>
+    <div class="rm_modal_content">
+        <div class="rm_cardlist center-block">
+            <span id="ok">
+                <!--<span class="glyphicon glyphicon-ok"></span>-->
+                <span class="icon"></span>
+            </span>
+            <h3>恭喜，成功创建攻略！</h3>
+        </div>
+    </div>
+    <div class="rm_modal_footer">
+        <div class="pull-right">
+            <button  class="rm_btn rm_btn_primary" ng-click="finish()">
+                完成，进入攻略中心
+            </button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="loading_group" ng-hide="load_flag">
+    	<div class="loading modal_loading"></div>
+   	 	<div class="loading_cover modal_loading"></div>
+	</div>
+
+</div>

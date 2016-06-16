@@ -1,0 +1,79 @@
+<div class="rm_content_header">
+    <h1 class="title">
+        人工标记事件
+        <a class="back" ui-sref="riskEvent">返回风险事件详情</a>
+    </h1>
+</div>
+
+<div class="rm_panel">
+    <div class="rm_panel_header">
+        <p class="title">人工标记事件</p>
+    </div>
+    <div class="rm_panel_content">
+        <!--<div class="form-group">-->
+        <button class="rm_btn_lg" ng-class="{primary:remark=='有风险', default:remark=='极低风险'}">
+            <label for="risk" >
+                <input name="risk" type="radio" value="有风险" ng-model="remark" id="risk">有风险
+            </label>
+        </button>&nbsp;&nbsp;
+        <button class="rm_btn_lg" ng-class="{primary:remark=='极低风险', default:remark=='有风险'}">
+            <label for="riskfree">
+                <input name="risk" type="radio" value="极低风险" ng-model="remark" id="riskfree">极低风险</label>
+        </button>&nbsp;&nbsp;
+        <a data-toggle="collapse" data-target="#nameListControl">
+            名单管控&nbsp;<span class="caret"></span>
+        </a>
+        <!--</div>-->
+
+    </div>
+    <div class="rm_panel_content">
+        <div id="nameListControl" class="collapse">
+            <div class="form-group">
+                <label>选择名单类型：&nbsp;</label>
+                <select ng-model="type" ng-init="type=typeList[0].code" ng-options="type.code as type.name for type in typeList"></select>
+            </div>
+
+            <table class="rm_table_bordered rm_table_vertical ud_table_D">
+                <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>维度</th>
+                    <th>内容</th>
+                    <th>属性</th>
+                    <th>生效时间</th>
+                    <th>有效期</th>
+                    <th>备注</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="nameListControl in nameListControls">
+                    <td><input type="checkbox" ng-model="check" ng-click="updateSelection($event, nameListControl)"></td>
+                    <td>{{nameListControl.dimensionCh}}</td>
+                    <td>{{nameListControl.value}}</td>
+                    <td>{{nameListControl.description}}</td>
+                    <td>立即生效</td>
+                    <td>
+                    <p>
+                        <select ng-model="nameListControl.validity" ng-options="v for v in Validities[$index]" ng-init="nameListControl.validity=Validities[$index][0]">
+                        </select>&nbsp;天
+                    </p>
+                        <p ng-show="nameListControl.validity=='自定义'">
+                            <input type="text" width="5" class="num" ng-model="nameListControl.validityDefined">&nbsp;天
+                        </p>
+                    </td>
+                    <td>
+                        <textarea ng-model="nameListControl.comment" placeholder="{{nameListControl.comment}}"></textarea>
+                        <!--<input type="text" ng-model="nameListControl.comment">-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="rm_panel_content">
+        <button type="button" class="rm_btn rm_btn_default" ng-click="cancel()" >取消</button>&nbsp;
+        <button type="button" class="rm_btn rm_btn_primary" ng-click="saveNameListControl()" >保存并完成</button>
+        <span ng-class="{ud_text_error: tip_list.invalid, ud_text_correct: !(tip_list.invalid)}">&nbsp;{{tip_list.info}}</span>
+    </div>
+</div>
+

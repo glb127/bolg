@@ -1,0 +1,84 @@
+<nav class="ud_navbar" role="navigation">
+
+   <!--  <div class="balance_tip" ng-if="tip_balance.invalid">
+        <span class="badge">温馨提示</span>
+        <span class="text">{{tip_balance.info}}</span>&nbsp;&nbsp;
+        <a class="link" ng-click="ignoreTip()">忽略此提示</a>
+    </div> -->
+
+    <div class="ud_navbar_nav">
+        <ul>
+            <li class="ud_navbar_merchant">
+                <div class="ud_navbar_item ud_navbar_header" uib-popover-template="userInfoPopover.templateUrl" popover-trigger="click" popover-placement="bottom" popover-is-open="popoverIsOpen">
+                    <span class="ud_merchant_name">{{userInfoData.name}}</span>
+                </div>
+            </li>
+            <li><i class="iconfont fs24" ui-sref="access({isNarrow:'false'})" title="帮助" >&#xe6e5;</i></li>
+            <li><i class="iconfont fs24" ng-click="logout()" title="退出" >&#xe72f;</i></li>
+
+            <!-- <li ng-mouseleave="hideMessageBox()">
+                <div class="ud_navbar_item item-hd" id="messageHead" ng-mouseover="showMessageBox()">
+                    <a class=""><span id="btn1"></span></a>
+                </div>
+                <div class="item-bd msg-box" id="messageBox">
+                    <div class="msg-title">消息中心</div>
+                    <div class="msg" ng-class="{active: message.messageStatus == '0'}" ng-repeat="message in messages">
+                        <a class="msg-tip operation" ng-if="message.messageStatus == '0'" ng-click="setRead(message.id)">我知道了</a>
+                        <div class="msg-date">{{message.messageTime | date:'yyyy.MM.dd HH:mm:ss'}}</div>
+                        <div>
+                            <span class="msg-type">{{messageType[message.messageType]}}：</span>
+                            <span class="msg-text">{{message.messageContent}}</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li title="常见问题">
+                <div class="ud_navbar_item item-hd">
+                    <a ng-href="#/access#question_and_answer"><span id="btn2"></span></a>
+                </div>
+                <div class="item-bd"></div>
+            </li>
+
+            <li title="安全退出" ng-click="logout()">
+                <div class="ud_navbar_item item-hd">
+                    <a class=""><span id="btn3"></span></a>
+                </div>
+            </li> -->
+        </ul>
+    </div>
+</nav>
+
+<script type="text/ng-template" id="userInfoTemplate.html">
+    <div class="popover-menu">
+        <table>
+            <tr>
+                <th>商 户 名：</th>
+                <td>{{userInfoData.name}}</td>
+            </tr>
+            <tr>
+                <th>商 户 号：</th>
+                <td>{{userInfoData.partnerCode}}</td>
+            </tr>
+            <!-- <tr>
+                <th>账户余额：</th>
+                <td class="important">{{userInfo.balance/1000}}元</td>
+            </tr>
+            <tr>
+                <th>赠送余额：</th>
+                <td class="important">{{userInfo.donateBalance/1000}}元<a ng-click="updateBalance()">刷新余额</a></td>
+            </tr> -->
+            <tr ng-hide="userInfoData.loginIp == '本次是首次登陆'">
+                <th>上次登录：</th>
+                <td>
+                    <p ng-hide="userInfoData.loginLocation=='null,null,null'">{{userInfoData.loginLocation}}</p>
+                    <p>IP {{userInfoData.loginIp}}</p>
+                    <p>{{userInfoData.loginTime | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+                </td>
+            </tr>
+            <tr>
+                <th><a ng-click="goPassword()">修改密码</a></th>
+            </tr>
+        </table>
+    </div>
+</script>

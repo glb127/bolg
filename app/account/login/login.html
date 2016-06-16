@@ -1,0 +1,58 @@
+<div id="login" class="login_page">
+
+    <header class="login_header">
+        <div class="login_container">
+            <div class="login_logo"></div>
+        </div>
+    </header>
+
+    <div class="login_content">
+        <div class="login_container">
+
+            <div class="adBox">
+                <div class="text">
+                    <h1 class="slogan">第三方大数据风控服务商</h1>
+                    <p class="subSlogan">Third-party Big Data Risk Management Service Provider</p>
+                </div>
+                <div class="picture"></div>
+            </div>
+
+            <div class="loginBox_wrapper">
+                <div class="loginBox">
+                    <p class="rm_text_error">{{tip}}</p>
+                    <form class="form" role="form">
+                        <div class="field nameBox">
+                            <input class="name" type="text" placeholder="账户名" id="username" ng-model="username" autofocus/>
+                        </div>
+                        <div class="field passwordBox">
+                            <input class="password" type="password" id="password" placeholder="密码" ng-model="password"/>
+                        </div>
+                        <div id="captcha"></div>
+                        <!-- <div class="field captchaBox">
+                            <input id="j_captcha" name="j_captcha" class="captcha" type='text' placeholder="验证码" ng-model="captchaText"
+                                   maxlength="5" ng-change="initCheckcode()"/>
+                            <span class="checkcode" id="checkcodeIcon"></span>
+                            <img ng-src="data:image/png;base64,{{captcha}}"  class="captcha_image" width="100" height="48" ng-click="loadCaptcha()"/>
+                        </div> -->
+                        <div class="rememberBox">
+                            <label>
+                                <input class="remember" type="checkbox" id="rememberMe" ng-model="rememberMe" checked/> 记住我
+                            </label>
+                        </div>
+                        <button class="login_btn">登&nbsp;&nbsp;录</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="login_links">
+            <a ng-href="http://www.udcredit.com">杭州有盾网络科技有限公司</a>&nbsp;&nbsp;
+            <!--<span class="linkHyphen">|</span>-->
+            <span>Copyright&copy;2015版权所有&nbsp;&nbsp;浙ICP备15035725号</span>&nbsp;&nbsp;
+            <a ng-href="http://www.udcredit.com/#/about_us">联系我们</a>    
+        <p>
+    </footer>
+
+</div>

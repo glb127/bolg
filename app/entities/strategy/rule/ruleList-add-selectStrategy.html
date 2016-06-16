@@ -1,0 +1,30 @@
+<div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<p class="panel-title">新增规则</p>
+		</div>
+		<div class="panel-body">
+			<h4>选择攻略</h4>
+			
+			<form role="form">
+				<p>向选定的攻略中新增规则</p>
+				<div class="form-group">
+					<select class="StrategySelect" ng-model="selec"  ng-options="Strategy as Strategy.name for Strategy in strategyListForMerchant">
+						<option selected disabled value="">----- 请选择 -----</option>
+					</select>	
+				</div>
+				<div class="leftbutton-abs">
+       				<button type="button" class="btn btn-warning" ui-sref="ruleList">
+            			<span class="glyphicon glyphicon-remove"></span>&nbsp;取消
+        			</button>
+    			</div>
+    			<div>
+       		 		<button type="button" ng-click="saveAndNext(selec.code)" class="btn btn-primary center-block">
+            			下一步&nbsp;
+            			<span class="glyphicon glyphicon-arrow-right"></span>
+            		</button>
+    			</div>
+			</form>
+		</div>
+	</div>
+</div>

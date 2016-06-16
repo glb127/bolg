@@ -1,0 +1,269 @@
+@charset "UTF-8";
+
+/* Reset:  */
+button:disabled,
+button[disabled],
+button.disabled {
+    background-color: #999 !important;
+}
+/* align button with panel header */
+.cloudx-btn-nopadding {
+    @extend .btn;
+    padding: 0 5px;
+}
+/* cancel/back/... button
+ * at the left-bottom of the page
+ */
+.leftbutton-abs {
+    position: absolute;
+}
+
+
+$operation-button-color: #12addd;
+
+
+.rm_btn, button {
+    color: #fff;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 0;
+    white-space: nowrap;
+    padding: 8px 34px;
+    font-size: 16px;
+    line-height: 1.42857;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.rm_btn {
+    &:hover {
+        color: #fff;
+    }
+
+    &_primary {
+        background: $blue;
+    }
+
+    &_default {
+        background: #9da6b6;
+    }
+
+}
+
+.rm_btn_nopadding {
+    @extend .btn;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    font-size: 12px;
+    padding: 2px 16px;
+    background: $blue_light;
+
+    &:hover {
+        color: #fff;
+        background: $blue;
+    }
+}
+
+.btn:hover,
+.cloudx-btn-nopadding:hover,
+.rm_btn_nopadding:hover,
+.btn:focus,
+.cloudx-btn-nopadding:focus,
+.rm_btn_nopadding:focus,
+.btn.focus,
+.focus.cloudx-btn-nopadding,
+.focus.rm_btn_nopadding
+{
+    color: #fff;
+    background: $blue;
+}
+
+.rm_btn_sm {
+    @extend .rm_btn;
+    font-size: 13px;
+    //padding: 6px 16px;
+    padding: 4px 16px;
+}
+
+.rm_btn_lg{
+    font-size: 16px;
+    line-height: 1;
+    padding: 16px 10px;
+    min-width: 198px;
+    text-align: left;
+    font-weight: bold;
+
+    &.primary {
+        background: #edf8fb;
+        border: 1px solid $blue;
+        color: $blue;
+    }
+    &.default {
+        background: $bg_grey;
+        border: 1px solid #d3d5da;
+        color: #707988;
+    }
+}
+
+
+input[type=button],
+input[type=submit]
+{
+    background: $blue_bg_btn;
+    border: 1px solid #fff;
+
+    &:focus {
+        color: #fff;
+        border: 1px solid #fff;
+    }
+}
+
+//realNameAuthentication.html
+#authenticateBtn, #savePwdBtn {
+    margin: -20px 0 20px 0;
+}
+
+
+.ud_btn_round {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 16px;
+    font-size: 14px;
+    padding: 7px 28px;
+    background: #35b9e2;
+
+    -moz-outline-style: none;
+    outline: none;
+
+    margin-top: -3px;   //TMP
+}
+
+//update button in rule list table
+.ud_btn_update {
+    display: inline-block;
+    height: 18px;
+    width: 48px;
+    border: 1px solid $blue;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: $blue;
+
+    &:hover {
+        color: $blue;
+        background: #eee;
+    }
+}
+
+//create user-defined-rule button in add-rule page
+.ud_btn_create {
+    display: block;
+    height: 26px;
+    padding: 0 30px;
+    line-height: 26px;
+    vertical-align: middle;
+    text-align: center;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 3px;
+    border: 1px solid $blue;
+    color: $blue;
+
+    &:hover {
+        cursor: pointer;
+        color: $blue;
+    }
+}
+
+.rm_modal_content.rm_modal_text_content td {
+	    text-align: left;
+}
+
+td textarea {
+	width:100%;
+}
+
+
+.ud_panel{
+	.back {
+		color: $operation-button-color;
+	}
+}
+
+.back {
+	color: $operation-button-color;
+}
+
+.ud_add_btn {
+	color: #12addd;
+	background: #fff;
+
+    span {
+        padding: 0px 3px;
+    }
+}
+
+.disabled_btn {
+    color: $font_grey_light;
+}
+
+.rm_nbtn {
+    color: $nbuttom_blue1;
+    display: inline-block;
+    margin: 0 5px;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid $nbuttom_white1;
+    white-space: nowrap;
+    padding: 0px 34px;
+    font-size: 14px;
+    line-height: 32px;
+    height: 32px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &:hover {
+        color: $nbuttom_blue1;
+        background: $ncolor_white;
+    }
+
+    &_primary {
+        color: #fff;
+        border: 1px solid $nbuttom_blue2;
+        background: $nbuttom_blue1;
+    }
+
+    &_primary:hover {
+        color: #fff;
+        background: $nbuttom_blue2;
+    }
+
+    &_default {
+        background: #fff;
+    }
+}
+
+.u-btn{
+    padding: 8px 15px;
+    border: 1px solid #eee;
+    background-color: #eee;
+}
+.u-btn-primary{
+    border: 1px solid #129fcd;
+    background-color: #12addd;
+}

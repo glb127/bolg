@@ -1,0 +1,55 @@
+<div cg-busy="savePromise">
+    <div class="rm_content_header">
+        <h1 class="title">
+            新增自定义规则 —— {{udrData.strategyInstanceName}}
+        </h1>
+
+        <ul class="progressBar">
+            <li class="progressItem"><span class="pbNum">1</span> 选择规则条件</li>
+            <li class="progressItem active"><span class="pbNum">2</span> 定义规则名称和分值</li>
+            <li class="progressItem"><span class="pbNum">3</span> 创建成功</li>
+        </ul>
+    </div>
+
+    <div class="ud_content_normal">
+        <form role="form">
+
+            <div class="ud_form_group_udr">
+                <label class="t">自定义规则名称</label>
+
+                <div class="c">
+                    <input type="text" ng-model="udrData.ruleName" class="ud_input_lg" placeholder="请输入规则名称"
+                           ng-change="validate_name()" ng-blur=validate_name()>
+                    <span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+                </div>
+            </div>
+
+            <div class="ud_form_group_udr">
+                <label class="t">自定义规则分值</label>
+
+                <div class="c">
+                    <input type="text" ng-model="udrData.ruleScore" class="ud_input_lg" placeholder="请输入规则分值"
+                           ng-change="validate_score()" ng-blur=validate_score()>
+                    <span ng-class="{ud_text_error: tip_score.invalid, ud_text_correct: !(tip_score.invalid)}">{{tip_score.info}}</span>
+                </div>
+            </div>
+
+            <div class="ud_form_group_udr">
+                <label class="t">描述</label>
+
+                <div class="c">
+                    <textarea ng-model="udrData.ruleDescription" class="ud_input_lg" rows="4" placeholder="请输入规则描述"></textarea>
+                </div>
+            </div>
+
+            <div class="ud_form_group_udr">
+                <label class="t"></label>
+
+                <div class="c">
+                    <a class="rm_btn rm_btn_default" ng-click="previous()">上一步</a>
+                    <a class="rm_btn rm_btn_primary" ng-click="saveAndFinish()">保存并完成</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

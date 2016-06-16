@@ -1,0 +1,113 @@
+.ud_card {
+    border: 1px solid $card_border;
+    margin: 0 10px 0 0;
+    display: inline-block;
+    text-decoration: none;
+    color: $card_font;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+
+    &:hover {
+        color: $card_hover_font;
+    }
+
+    &.checked {
+        /*
+        .icon {
+            background-image: url("../images/icons.png");
+            background-repeat: no-repeat;
+            background-position: -34px 8px;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            display: block;
+            height: 16px;
+            width: 16px;
+            top: inherit;
+            z-index: 99;
+            font-size: 14px;
+        }
+        &:after {
+            content: ' ';
+            height: 0;
+            width: 0;
+            border-bottom: 17px solid $blue;
+            border-left: 17px solid transparent;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border-bottom-color: ;
+        }
+        */
+        color: $ncolor_blue;
+        border-color: $ncolor_blue;
+
+    }
+}
+
+.ud_card_merchantType {
+    padding: 0 60px;
+    height: 50px;
+    line-height: 50px;
+}
+
+.ud_card_glType {
+    height: 50px;
+    padding: 0 30px;
+    line-height: 50px;
+    width: 400px;
+    text-align: left;
+    margin-bottom: -5px;
+    font-size: 14px;
+}
+
+.ud_card_platform {
+    width: 120px;
+    height: 160px;
+
+    .p_bg {
+        display: block;
+        height: 60px;
+        background-image: url("../images/icons.png");
+        width: 60px;
+        margin: 30px auto 16px auto;
+
+        &.iOS {  background-position: 0 -274px;  }
+        &.android {  background-position: -60px -274px;  }
+        &.web {  background-position: -120px -274px;  }
+    }
+
+    &.checked .p_bg {
+        display: block;
+        background-image: url("../images/icons.png");
+
+        &.iOS {  background-position: 0 -214px;  }
+        &.android {  background-position: -60px -214px;  }
+        &.web {  background-position: -120px -214px;  }
+    }
+
+    .p_name {
+        font-size: 14px;
+    }
+}
+
+.ud_cardlist #ok {
+    display: block;
+    width: 48px;
+    height: 48px;
+    color: #fff;
+    background: #8bde14;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: 30px;
+
+    .icon {
+        display: block;
+        width: 48px;
+        height: 48px;
+        background-image: url("../images/icons.png");
+        background-repeat: no-repeat;
+        background-position: 12px -25px;
+    }
+}

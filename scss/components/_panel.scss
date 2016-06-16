@@ -1,0 +1,33 @@
+.ud_panel {
+    padding: 0 50px;
+    border-bottom: 1px solid $grey_light;
+
+    &_header {
+        padding-top: 30px;
+
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: $font_grey_dark;
+        }
+    }
+
+    &_footer {
+        padding-bottom: 30px;
+    }
+
+    &_content {
+        padding: 30px 0;
+    }
+
+    &_header,
+    &_footer {
+        .back {
+            font-size: 12px;
+            color: $font_grey_light;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 2em;
+        }
+    }
+}

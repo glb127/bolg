@@ -1,0 +1,43 @@
+<right-slide-dialog ng-cloak dialog-name="new_scenario" back-router="ruleCenter">
+	<div class="right_slide_width">
+		<div class="rmn_content_header rmn_slide">
+		    <h1 class="title">
+		        添加场景
+		    </h1>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_slide">
+			<form role="form" class="ud_form_lg">
+				<div class="ud_form_group_lg">
+	                <label class="t">已添加的场景</label>
+	                <div class="c">
+	                	<div dragular="dragularOptions" >
+	                		<label class="checkbox_cs checked" ng-repeat="scenario in scenarios" tid="{{scenario.id}}" tcode="{{scenario.code}}">
+				                {{scenario.name}}
+				            </label>
+				            <!-- <label class="checkbox_cs checked" ng-repeat="scenario in scenariosOther" ng-if=" scenario.checked" index="2_{{$index}}" >
+				                {{scenario.name}}
+				            </label>  -->
+	                	</div>
+	                </div>
+	            </div>
+	            <div class="ud_form_group_lg">
+	                <label  class="t">还可以选择以下场景</label>
+	                <div class="c">
+	                	<div >
+	                		<label class="checkbox_cs" ng-repeat="scenario in scenariosOther" ng-class="{'checked': scenario.checked}">
+				                {{scenario.name}}
+				                <input type="checkbox" ng-model="scenario.checked" ng-click="changeScenario(scenario)"/>
+				            </label>
+	                	</div>
+	                </div>
+	            </div>
+	        </form>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+			<div class="rm_buttoms rm_right">
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="close()">取消</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>

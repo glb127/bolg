@@ -1,0 +1,131 @@
+<div class="rm_content_header">
+    <h1 class="title">
+        统计分析
+    </h1>
+
+    <div class="subtitle rm_conditionlist">
+        <div class="rm_conditionlist_item">
+            <a ui-sref="riskTrend" class="rm_condition active">风险走势</a>
+            <a ui-sref="riskResult" class="rm_condition">风险结果</a>
+        </div>
+    </div>
+</div>
+
+<div class="ud_content_condition_B">
+    <div class="conditions-wrapper">
+        <div class="conditions">
+            <div class="condition" ng-show="showStrategyList" id="strategyCondition">
+                <div class="condition-hd" ng-click="onClickSelector($event)">
+                    <span ng-show="chosenStrategyName==''" class="text">攻略</span>
+                    <span ng-show="chosenStrategyName!=''" class="text">{{chosenStrategyName}}</span>
+                    <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                    <span class="arrow-down"></span>
+                </div>
+                <div class="condition-bd">
+                    <a ng-repeat="Strategy in StrategyList"
+                       ng-click="setStrategy(Strategy)"
+                       ng-class="{active: riskTrendDTO.strategyInstanceCode == Strategy.code}">
+                        {{Strategy.name}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div cg-busy="getStrategisPromise">
+<!--
+    <div class="ud_content_condition">
+        <div class="conditions">
+            <div class="condition" ng-show="showStrategyList">
+                <div class="title">我的攻略：</div>
+                <div class="itemgroup">
+                    <a ng-repeat="Strategy in StrategyList"
+                       ng-click="getRiskTrendStatisticsByStrategyAndStrategyCode(Strategy)"
+                       class="item"
+                       ng-class="{active: riskTrendDTO.strategyInstanceCode == Strategy.code}">
+                        {{Strategy.name}}
+                    </a>
+                </div>
+            </div>
+
+            <div class="condition">
+                <div class="title">时间范围：</div>
+                <div class="itemgroup">
+
+                    <div class="ud_datepicker">
+                        <input type="text" class="item_ipt"
+                               datepicker-popup="{{format}}"
+                               ng-model="beginDate"
+                               is-open="opened1"
+                               min-date="minDate"
+                               max-date="endDate"
+                               datepicker-options="dateOptions"
+                               show-button-bar="false"
+                               ng-click="openBeginDate($event)"
+                               placeholder="请选择日期"
+                               ng-change="validateDate()"
+                               readonly/>
+                        <span class="item_hyphen">-</span>
+                        <input type="text" class="item_ipt"
+                               datepicker-popup="{{format}}"
+                               ng-model="endDate"
+                               is-open="opened2"
+                               min-date="beginDate"
+                               max-date="maxDate1"
+                               datepicker-options="dateOptions"
+                               show-button-bar="false"
+                               ng-click="openEndDate($event)"
+                               placeholder="请选择日期"
+                               ng-change="validateDate()"
+                               readonly/>
+                        &lt;!&ndash;<input type="button" class="rm_btn_sm rm_btn_primary item_ipt"
+                               ng-click="getRiskTrendStatisticsByStrategyAndTime()" value="确定搜索"/>&ndash;&gt;
+                    </div>
+                    <a ng-repeat="selectTime in selectTimes"
+                       ng-click="getRiskTrendStatisticsByStrategyAndSelectTime(selectTime)"
+                       class="item"
+                       ng-class="{active: selectTimes.highlight == selectTime.value}">
+                        {{selectTime.name}}
+                    </a>
+                    <span ng-class="{rm_error_info: tip_date.invalid, rm_text_correct: !(tip_date.invalid)}"
+                          class="item_hyphen">{{tip_date.info}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+-->
+
+    <div class="ud_content_result" ng-show="riskTrends">
+        <table class="ud_table ud_table_rainbow">
+            <thead>
+            <tr>
+                <th class="c1">场景</th>
+                <th class="c2">风险事件</th>
+                <th class="c3">阻止事件</th>
+                <th class="c4">放行事件</th>
+                <th class="c5">总事件</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="riskTrend in riskTrends.scenarionRiskEventCountDTOs">
+                <td class="c1">{{riskTrend.scenarioInstanceName}}</td>
+                <td class="c2 num">{{riskTrend.riskEventCount}}</td>
+                <td class="c3 num">{{riskTrend.blockEventCount}}</td>
+                <td class="c4 num">{{riskTrend.passEventCount}}</td>
+                <td class="c5 num">{{riskTrend.totalEventCount}}</td>
+            </tr>
+            <tr>
+                <td class="c1">所有场景</td>
+                <td class="c2 num_lg">{{riskTrends.riskEventSum}}</td>
+                <td class="c3 num_lg">{{riskTrends.blockEventSum}}</td>
+                <td class="c4 num_lg">{{riskTrends.passEventSum}}</td>
+                <td class="c5 num_lg">{{riskTrends.totalEventSum}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

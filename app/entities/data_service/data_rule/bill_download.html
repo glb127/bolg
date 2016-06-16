@@ -1,0 +1,80 @@
+<div class="rm_modal">
+    <div class="rm_modal_header">
+        <h3>对账单下载</h3>
+
+        <a class="rm_modal_close" ng-click="cancel()" title="关闭"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+
+    <div class="rm_modal_nav type_nav">
+        <div class="rm_col2"><a ng-class="{'active': monthFlag}" ng-click="openMonth()">按月下载</a></div>
+        <div class="rm_col2"><a ng-class="{'active': !monthFlag}" ng-click="openDate()">按日期下载</a></div>
+    </div>
+
+    <div ng-if="monthFlag">
+        <div class="rm_modal_nav year_nav">
+            <div class="ud_left">
+                <a ng-class="{invalid: activeYear-1 < 2015}" ng-click="goPreviousYear()"><span class="glyphicon glyphicon-menu-left"></span> {{activeYear-1}}年</a>
+            </div>
+            <div class="ud_right">
+                <a ng-class="{invalid: activeYear+1 > currentDate.getFullYear()}" ng-click="goNextYear()">{{activeYear+1}}年 <span class="glyphicon glyphicon-menu-right"></span></a>
+            </div>
+            <div class="activeYear">
+                <a class="active">{{activeYear}}年</a>
+            </div>
+        </div>
+
+        <div class="rm_modal_content" cg-busy="getPromise">
+            <div class="download_bill_month">
+                <div class="rm_col4 month_item" ng-repeat="month in months">
+                    <a ng-click="downloadBill(month)" ng-class="{invalid: !month.valid}">{{month.format}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="!monthFlag">
+        <div class="rm_modal_content" cg-busy="getPromise">
+            <div class="download_bill_date">
+                <div class="ud_datepicker">
+                    <input type="text" class="date_ipt"
+                           ng-model="startTime"
+                           datepicker-popup="{{format}}"
+                           is-open="startOpened"
+                           min-date="minDate"
+                           max-date="endTime"
+                           datepicker-options="dateOptions"
+                           ng-required="true"
+                           show-button-bar="false"
+                           ng-click="openStartDate($event)"
+                           placeholder="请选择日期"
+                           readonly/>
+                    <span class="text_hyphen">-</span>
+                    <input type="text" class="ud_input date_ipt"
+                           ng-model="endTime"
+                           datepicker-popup="{{format}}"
+                           is-open="endOpened"
+                           min-date="startTime"
+                           max-date="maxDate1"
+                           datepicker-options="dateOptions"
+                           ng-required="true"
+                           show-button-bar="false"
+                           ng-click="openEndDate($event)"
+                           placeholder="请选择日期"
+                           readonly/>
+                </div>
+                <input type="button" class="download_btn" ng-click="downloadBill('date')" value="下载对账单" />
+
+                <!--<div class="desc">
+                    <p>Here's some description. test En. Eng.. English...</p>
+                    <p>这里是补充说明。中文测、测、测试……</p>
+                </div>-->
+
+                <div class="desc">
+                    <p ng-class="{ud_text_error: tip_date.invalid, ud_text_correct: !(tip_date.invalid)}">
+                        {{tip_date.info}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

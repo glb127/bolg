@@ -1,0 +1,211 @@
+<div class="ud_content_withlist" cg-busy="queryPromise">
+    <div class="rm_content_header">
+        <h1 class="title">风险事件</h1>
+
+        <div class="subtitle">
+            <!--<div class="input-group">
+                <select ng-model="conditionDTO.strategyInstance" ng-change="setStrategy()" ng-options="Strategy.strategyInstanceName for Strategy in conditionDTOs">
+                    <option selected value="" disabled>请选择攻略</option>
+                </select>
+                <select ng-model="conditionDTO.platform" ng-change="setPlatform()" ng-options="platform.name as platform.name for platform in platforms">
+                    <option selected value="">全部平台</option>
+                </select>
+                &nbsp;&nbsp;
+                <span ng-class="{ud_text_error: tip_strategy.invalid, ud_text_correct: !(tip_strategy.invalid)}">{{tip_strategy.info}}</span>
+            </div>-->
+
+            <div class="ud_right">
+                查询结果：{{resultCount}} 条
+            </div>
+
+            <div class="navgroup ud_left rm_collapse">
+                <a class="link" data-toggle="collapse" data-target="#advancedSearch" ng-click="colExp()">
+                    <span class="ud_collapse_btn" ng-show="collapse">收起高级搜索<span
+                            class="glyphicon glyphicon-menu-up ud_icon"></span></span>
+                    <span class="ud_collapse_btn" ng-hide="collapse">展开高级搜索<span
+                            class="glyphicon glyphicon-menu-down ud_icon"></span></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ud_content_condition_B">
+        <div class="conditions-wrapper collapse" id="advancedSearch">
+            <div class="conditions condition-row">
+                <div class="condition">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        <span ng-show="chosenDateRangeName==''" class="text">事件时间</span>
+                        <span ng-show="chosenDateRangeName!=''" class="text">{{chosenDateRangeName}}</span>
+                        <!--<span class="text">{{dateRanges[dateRangeCode]}}</span>-->
+                        <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                        <span class="arrow-down"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">事件时间</div>
+                        <a class="item" ng-repeat="item in dateRange" ng-class="{active:timeType == item.code}" ng-click="setDateRangeByCode($index)">{{item.name}}</a>
+                        <span ng-class="{rm_text_error: tip_date.invalid, rm_text_correct: !(tip_date.invalid)}" class="item_hyphen">{{tip_date.info}}</span>
+                    </div>
+                </div>
+
+                <div class="condition">
+                    <!--<div class="title">事件时间：</div>-->
+                    <div class="itemgroup">
+                        <div class="ud_datepicker">
+                            <input type="text" class="item_ipt"
+                                   ng-model="conditionDTO.leftTime"
+                                   datepicker-popup="{{format}}"
+                                   is-open="startOpened"
+                                   min-date="minDate"
+                                   max-date="maxDate"
+                                   datepicker-options="dateOptions"
+                                   ng-required="true"
+                                   show-button-bar="false"
+                                   ng-click="openStartDate($event)"
+                                   placeholder="请选择日期"
+                                   ng-change="setDateRange()"
+                                   readonly/>
+                            <span class="item_hyphen">-</span>
+                            <input type="text" class="item_ipt"
+                                   ng-model="conditionDTO.rightTime"
+                                   datepicker-popup="{{format}}"
+                                   is-open="endOpened"
+                                   min-date="conditionDTO.leftTime"
+                                   max-date="maxDate1"
+                                   datepicker-options="dateOptions"
+                                   ng-required="true"
+                                   show-button-bar="false"
+                                   ng-click="openEndDate($event)"
+                                   placeholder="请选择日期"
+                                   ng-change="setDateRange()"
+                                   readonly/>
+                            <!--<input type="button" class="rm_btn_sm rm_btn_primary item_ipt" ng-click="searchByConditionDTO()" value="搜索" />-->
+                        </div>
+                        <!--日期错误提示-->
+                        <span ng-class="{rm_text_error: tip_date.invalid, rm_text_correct: !(tip_date.invalid)}" class="item_hyphen">{{tip_date.info}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="conditions condition-row">
+                <div class="condition">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        <span ng-show="chosenStrategyName==''" class="text">攻略</span>
+                        <span ng-show="chosenStrategyName!=''" class="text">{{chosenStrategyName}}</span>
+                        <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                        <span class="arrow-down"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">攻略</div>
+                        <a class="item" ng-repeat="item in conditionDTOs" ng-class="{active:conditionDTO.strategyInstanceCode == item.strategyInstanceCode}"
+                           ng-click="setStrategy(item)">{{item.strategyInstanceName}}</a>
+                    </div>
+                </div>
+
+                <div class="condition">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        <span ng-show="chosenRiskLevelName==''" class="text">风险等级</span>
+                        <span ng-show="chosenRiskLevelName!=''" class="text">{{chosenRiskLevelName}}</span>
+                        <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                        <span class="arrow-down"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">风险等级</div>
+                        <a class="item" ng-repeat="item in riskLevels" ng-class="{active:conditionDTO.riskLevel == item.code}"
+                           ng-click="setRiskLevel($index)">{{item.name}}</a>
+                    </div>
+                </div>
+
+                <div class="condition">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        <span ng-show="chosenRetName==''" class="text">处理结果</span>
+                        <span ng-show="chosenRetName!=''" class="text">{{chosenRetName}}</span>
+                        <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                        <span class="arrow-down"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">处理结果</div>
+                        <a class="item" ng-repeat="item in dealSolutions" ng-class="{active:conditionDTO.retCode == item.code}"
+                           ng-click="setDealSolution($index)">
+                            {{item.name}}
+                        </a>
+                    </div>
+                </div>
+
+                <!--<div class="condition">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        决策分值
+                        <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">决策分值</div>
+                        <input type="text" name="leftScore" ng-model="conditionDTO.leftScore" class="item_ipt num" ng-pattern="/^(\d{1,2}|100)$/">
+                        <span class="item_hyphen">-</span>
+                        <input type="text" name="rightScore" ng-model="conditionDTO.rightScore" class="item_ipt num" ng-pattern="/^(\d{1,2}|100)$/">
+                        <input type="button" class="rm_btn_sm rm_btn_primary item_ipt" ng-click="searchByScore()" value="搜索" />
+                    </div>
+                </div>-->
+
+                <div class="condition" ng-show="scenarioInstanceDTOs[0]">
+                    <div class="condition-hd" ng-click="onClickSelector($event)">
+                        <span ng-show="chosenScenarioName==''" class="text">发生场景</span>
+                        <span ng-show="chosenScenarioName!=''" class="text">{{chosenScenarioName}}</span>
+                        <!--<span class="glyphicon glyphicon-triangle-bottom"></span>-->
+                        <span class="arrow-down"></span>
+                    </div>
+                    <div class="condition-bd">
+                        <div class="title">发生场景</div>
+                        <a class="item" ng-class="{active: conditionDTO.scenarioInstanceCode ==''}"
+                           ng-click="setScenario(-1)">全部</a>
+                        <a class="item" ng-repeat="item in scenarioInstanceDTOs" ng-class="{active: conditionDTO.scenarioInstanceCode == item.scenarioInstanceCode}"
+                           ng-click="setScenario($index)">{{item.scenarioInstanceName}}</a>
+                    </div>
+                </div>
+
+                <div class="search-group">
+                    <input type="text" class="search-item search-text" placeholder="请输入事件ID、账户ID或交易ID" ng-model="keyword" size="25"  ng-keypress="queryByKeywordWithEnterKey($event)"/>
+                    <input type="button" class="search-item search-btn" ng-click="searchByKeyword()" value="搜索" />
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+    
+    <div class="rm_content_table">
+        <table class="rm_table with_detail">
+            <thead>
+            <tr>
+                <th>事件时间</th>
+                <th>事件ID</th>
+                <th>账户ID</th>
+                <th>交易ID</th>
+                <th>我的攻略</th>
+                <th>应用平台</th>
+                <th>场景</th>
+                <th>决策分值</th>
+                <th>处理结果</th>
+                <th>风险等级</th>
+                <th>标记/操作</th>
+            </tr>
+            </thead>
+            <tbody infinite-scroll='loadPage(page+1)' infinite-scroll-disabled="links['last'] == page" infinite-scroll-container="'.rm_right_content'">
+            <tr ng-repeat="risk in riskEvent" ng-click="riskDetails(risk.id, risk.eventId)">
+                <td>{{risk.eventTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td title="{{risk.eventId}}">{{risk.eventId | lengthLimit}}</td>
+                <td title="{{risk.userId}}">{{risk.userId | lengthLimit}}</td>
+                <td title="{{risk.transId}}">{{risk.transId | lengthLimit}}</td>
+                <td>{{risk.strategyInstanceName}}</td>
+                <td>{{risk.platform}}</td>
+                <td>{{risk.scenarioInstanceName}}</td>
+                <td>{{risk.score}}</td>
+                <td>{{risk.retCode}}</td>
+                <td>{{risk.riskLevel}}</td>
+                <td>{{risk.remark}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

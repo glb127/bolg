@@ -1,0 +1,100 @@
+@charset "utf-8";
+
+/* --------------- START Right Slide --------------- */
+
+.ud_rightslide {
+    .ud_rightslide_bg {
+        position: fixed;
+        left: $width_nav;
+        right: 0;
+        top: 60px;
+        bottom: 0;
+        z-index: 1000;
+        background-color: $ncolor_black;
+        opacity: .5;
+    }
+    .ud_rightslide_content {
+        position: fixed;
+        right: 0;
+        top: 61px;
+        bottom: 0;
+        z-index: 1001;
+        background-color: #fff;
+        box-shadow: -2px 0px 5px -1px $ncolor_black;
+        &.in{
+            animation: 0.5s ud_rightslide_in;
+        }
+        &.out{
+            animation: 0.5s ud_rightslide_out;
+        }
+    }
+    .rightslide_clps {
+        margin-left: -22px;
+        position: absolute;
+        display: block;
+        height: 36px;
+        width: 22px;
+        top: 40px;
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        z-index: 1000;
+        background-color: #fff;
+        color: $ncolor_black;
+        line-height: 36px;
+        vertical-align: middle;
+        text-align: center;
+        overflow: hidden;
+        -ms-text-overflow: clip;
+        text-overflow: clip;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: serif;
+        box-shadow: -2px 0px 5px -1px $ncolor_black;
+        &:hover {
+            color: $ncolor_grey;
+        }
+    }
+    @keyframes ud_rightslide_in {
+        0% {  width: 0px; }
+        100% {  width: $width_rightslide; }
+    }
+    @keyframes ud_rightslide_out {
+        0% {  width: $width_rightslide; }
+        100% {  width: 0px; }
+    }
+}
+
+.rs_content {
+    background: #fff;
+    height: 100%;  
+    .rs_content_header {
+
+        padding: 30px 20px 20px 20px;
+        .title {
+            color: $bg_grey1;
+            font-size: 22px;
+            margin: 0;
+        }
+    }
+    .rs_content_info {
+        padding: 20px;
+    }
+    .rs_content_footer {
+        border-top: 1px solid $bg_grey;
+        padding: 20px 20px 30px 0;  
+        display: block;
+        text-align: right; 
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        .rm_buttom {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    }
+}
+.right_slide_width{
+    width: $width_rightslide;
+    height: 100%;
+}
+/* --------------- END Right Slide ------------------*/

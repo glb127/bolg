@@ -1,0 +1,108 @@
+<div>
+    <div class="ud_content_header">
+        <div class="ud_right sv_nav_links">
+            <a class="sv_link_item" ng-repeat="item in authorization"
+               ng-class="{active: selectAuthorization.code == item.code}"
+               ng-click="setAuthorization($index)">{{item.name}}
+            </a>
+        </div>
+
+        <h1 class="title">
+            数据规则
+            <!--<a class="back" ng-click="openDownloadBill()">下载对账单明细</a>-->
+            <a class="back" ng-click="openDownloadBill()">下载对账单</a>
+        </h1>
+    </div>
+
+    <div class="ud_content_condition">
+        <div class="conditions">
+            <div class="condition">
+                <div class="title">服务类型</div>
+                <div class="itemgroup">
+                    <div class="item" ng-repeat="item in serviceType"
+                         ng-class="{active: selectService.id == item.id}"
+                         ng-click="setServiceType($index)">{{item.name}}
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="condition">
+                <div class="title">开通情况</div>
+                <div class="itemgroup">
+                    <div class="item" ng-repeat="item in authorization"
+                         ng-class="{active: selectAuthorization.code == item.code}"
+                         ng-click="setAuthorization($index)">{{item.name}}
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="">
+        <table class="ud_table_data_service">
+            <thead>
+            <tr>
+                <th>服务分类</th>
+                <th>服务编号</th>
+                <th>数据服务</th>
+                <th>描述说明</th>
+                <th>实时性</th>
+                <th>收费情况</th>
+                <th>开通情况</th>
+                <th>更新时间</th>
+            </tr>
+            </thead>
+            <tbody  ng-repeat="item in dataServiceList">
+            <tr>
+                <td class="first" rowspan="{{item.dataServiceDTOs.length+1}}">{{item.dataServiceGroupName}}</td>
+            </tr>
+            <tr ng-repeat="dataService in item.dataServiceDTOs">
+                <td>{{dataService.code}}</td>
+                <td>
+                    {{dataService.name}}
+                    <span ng-if="dataService.isNew" class="new">New</span>
+                </td>
+                <td>{{dataService.description}}</td>
+                <td>{{isSynchronization[dataService.isSynchronization]}}</td>
+                <td ng-class='{isPay: dataService.isPay=="1"}'>{{isPay[dataService.isPay]}}</td>
+                <td>
+                    <span ng-if='dataService.status==1'>维护中</span>
+                    <span ng-if='dataService.status==0'>
+                        <a class='operation' ng-click="applyAuthorization(dataService.code)" ng-if='dataService.authorization=="-1"'>{{myauthorization[dataService.authorization]}}</a>
+                        <span ng-if='dataService.authorization!="-1"'>{{myauthorization[dataService.authorization]}}</span>
+                    </span>
+                </td>
+                <td>
+                    <span>{{dataService.updateTime | date:'yyyy.MM.dd HH:mm:ss'}}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/ng-template" id="applyAuthorization.html">
+    <div ng-cloak class="rm_modal">
+        <div class="rm_modal_header">
+            <h3>申请开通数据服务</h3>
+            <a class="iconfont modal_close" ng-click="cancel()">&#xe626;</a>
+        </div>
+        <div class="rm_modal_content rm_modal_text_content">
+            <div class="rm_modal_text_item">
+                <h4>申请开通后，有盾会发起数据服务开通流程。</h4>
+                <br/><h4>是否确定申请？</h4>
+            </div>
+        </div>
+        <div class="rm_modal_footer">
+            <div class="pull-right">
+                <button class="rm_btn rm_btn_default" ng-click="cancel()">
+                    取消
+                </button>&nbsp;
+                <button class="rm_btn rm_btn_primary" ng-click="ok()">
+                    确定
+                </button>
+            </div>
+            <div class="clearfix" ></div>
+        </div>
+    </div>
+</script>

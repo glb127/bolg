@@ -1,0 +1,161 @@
+<div>
+
+    <div class="rmn_content_header rmn_name_list">
+        <div class="m-subtitle">
+            <h1>名单列表</h1>
+        </div>
+        <div class="name_list_pans">
+            <div class="name_list_pans_in">
+                <span ng-repeat="ent in nameList">
+                    <div ng-if="ent.type=='0'" class="name_list_pan system" ng-click="chooseNameList(ent)" >
+                        <div class="iconfont fs40">&#xe684;</div>
+                        <div class="n_title">{{ent.name}}</div>
+                        <div class="n_info" ng-show="ent.lastModifiedDate">更新{{ent.lastModifiedDate.substr(0,10)}}</div>
+                        <div class="active" ng-if="tmp.nameListId==ent.id"></div>
+                    </div>
+                    <div ng-if="ent.type=='1'" class="name_list_pan normal" ng-click="chooseNameList(ent)">
+                        <div class="iconfont fs40">&#xe62a;</div>
+                        <div class="n_title">{{ent.name}}</div>
+                        <div class="n_info">
+                            <span ng-show="ent.lastModifiedDate" class="fleft">更新{{ent.lastModifiedDate.substr(0,10)}}</span>
+                            <span class="fright"><span ng-click="editNameList(ent)">修改</span> | <span ng-click="deleteNameList(ent)">删除</span></span>
+                        </div>
+                        <div class="active" ng-if="tmp.nameListId==ent.id"></div>
+                    </div>
+                </span>
+                <div class="name_list_pan empty" ng-click="addNameList()">
+                    <div class="add"><a class="iconfont fs16">&#xe69e;</a>自定义名单</div>
+                </div>
+            </div>
+        </div>
+        <div class="name_list_seach">
+            <div class="rm_right"> 
+                <div class="nsearch">
+                    <input type="text" class="nsearch-item" placeholder="请搜索"
+                           ng-model="tmp.value" size="25" ng-keypress="queryByEnterKey($event)" /><span class="iconfont nsearch-fdj" ng-click="filterDataValues()">&#xe705;</span>               
+                </div>
+                <a type="button" class="rm_nbtn rm_nbtn_primary" ng-click="addDataValue()"><span class="iconfont fs16">&#xe69e;</span>添加</a>  
+            </div>
+        </div>
+    </div>
+    <div class="rmn_empty_line5"></div>
+    <div class="rmn_content_normal rmn_name_list" ng-show="tmp.nameListId!=''">
+        <div ud-table-title>
+        <table class="m-table fs32">
+            <thead>
+                <tr>
+                    <th>数据值</th>
+                    <th>维度</th>
+                    <th>描述</th>
+                    <th>录入时间</th>
+                    <th>修改时间</th>
+                    <th>状态</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr  ng-repeat="ent in dataValuesList">
+                    <td>{{ent.value}}</td>
+                    <td>{{ent.parameterTagName}}</td>
+                    <td title="{{ent.description}}">{{ent.description}}</td>
+                    <td title="{{ent.createdDate.substr(0,19).replace('T',' ')}}">{{ent.createdDate.substr(0,19).replace('T',' ')}}</td>
+                    <td title="{{ent.lastModifiedDate.substr(0,19).replace('T',' ')}}">{{ent.lastModifiedDate.substr(0,19).replace('T',' ')}}</td>
+                    <td>
+                        <a class="iconfont fs48 rm_left" ng-show="ent.status == '1'" ng-click="changeStatus(ent)">&#xe71b;</a>
+                        <a class="iconfont fs48 rm_left cgreen" ng-show="ent.status == '0'" ng-click="changeStatus(ent)">&#xe71c;</a>
+                        <a  class="iconfont hide_option fs24" tooltip-class="normalClass" uib-tooltip="删除" ng-click="deleteDataValue(ent)">&#xe69d;</a>
+                        <a  class="iconfont hide_option fs24" tooltip-class="normalClass" uib-tooltip="编辑" ng-click="editDataValue(ent)">&#xe6c8;</a>         
+                    </td>
+                </tr>  
+                <tr>
+                    <td colspan="6" ng-show="dataValuesList.length == 0 ">无查询结果</td>
+                </tr>              
+            </tbody>
+        </table>
+        </div>
+    </div>    
+    <div class="m-uib-pagination">
+        <uib-pagination ng-show="pageTotal" total-items="pageTotal" ng-model="currentPage" max-size="5" class="pagination-sm" boundary-links="true" ng-change="pageChanged()" items-per-page="per_page" first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="末页"></uib-pagination>
+        <span ng-show="pageTotal" class="pagination-text">每页{{per_page}}条，共计{{pageTotal}}条</span>
+    </div>
+</div>
+<script type="text/ng-template" id="AddNameList.html">
+    <div ng-cloak class="rm_modal">
+        <div class="rm_modal_header">
+            <h3>{{title}}</h3>
+            <a class="iconfont modal_close" ng-click="cancel()">&#xe626;</a>
+        </div>
+        <div class="rm_modal_content rm_modal_text_content">
+            <div class="rm_modal_text_item"> 
+                <div class="rm_modal_form">               
+                    <div class="ud_form_group_lg">
+                        <label class="t">名单名称</label>
+                        <div class="c">
+                            <input type="text" placeholder="自定义名单名称" class="ud_input_lg" ng-model="name" ng-change="validate_name()" ng-blur=validate_name()  maxlength="20">
+                            <span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+                        </div>
+                    </div>  
+                </div>  
+            </div>
+        </div>
+        <div class="rm_modal_footer">
+            <div class="pull_center">
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="cancel()">
+                    取消
+                </button>
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="ok()">
+                    确定
+                </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="DeleteNameList.html">
+    <div ng-cloak class="rm_modal">
+        <div class="rm_modal_header">
+            <h3>提示</h3>
+            <a class="iconfont modal_close" ng-click="cancel()">&#xe626;</a>
+        </div>
+        <div class="rm_modal_content rm_modal_text_content">
+            <div class="rm_modal_text_item">
+                请确定是否删除名单列表：<span class="rm_create_title">{{name}}</span>？
+            </div>
+        </div>
+        <div class="rm_modal_footer">
+            <div class="pull_center">
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="cancel()">
+                    取消
+                </button>
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="ok()">
+                    确定
+                </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="DeleteDataValue.html">
+    <div ng-cloak class="rm_modal">
+        <div class="rm_modal_header">
+            <h3>提示</h3>
+            <a class="iconfont modal_close" ng-click="cancel()">&#xe626;</a>
+        </div>
+        <div class="rm_modal_content rm_modal_text_content">
+            <div class="rm_modal_text_item">
+                请确定是否删除数据值：<span class="rm_create_title">{{name}}</span>？
+            </div>
+        </div>
+        <div class="rm_modal_footer">
+            <div class="pull_center">
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="cancel()">
+                    取消
+                </button>
+                <button class="rm_nbtn rm_nbtn_primary" ng-click="ok()">
+                    确定
+                </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</script>
+

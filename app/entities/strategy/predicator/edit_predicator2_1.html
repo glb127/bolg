@@ -1,0 +1,77 @@
+<right-slide-dialog ng-cloak dialog-name="edit_predicator2_1" back-router="ruleCenter" no-slide="{{noslide}}">
+	<div class="right_slide_width" cg-busy="queryPromise_ep2_1">
+		<div class="rmn_content_header rmn_slide">
+		    <h1 class="title">
+		        指标详情
+		    </h1>		    
+			<a ng-if="false" class="iconfont titleButtomOpen" ng-click="pmDTO.status='1';" ng-show="pmDTO.status=='0'">&#xe71c;</a> 
+	        <a ng-if="false" class="iconfont titleButtomClose" ng-click="pmDTO.status='0';" ng-show="pmDTO.status=='1'">&#xe71b;</a>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_slide">
+			<form role="form" class="ud_form_lg">
+                <div class="ud_form_group_lg" ng-show="pmDto.description">
+                    <label class="t">描述</label>
+                    <div class="c">
+                        <div class="ud_text_indent2" >{{pmDto.description}}</div>
+                    </div>
+                </div>                 
+                <div class="ud_form_group_lg" ng-show="pmDto.example">
+                    <label class="t">示例</label>
+                    <div class="c">
+                        <div class="ud_text_indent2" >{{pmDto.example}}</div>
+                    </div>
+                </div> 
+                <div class="ud_form_group_lg">
+                    <label class="t">指标名称</label>
+                    <div class="c">
+                        <input type="text" placeholder="请填写指标名称" class="ud_input_lg" ng-model="pmDto.name" ng-change="validate_namw()" ng-blur=validate_name()><span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+                    </div>
+                </div>
+                <div class="ud_form_group_lg rmn_rule_info">
+                    <label class="t">时间A<i class="iconfont fs16" uib-tooltip="时间差运算中的被减数" tooltip-class="customClass">&#xe6e2;</i></label>
+                     <div class="c" >
+                        <div class="chosen big">
+                            <select chosen data-placeholder-text-single="'请选择时间A'" disable-search="true" ng-model="opDto.calculationFactorDTOs[0].tmpValue"  ng-options="ent as ent.name for ent in parameterAllList" ng-change="validate_factorA()" >
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <span ng-class="{ud_text_error: tip_factora.invalid, ud_text_correct: !(tip_factora.invalid)}">{{tip_factora.info}}</span> 
+                    </div>
+                </div>
+                <div class="ud_form_group_lg rmn_rule_info">
+                    <label class="t">时间B<i class="iconfont fs16" uib-tooltip="时间差运算中的减数" tooltip-class="customClass">&#xe6e2;</i></label>
+                     <div class="c" >
+                        <div class="chosen big">
+                            <select chosen data-placeholder-text-single="'请选择时间B'" disable-search="true" ng-model="opDto.calculationFactorDTOs[1].tmpValue"  ng-options="ent as ent.name for ent in parameterAllList" ng-change="validate_factorB()" >
+                                <option value=""></option>
+                            </select> 
+                        </div>
+                        <span ng-class="{ud_text_error: tip_factorb.invalid, ud_text_correct: !(tip_factorb.invalid)}">{{tip_factorb.info}}</span>
+                    </div>
+                </div>
+                <div class="ud_form_group_lg">
+                    <label class="t">单位<i class="iconfont fs16" uib-tooltip="时间A与时间B根据指定单位计算差值" tooltip-class="customClass">&#xe6e2;</i></label>
+                    <div class="c">
+                        <div class="chosen big">
+                            <select chosen data-placeholder-text-single="'请选择单位'" disable-search="true" ng-model="opDto.functionType"  ng-options="ent.id  as ent.name for ent in optionList" ng-change="validate_function()" >
+                                <option value=""></option>
+                            </select> 
+                        </div>
+                        <span ng-class="{ud_text_error: tip_function.invalid, ud_text_correct: !(tip_function.invalid)}">{{tip_function.info}}</span>
+                    </div>
+                </div>
+	        </form>
+            <div class="rmn_empty_line100"></div>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+			<div class="rm_buttoms rm_right">
+                <span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+
+                <a ng-show="type=='edit'" class="rm_nbtn rm_nbtn_primary" ng-click="close()">取消</a>
+				<a ng-show="type=='new'" class="rm_nbtn rm_nbtn_primary" ng-click="back()">上一步</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>
+

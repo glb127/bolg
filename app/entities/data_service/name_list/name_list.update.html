@@ -1,0 +1,63 @@
+<!-- 修改名单生效期弹窗 -->
+<div class="rm_modal">
+    <div class="rm_modal_header">
+        <h3>修改名单生效期</h3>
+        <a class="iconfont modal_close" ng-click="cancelNameList()">&#xe626;</a>
+    </div>
+    <div class="rm_modal_content">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">维度：</label>
+                <div class="col-sm-9">
+                    <select ng-model="blackList.dimensionCh" disabled class="ud_input_lg">
+                        <option selected disabled ng-value="blackList.dimensionCh='{{blackList.dimensionCh}}'">{{blackList.dimensionCh}}</option>
+                    </select>&nbsp;&nbsp;
+                    <input type="text" class="ud_input_lg w160" disabled ng-value="blackList.value='{{blackList.value}}'" ng-model="blackList.value">
+                </div>
+            </div>
+                  
+            <div class="form-group">
+                <label class="col-sm-3 control-label">类型：</label>
+                <div class="col-sm-9">
+                    <select ng-model="blackList.type" disabled class="ud_input_lg">
+                        <option selected disabled>{{showType}}</option>
+                    </select>
+                </div>
+            </div>
+
+           <div class="form-group">
+                <label class="col-sm-3 control-label">有效期：</label>
+                <div class="col-sm-9">
+                    <select ng-model="blackList.validity" ng-options="v for v in removeDuplicateValidities" ng-init="removeDuplicateValidities[0]" ></select>&nbsp 天
+                    <span ng-show="blackList.validity=='自定义'">
+                        <input type="number" width="5" ng-maxlength="5" ng-model="validityDefined">
+                    </span> 
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-9">
+                    <input type="text" ng-model="blackList.comment" class="ud_input_lg w160">
+                </div>
+            </div>
+            <div class="form-group">
+
+                <label class="col-sm-3 control-label">属性：</label>
+                <div class="col-sm-9">
+                    <textarea ng-model="blackList.description" class="ud_textarea_lg"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="rm_modal_footer clearfix">
+        <div class="pull-right">
+            <button class="rm_btn rm_btn_default" ng-click="cancelNameList()">
+                取消
+            </button>&nbsp;&nbsp;
+            <button type="submit" class="rm_btn rm_btn_primary" ng-click="updateNameList()">
+                确定
+            </button>
+        </div>
+    </div>
+</div>

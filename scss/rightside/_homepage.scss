@@ -1,0 +1,213 @@
+@charset "utf-8";
+
+.rm_home {
+
+}
+
+.rm_home_board{
+
+    padding: 30px;
+    color: #fff;
+
+    li{
+        padding: 30px;
+        color: #fff;
+        list-style-type: none;
+
+        &:last-child{
+            border-right: 0;
+        }
+    }
+
+    .title {
+        font-size: 14px;
+        margin-top: 0;
+        margin-bottom: 14px;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .last:after{
+        content:' ';
+        display:none;
+        clear: both;
+    }
+}
+
+
+
+.rm_home_rank{
+    background: $blue;
+    //height: 270px;
+}
+
+.rm_home_event{
+    background: $green;
+    height: 140px;
+}
+
+
+//
+.rm_riskrank{
+    border-radius: 2px;
+    border: 1px solid $blue_light;
+}
+
+.rm_riskrank_item, .rm_riskevent_item {
+
+    &.last{
+        border-right: 0;
+    }
+}
+
+.rm_riskrank_item {
+
+    padding: 42px 20px;
+    border-right: 1px solid $blue_light;
+
+    h5 {
+        font-size: 14px;
+        margin: 0 0 14px 0;
+        line-height: 1;
+    }
+    p {
+        font-size: 36px;
+        margin: 0 0 0;
+        line-height: 1;
+    }
+}
+
+
+.rm_riskevent {
+    border-radius: 2px;
+    border: 1px solid $green_light;
+}
+
+.rm_riskevent_item{
+
+    border-right: 1px solid $green_light;
+    padding: 13px 20px;
+    line-height: 1;
+
+    p {
+        font-size: 16px;
+        margin: 0 0 0;
+    }
+    .count {
+         font-size: 14px;
+     }
+}
+
+
+.rm_rr_list{
+    border: 1px solid $blue_light;
+
+    li{
+        float:left;
+        height: 178px;
+        width: 219px;
+        border-right: 1px solid $blue_light;
+        padding: 42px 20px;
+    }
+}
+
+
+.rm_re_list{
+    border: 1px solid $green_light;
+
+    li{
+        float:left;
+        height: 48px;
+        width: 548px;
+        border-right: 1px solid $green_light;
+        padding: 13px 20px;
+        font-size: 22px;
+        line-height: 1;
+    }
+}
+
+.rm_rr_listitem {
+
+    h5 {
+        font-size: 14px;
+        margin: 0 0 14px 0;
+        line-height: 1;
+    }
+
+    p {
+        font-size: 36px;
+        margin: 0;
+        line-height: 1;
+    }
+}
+
+
+.rm_home_listheader {
+
+    background: #fff;
+    padding: 14px 30px;
+    color: $font_grey_table;
+
+    .title {
+        font-size: 14px;
+    }
+
+    .tip{
+        font-size: 10px;
+    }
+}
+
+
+.rm_home_toprule {
+    padding-bottom: 45px;
+    background: $bg_grey;
+}
+
+.rm_rulelist{
+    background: $bg_grey;
+
+    &.left {
+        border-right: 1px solid #dee0e2;
+    }
+
+    th, td {
+
+        padding: 16px 30px;
+        font-size: 12px;
+        //border-left: 1px solid #dee0e2;
+        border-bottom: 1px solid #dee0e2;
+        min-height: 50px;
+    }
+
+    .num {
+         color: $font_grey_light;
+         width: 50px;
+         padding-right: 0;
+     }
+
+    .rule_name{
+        color: $font_grey_table;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .times{
+        color: $font_grey_light;
+        min-width: 100px;
+        padding-left: 15px;
+        text-align: right;
+    }
+}
+
+
+
+
+
+

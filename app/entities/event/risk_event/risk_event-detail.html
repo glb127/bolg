@@ -1,0 +1,155 @@
+<div class="rm_content_header">
+    <h1 class="title">
+        风险事件详情
+        <a class="back" ui-sref="riskEvent">返回风险事件查询</a>
+    </h1>
+</div>
+
+<!-- 风险详情 -->
+<div class="rm_panel">
+    <div class="rm_panel_header">
+        <button type="button" class="rm_btn rm_btn_primary rm_right"
+                ng-click="openRiskEventControlWindow()">
+            立即处理
+        </button>
+        <p class="title">风险详情</p>
+    </div>
+    <div class="rm_panel_content">
+        <ul class="list_red clearfix">
+            <li class="ud_row">
+                <div>
+                    <span class="t">事件时间</span>
+                    <span class="d">{{items.riskEventDetailsDTO.eventTime | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                </div>
+            </li>
+            <li class="ud_row">
+                <div class="rm_col2">
+                    <span class="t">事件ID</span>
+                    <span class="d">{{items.riskEventDetailsDTO.eventId}}</span>
+                </div>
+
+                <div class="rm_col2">
+                    <span class="t">账户ID</span>
+                    <a class="d operation" ng-click="relateUserId(items.riskEventDetailsDTO.userId)">{{items.riskEventDetailsDTO.userId}}</a>
+                </div>
+            </li>
+            <li class="ud_row">
+                <div class="rm_col2">
+                    <span class="t">交易ID</span>
+                    <a class="d operation" ng-click="relateTransactionId(items.riskEventDetailsDTO.transId)">{{items.riskEventDetailsDTO.transId}}</a>
+                </div>
+
+                <div class="rm_col2">
+                    <span class="t">应用平台</span>
+                    <span class="d">{{items.riskEventDetailsDTO.platform}}</span>
+                </div>
+            </li>
+            <li class="ud_row">
+                <div class="rm_col2">
+                    <span class="t">我的攻略</span>
+                    <span class="d">{{items.riskEventDetailsDTO.strategyInstanceName}}</span>
+                </div>
+
+                <div class="rm_col2">
+                    <span class="t">场景</span>
+                    <span class="d">{{items.riskEventDetailsDTO.scenarioInstanceName}}</span>
+                </div>
+            </li>
+            <li class="ud_row">
+                <div class="rm_col2">
+                    <span class="t">风险决策方式</span>
+                    <span class="d">最坏匹配</span>
+                </div>
+
+                <div class="rm_col2">
+                    <span class="t">决策分值</span>
+                    <span class="d">{{items.riskEventDetailsDTO.score}}</span>
+                </div>
+            </li>
+            <li class="ud_row">
+                <div class="rm_col2">
+                    <span class="t">处理结果</span>
+                    <span class="d">{{items.riskEventDetailsDTO.retCode}}</span>
+                </div>
+
+                <div class="rm_col2">
+                    <span class="t">风险等级</span>
+                    <span class="d">{{items.riskEventDetailsDTO.riskLevel}}</span>
+                </div>
+            </li>
+            <li class="ud_row" ng-repeat="riskRule in items.riskEventDetailsDTO.riskRules">
+                <span class="t">命中规则</span>
+                <span class="d">{{riskRule.ruleInstanceName}}；规则分值：{{riskRule.score}}；所在锦囊：{{riskRule.solutionInstanceName}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 地理位置 -->
+<div class="rm_panel" ng-show="items.geographyRecordDTOs[0]">
+    <div class="rm_panel_header">
+        <p class="title">地理位置</p>
+    </div>
+
+    <div class="rm_panel_content">
+        <table ng-repeat="item in items.geographyRecordDTOs" class="rm_table_bordered ud_table_B">
+            <tbody>
+            <tr>
+                <th>{{item.description}}</th>
+                <td colspan="3">{{item.value}}</td>
+            </tr>
+            <tr>
+                <th>地理位置</th>
+                <td colspan="3">{{item.geographyRecord.country}} {{item.geographyRecord.province}} {{item.geographyRecord.city}} {{item.geographyRecord.street}}</td>
+            </tr>
+            <tr ng-if="item.geographyRecord.isProxy">
+                <th>是否代理</th>
+                <td colspan="3">{{item.geographyRecord.isProxy}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 设备环境 -->
+<div class="rm_panel" ng-show="items.deviceEnvDTOs">
+    <div class="rm_panel_header">
+        <p class="title">设备环境</p>
+    </div>
+    <div class="rm_panel_content">
+        <table class="rm_table_bordered ud_table_B">
+            <tr ng-repeat="deviceEnvDTO in items.deviceEnvDTOs">
+                <th>{{deviceEnvDTO.name}}</th>
+                <td>{{deviceEnvDTO.value}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- 业务数据 -->
+<div class="rm_panel" ng-show="items.businessDataDTOs">
+    <div class="rm_panel_header">
+        <p class="title">业务数据</p>
+    </div>
+
+    <div class="rm_panel_content">
+        <table class="rm_table_bordered ud_table_B businessData">
+            <tr ng-repeat="businessData in items.businessDataDTOs"
+                ng-class="{highlight: businessData.highLighting, relation: businessData.relationship}"
+                ng-click="relate(businessData)">
+                <th>{{businessData.name}}</th>
+                <td>
+                    <a ng-if="businessData.relationship" class="operation">{{businessData.value}}</a>
+                    <span ng-if="!businessData.relationship">{{businessData.value}}</span>
+                    <span class="ud_right" ng-show="businessData.highLighting">此业务数据命中规则</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="rm_panel">
+    <div class="rm_panel_content">
+        <button class="rm_btn rm_btn_primary" ui-sref="riskEvent">返回</button>
+    </div>
+</div>

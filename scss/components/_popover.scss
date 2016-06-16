@@ -1,0 +1,47 @@
+
+
+
+.table_solutionList {
+    .popover {
+        width: 600px;
+        max-width: 800px;
+
+        .popover-inner{
+
+            .popover-content{
+                width: 600px;
+                padding: 0px;
+
+                table{
+                    thead {
+                        background: #f1f4f4;
+                        font-weight: normal;
+                        font-size: 12px;
+
+                        th:first-child {
+                            padding:14px 30px;
+                        }
+
+                        th {
+                            color: $font_color;
+                            padding: 14px 0px;
+                        }
+                    }
+
+                    tbody {
+                        font-size: 12px;
+
+                        td:first-child {
+                            padding: 14px 30px;
+                        }
+
+                        td {
+                            padding: 14px 0px;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}

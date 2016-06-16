@@ -1,0 +1,87 @@
+<right-slide-dialog ng-cloak dialog-name="edit_guide" back-router="ruleCenter">
+	<div class="right_slide_width">
+		<div class="rmn_content_header rmn_slide">
+		    <h1 class="title">
+		        攻略属性设置
+		        <!-- &nbsp;&nbsp;<a class="operation fs14" ng-click="clickStrategyDelete()">删除此攻略</a> -->
+		    </h1>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_slide">
+			<form role="form" class="ud_form_lg">
+	            <div class="ud_form_group_lg">
+	                <label class="t">攻略ID</label>
+	                <div class="c">
+	                    <div class="ud_text_indent2" >{{sessionData.code}}</div>
+	                </div>
+	            </div>
+
+	            <div class="ud_form_group_lg">
+	                <label class="t">攻略名称</label>
+	                <div class="c">
+	                    <input type="text" placeholder="攻略名称" class="ud_input_lg" ng-model="sessionData.name" ng-change="validate_name()" ng-blur=validate_name()  maxlength="20">
+	                    <span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+	                </div>
+	            </div>	            
+
+	            <div class="ud_form_group_lg">
+	                <label class="t">应用平台</label>
+	                <div class="c">
+	                    <div class="chosen big">
+	                        <select chosen disable-search="true" ng-model="sessionData.platform" ng-options="ent.code as ent.name for ent in platformsList">
+	                        	<option value=""></option>
+	                        </select> 
+	                    </div>
+	                </div>                
+	            </div>
+
+	            <div class="ud_form_group_lg">
+	                <label class="t">应用行业</label>
+	                <div class="c">
+	                    <div class="chosen big">
+	                        <select chosen disable-search="true" ng-change="changeIndustrie()" ng-model="sessionData.industryId" ng-options="ent.id as ent.name for ent in industriesList">
+	                        	<option value=""></option>
+	                        </select> 
+	                    </div>
+	                </div>
+	            </div>
+                <div class="ud_form_group_lg">
+	                <label class="t">攻略模板</label>
+	                <div class="c">
+	                    <div class="ud_text_indent2" >{{sessionData.templateName}}</div>
+	                </div>
+	            </div>
+				<div class="ud_form_group_lg">
+	                <label class="t">已添加的场景</label>
+	                <div class="c">
+	                	<div dragular="dragularOptions" >
+	                		<label class="checkbox_cs checked" ng-repeat="scenario in scenarios" tid="{{scenario.id}}" tcode="{{scenario.code}}">
+				                {{scenario.name}}
+				            </label>
+				            <!-- <label class="checkbox_cs checked" ng-repeat="scenario in scenariosOther" ng-if=" scenario.checked" index="2_{{$index}}" >
+				                {{scenario.name}}
+				            </label>  -->
+	                	</div>
+	                </div>
+	            </div>
+	            <div class="ud_form_group_lg" ng-show="scenariosOther.length>0">
+	                <label ng-click="toggleAddScenarios()" class="t operation"><span class="iconfont">&#xe69e;</span>添加新的场景</label>
+	                <div ng-if="showAddScenariosFlag" class="c">
+	                	<div >
+	                		<label class="checkbox_cs" ng-repeat="scenario in scenariosOther" ng-class="{'checked': scenario.checked}">
+				                {{scenario.name}}
+				                <input type="checkbox" ng-model="scenario.checked" ng-click="changeScenario(scenario)"/>
+				            </label>
+	                	</div>
+	                </div>
+	            </div>
+	        </form>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+			<div class="rm_buttoms rm_right">
+				<span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="close()">取消</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>

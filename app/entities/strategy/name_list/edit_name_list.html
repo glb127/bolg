@@ -1,0 +1,46 @@
+<right-slide-dialog ng-cloak dialog-name="edit_name_lists" back-router="nameLists">
+	<div class="right_slide_width">
+		<div class="rmn_content_header rmn_slide">
+		    <h1 class="title">
+		        {{title}}
+		    </h1>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_slide">
+			<form role="form" class="ud_form_lg">
+				<div class="ud_form_group_lg">
+	                <label class="t">*数据值</label>
+	                <div class="c">
+	                    <input type="text" placeholder="请填写数据值" class="ud_input_lg" ng-model="sessionData.value" ng-change="validate_value()" ng-blur="validate_value()"><span ng-class="{ud_text_error: tip_value.invalid, ud_text_correct: !(tip_value.invalid)}">{{tip_value.info}}</span>
+	                </div>
+	            </div>
+	            <div class="ud_form_group_lg">
+	                <label class="t">*维度</label>
+	                <div class="c">
+	                    <div class="chosen big">
+	                        <select chosen data-placeholder-text-single="'请选择维度'" disable-search="true" ng-model="sessionData.parameterTagId" ng-change="validate_dimension()" ng-options="ent.id as ent.name for ent in dataTmp.dimensionList">
+	                        	<option value=""></option>
+	                        </select> 
+	                    </div>
+	                    <span ng-class="{ud_text_error: tip_dimension.invalid, ud_text_correct: !(tip_dimension.invalid)}">{{tip_dimension.info}}</span>
+	                </div>
+	            </div>
+
+	            <div class="ud_form_group_lg">
+	                <label class="t">描述</label>
+	                <div class="c">
+	                    <textarea rows="5" placeholder="" class="ud_input_lg" ng-model="sessionData.description" ng-change="validate_description()" ng-blur="validate_description()"></textarea>
+	                </div>
+	                <span ng-class="{ud_text_error: tip_description.invalid, ud_text_correct: !(tip_description.invalid)}">{{tip_description.info}}</span>
+	            </div>
+
+	        </form>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+			<div class="rm_buttoms rm_right">
+				<span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="close()">取消</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>

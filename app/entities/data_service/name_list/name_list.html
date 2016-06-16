@@ -1,0 +1,106 @@
+<div class="ud_content_withlist">
+    <div class="ud_content_header">
+        <h1 class="title">
+            名单查询
+        </h1>
+    </div>
+
+    <div class="ud_content_condition">
+        <div class="conditions single">
+            <div class="condition">
+                <div class="ud_row">
+                    <div class="title">选择名单类型</div>
+                    <div class="itemgroup">
+                        <select ng-model="blackListManagerForm.type" class="item_ipt"
+                                ng-options="type.code as type.name for type in typeList"
+                                ng-change="changeTypeList(blackListManagerForm.type)">
+                            <option selected value="">全部名单</option>
+                        </select>
+                        <a class="item link" ng-click="openNameListManager()"
+                           ng-hide="blackListManagerForm.type">新建名单</a>
+                        <a class="item link" ng-click="openNameListManager()"
+                           ng-show="blackListManagerForm.type">新建{{showType}}</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        <div class="conditions">
+
+            <div class="condition">
+                <div class="title">生效情况</div>
+                <div class="itemgroup">
+                    <div class="item" ng-repeat="item in statusList"
+                         ng-class="{active: blackListManagerForm.status == item.code}"
+                         ng-click="setStatus($index)">{{item.name}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="condition">
+                <div class="title">维度</div>
+                <div class="itemgroup">
+                    <div class="ud_form_group">
+                        <select ng-model="blackListManagerForm.dimensionCh" ng-options="obj for obj in dimensions"
+                                class="item_ipt">
+                            <option selected value="">请选择</option>
+                        </select>
+                        <input type="text" value="10.10.11" ng-model="blackListManagerForm.value"
+                               class="item_ipt"/>
+                        <input type="button" class="rm_btn_sm rm_btn_primary item_ipt" value="搜索"
+                               ng-click="queryByCondition()"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rm_content_table">
+        <table class="rm_table">
+            <thead>
+            <tr>
+                <th>维度</th>
+                <th>内容</th>
+                <th>类型</th>
+                <th>属性</th>
+                <th>生效时间</th>
+                <th>失效时间</th>
+                <th>名单状态</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody infinite-scroll='loadPage(page+1)' infinite-scroll-disabled="links['last'] == page"
+                   infinite-scroll-container="'.rm_right_content'">
+            <tr ng-repeat="blackListManager in blackListManagers">
+                <td>
+                    {{blackListManager.dimensionCh}}
+                </td>
+                <td title="{{blackListManager.value}}">
+                    {{blackListManager.value | lengthLimit}}
+                </td>
+                <td>
+                    {{blackListManager.type}}
+                </td>
+                <td title="{{blackListManager.description}}">
+                    {{blackListManager.description | lengthLimit}}
+                </td>
+                <td>
+                    {{blackListManager.validTime | date : 'yyyy-MM-dd HH:mm:ss'}}
+                </td>
+                <td>
+                    {{blackListManager.invalidTime | date : 'yyyy-MM-dd HH:mm:ss'}}
+                </td>
+                <td>
+                    {{blackListManager.status}}
+                </td>
+                <td title="{{blackListManager.comment}}">
+                    {{blackListManager.comment | lengthLimit}}
+                </td>
+                <td>
+                    <a class="operation" ng-click="updateBlackListManager(blackListManager.id)">修改</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

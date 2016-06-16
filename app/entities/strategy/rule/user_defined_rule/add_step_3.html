@@ -1,0 +1,25 @@
+<div>
+    <div class="rm_content_header">
+        <h1 class="title">
+            新增自定义规则 —— {{udrData.strategyInstanceName}}
+        </h1>
+
+        <ul class="progressBar">
+            <li class="progressItem"><span class="pbNum">1</span> 选择规则条件</li>
+            <li class="progressItem"><span class="pbNum">2</span> 定义规则名称和分值</li>
+            <li class="progressItem active"><span class="pbNum">3</span> 创建成功</li>
+        </ul>
+    </div>
+
+    <div class="ud_content_normal ud_center">
+        <div class="okInfo">
+            <div class="okIcon ud_center_block">
+                <div class="checkIcon"></div>
+            </div>
+            <p class="ud_center okText">自定义规则已生成，规则ID：
+                <strong class="ud_text_success">{{udrData.ruleInstanceCode}}</strong>
+            </p>
+        </div>
+        <a class="rm_btn rm_btn_primary " ng-click="goRuleList()">返回规则列表</a>
+    </div>
+</div>

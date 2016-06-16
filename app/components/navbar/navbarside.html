@@ -1,0 +1,174 @@
+<div ng-switch="isAuthenticated()" class="ud_sidenav"  ng-mouseleave="closeAll()">
+
+    <div class="wide">
+        <div class="ud_sidenav_header">
+            <i class="icon-logo">&#xe74f;</i>
+        </div>
+        <div>
+            <div class="ud_sidenav_content">
+                <ul class="ud_navmenu_nav">
+                    <!-- <li class="ud_navmenu_item" ng-class="{active: $state.includes('home')}" ng-mouseenter="closeAll()">
+                        <a ui-sref="home({isNarrow:'false'})"><span class="icon_home"></span>首页</a>
+                    </li> -->
+                    <li ng-show="false" class="ud_navmenu_item" ng-class="{active: $state.includes('statisticsAnalysis')}"
+                        ng-mouseenter="closeAll()">
+                        <a ui-sref="riskTrend({isNarrow:'false'})"><i class="iconfont">&#xe72c;</i>统计分析</a>
+                    </li>
+                    <li class="ud_navmenu_item" id="riskEvent"
+                        ng-class="{active: $state.includes('eventLog')}" ng-mouseenter="showRiskEventMenu()">
+                        <a ui-sref="eventLog({isNarrow:'false'})"><i class="iconfont">&#xe736;</i>事件中心</a>
+                        <ul class="u-subnav">
+                            <li><a ui-sref="eventLog" ng-class="{active: $state.includes('eventLog')}">事件日志</a></li>
+                        </ul>
+                    </li>
+                    <li class="ud_navmenu_item" id="strategyCenter"
+                        ng-class="{active: $state.includes('parameterList')||$state.includes('strategyCenter')||$state.includes('nameLists')}" ng-mouseenter="showStrategyList()">
+                        <a ui-sref="strategyCenter({isNarrow:'false'})"><i class="iconfont">&#xe72a;</i>攻略中心</a>
+                        <ul class="u-subnav">
+                            <li><a ui-sref="strategyCenter({isNarrow:'false'})" ng-class="{active: $state.includes('strategyCenter')}">攻略管理</a></li>
+                            <li><a ui-sref="parameterList({isNarrow:'false'})" ng-class="{active: $state.includes('parameterList')}">字段列表</a></li>
+                            <li><a ui-sref="nameLists({isNarrow:'false'})" ng-class="{active: $state.includes('nameLists')}">名单管理</a></li>
+                        </ul>
+                    </li>
+                    <li ng-show="false" class="ud_navmenu_item" ng-class="{active: $state.includes('dataService')}"
+                        ng-mouseenter="showDataServiceMenu()">
+                        <a ui-sref="dataRule({isNarrow:'false'})"><i class="iconfont">&#xe730;</i>数据服务</a>
+                        <ul class="u-subnav">
+                            <li><a ui-sref="dataRule({isNarrow:'false'})" ng-class="{active: $state.includes('dataRule')}">数据规则</a></li>
+                            <li><a ui-sref="dataInterface({isNarrow:'false'})" ng-class="{active: $state.includes('dataInterface')}">数据接口</a></li>
+                        </ul>
+                    </li>
+                    <li class="ud_navmenu_item" ng-class="{active: $state.includes('access')}">
+                        <a ui-sref="access({isNarrow:'false'})"><i class="iconfont">&#xe6e5;</i>帮助中心</a>
+                        <ul class="u-subnav">
+                            <li ng-repeat="(key, value) in accessHelperMap"><a ui-sref="access({anchor:key})" ng-class="{active: $state.params.anchor==key }">{{value}}</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- <div class="ud_navmenu_sec clearfix  ud_strategy_list" ng-hide="strategyList"
+                 ng-mouseleave="closeStrategyList()">
+                <div class="ud_navmenu_sec_content">
+                    <div class="ud_navmenu_sec_btn_list">
+                        <a class="ud_navmenu_sec_btn" ui-sref="createStrategyStep1">
+                            <div class="glyphicon glyphicon-plus"></div>
+                            <div class="plus">+</div>
+                            创建新攻略
+                        </a>
+                    </div>
+
+                    <div class="ud_navmenu_sec_link_list strategy_center">
+                        <a class="ud_navmenu_sec_item" ng-class="{active: $state.params.strategyId == strategy.id}"
+                           ng-click="selectStrategy(strategy.id, 'false')" ng-repeat="strategy in strategyInstanceList">{{strategy.name}}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ud_navmenu_sec clearfix ud_dataservice_list" ng-hide="riskEventMenu"
+                 ng-mouseleave="closeRiskEventMenu()">
+                <div class="ud_navmenu_sec_link_list  risk_event">
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('riskEvent')}" ui-sref="riskEvent">
+                        风险事件
+                    </a>
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('eventLog')}" ui-sref="eventLog">
+                        事件日志
+                    </a>
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('nameList')}" ui-sref="nameList">
+                        名单查询
+                    </a>
+                </div>
+            </div>
+            <div class="ud_navmenu_sec clearfix ud_dataservice_list" ng-hide="dataServiceMenu"
+                 ng-mouseleave="closeDataServiceMenu()">
+                <div class="ud_navmenu_sec_link_list  data_service">
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('dataRule')}" ui-sref="dataRule">数据规则</a>
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('dataInterface')}"
+                       ui-sref="dataInterface">数据接口</a>
+                </div>
+            </div> -->
+            <div class="clearfix"></div>
+        </div>
+        <!-- <a class="sidenav_clps" ng-click="collapse()"><span></span></a> -->
+    </div>
+
+    <div class="narrow" style="display: none;">
+        <div class="ud_sidenav_header">
+            <div class="nav_logo"></div>
+        </div>
+        <div class="ud_sidenav_content">
+            <ul class="ud_navmenu_nav">
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('home')}" ng-mouseenter="closeAll()">
+                    <a ui-sref="home({isNarrow:'true'})"><span class="icon_home"></span></a>
+                </li>
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('strategyCenter')}"
+                    ng-mouseenter="showStrategyListNarrow()" >
+                    <a ui-sref="strategyCenter({strategyId:strategyInstanceList[0].id, isNarrow:'true'})"><span class="icon_strategy"></span></a>
+                </li>
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('eventCenter')}"
+                    ng-mouseenter="showRiskEventMenuNarrow()" >
+                    <a ui-sref="eventLog({isNarrow:'true'})"><span class="icon_event"></span></a>
+                </li>
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('dataService')}"
+                    ng-mouseenter="showDataServiceMenuNarrow()" >
+                    <a ui-sref="dataRule({isNarrow:'true'})"><span class="icon_ds"></span></a>
+                </li>
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('statisticsAnalysis')}"
+                    ng-mouseenter="closeAll()">
+                    <a ui-sref="riskTrend({isNarrow:'true'})"><span class="icon_sa"></span></a>
+                </li>
+                <li class="ud_navmenu_item" ng-class="{active: $state.includes('access')}">
+                    <a ui-sref="access({isNarrow:'true'})"><span class="icon_access"></span></a>
+                </li>
+            </ul>
+        </div>
+        <div class="ud_navmenu_sec clearfix  ud_strategy_list narrow" ng-hide="strategyList_narrow"
+             ng-mouseleave="closeStrategyListNarrow()">
+            <div class="ud_navmenu_sec_content">
+                <div class="ud_navmenu_sec_btn_list">
+                    <a class="ud_navmenu_sec_btn" ui-sref="createStrategyStep1">
+                        <!--<div class="glyphicon glyphicon-plus"></div>-->
+                        <div class="plus">+</div>
+                        创建新攻略
+                    </a>
+                </div>
+
+                <div class="ud_navmenu_sec_link_list strategy_center">
+                    <a class="ud_navmenu_sec_item" ng-class="{active: $state.params.strategyId == strategy.id}"
+                       ng-click="selectStrategy(strategy.id, 'true')" ng-repeat="strategy in strategyInstanceList">
+                        <span>{{strategy.name}}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="ud_navmenu_sec clearfix ud_dataservice_list narrow" ng-hide="riskEventMenu_narrow"
+             ng-mouseleave="closeRiskEventMenuNarrow()">
+
+            <div class="ud_navmenu_sec_link_list risk_event">
+                <!--<a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('riskEvent')}" ui-sref="riskEvent({isNarrow:'true'})">-->
+                    <!--<span>风险事件</span>-->
+                <!--</a>-->
+                <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('eventLog')}" ui-sref="eventLog({isNarrow:'true'})">
+                    <span>事件日志</span>
+                </a>
+                <!--<a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('nameList')}"-->
+                   <!--ui-sref="nameList({isNarrow:'true'})">-->
+                    <!--<span>名单查询</span>-->
+                <!--</a>-->
+            </div>
+        </div>
+        <div class="ud_navmenu_sec clearfix ud_dataservice_list narrow" ng-hide="dataServiceMenu_narrow"
+             ng-mouseleave="closeDataServiceMenuNarrow()">
+            <div class="ud_navmenu_sec_link_list data_service">
+                <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('dataRule')}" ui-sref="dataRule({isNarrow:'true'})">
+                    <span>数据规则</span>
+                </a>
+                <a class="ud_navmenu_sec_item" ng-class="{active: $state.includes('dataInterface')}"
+                   ui-sref="dataInterface({isNarrow:'true'})">
+                    <span>数据接口</span>
+                </a>
+            </div>
+        </div>
+        <a class="sidenav_clps" ng-click="expand()"><span>||</span></a>
+    </div>
+
+</div>

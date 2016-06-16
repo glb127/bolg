@@ -1,0 +1,55 @@
+<div>
+    <div class="rmn_content_header rmn_bottomline">
+        <h1 class="title">
+            创建攻略
+        </h1>
+        <ul class="progressBar">
+            <li class="progressItem"><span class="pbNum">1</span> 定义攻略</li>
+            <li class="progressItem active"><span class="pbNum">2</span> 选择攻略内容</li>
+            <li class="progressItem"><span class="pbNum">3</span> 完成创建</li>
+        </ul>
+    </div>
+
+    <div ng-cloak class="rmn_content_normal rmn_footer">
+        <div class="rmn_empty_line20"></div>
+        <table class="table_createStrategy">
+            <thead>
+            <tr>
+                <th class="width170">场景</th>
+                <th class="width170"><div class="line"></div>锦囊</th>
+                <th><div class="line"></div>规则</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="rule in sessionData.allRuleList">
+                    <td class="scenario" ng-show="rule.ScenariosName" rowspan="{{rule.ScenariosRow}}">
+                        <label class="checkbox_cs" ng-class="{'checked': sessionData.scenarios[rule.ScenariosIndex].checked}">
+                            {{rule.ScenariosName}}
+                            <input type="checkbox" ng-model="sessionData.scenarios[rule.ScenariosIndex].checked" ng-click="changeScenario(rule)"/>
+                        </label>
+                    </td>
+                    <td class="solution" ng-show="rule.SolutionsName" rowspan="{{rule.SolutionsRow}}">
+                        <label ng-show="rule.SolutionsName!=' '" class="checkbox_cs" ng-class="{'checked': sessionData.scenarios[rule.ScenariosIndex].solutions[rule.SolutionsIndex].checked}">
+                            {{rule.SolutionsName}}
+                            <input type="checkbox" ng-model="sessionData.scenarios[rule.ScenariosIndex].solutions[rule.SolutionsIndex].checked" ng-click="changeSolution(rule)"/>
+                        </label>
+                    </td>
+                    <td class="rule">
+                        <div ng-show="rule.name">
+                            <span>{{rule.name}}</span>
+                            <input  type="checkbox" ng-model="rule.checked" ng-disabled="rule.disabled" ng-click="changeRule(rule)"/>
+                        </div>
+                    </td>
+                </tr>                
+            </tbody>
+        </table>        
+    </div>
+
+    <div class="rmn_content_footer">
+        <div class="rm_buttoms">
+            <a class="rm_nbtn rm_nbtn_primary"ng-click="previous()">上一步</a>
+            <a class="rm_nbtn rm_nbtn_primary" ng-click="saveAndNext()">保存并完成</a>
+            <span ng-class="{ud_text_error: tip_solution.invalid, ud_text_correct: !(tip_solution.invalid)}">{{tip_solution.info}}</span>
+        </div>
+    </div>
+</div>

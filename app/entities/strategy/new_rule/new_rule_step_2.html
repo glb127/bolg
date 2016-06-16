@@ -1,0 +1,48 @@
+<right-slide-dialog ng-cloak dialog-name="new_rule_step_2" back-router="ruleCenter" no-slide="{{noslide}}" >
+	<div class="right_slide_width">
+		<div class="rmn_content_header rmn_library_rule">
+		    <h1 class="title">
+		        规则库
+		    </h1>
+            <div class="rm_right">                
+                <div class="chosen small rm_left">
+                    <select style="width:100%" chosen disable-search="true" ng-model="selectTmp.selectType" ng-options="ent.id as ent.name for ent in selectTmp.selectTypesList" ng-change="queryTypeChange()">
+                        <option value=""></option>
+                    </select> 
+                </div><div class="nsearch">
+                    <input ng-show="selectTmp.selectType==1" type="text" class="nsearch-item" placeholder="请输入关键字"
+                           ng-model="selectTmp.queryKeyword" size="25" ng-keypress="queryByEnterKey($event)" /><span class="iconfont nsearch-fdj" ng-click="selectLibraryRule()">&#xe705;</span>
+                    <div ng-show="selectTmp.selectType==2" class="udi-typeahead-select">
+                            <input type="text" ng-model="selectTmp.queryKeyword" placeholder="请输入关键字" uib-typeahead="ent as ent.name for ent in  parameterSelList | filter:$viewValue" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-keypress="queryByEnterKey($event)">
+                            <span class="iconfont nsearch-fdj" ng-click="selectLibraryRule()">&#xe705;</span>
+                        </div>
+                </div>
+            </div></br></br>
+            <div class="rmn_tags"><span class="rmn_tag" ng-class="{checked:ruleTagChooseID.indexOf(tag.id)>-1}" ng-click="clickTag(tag.id)" ng-repeat="tag in dataTmp.ruleTagList">{{tag.name}}</span></div>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_library_rule">
+			<table class="table_createStrategy">
+                <tbody>
+                    <tr ng-repeat="rule in libraryRuleList" ng-class="{checked:rule.checked}" ng-click="chooseRlue(rule)">
+                        <td class="library_rule" ng-show="rule.name">
+                            <span>{{rule.name}}</span>
+                            <input  type="checkbox" ng-model="rule.checked"  ng-click="chooseRlue(rule)"/>
+                     
+                        </td>
+                    </tr>                
+                </tbody>
+            </table>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+            <div class="rm_buttoms rm_left">
+                <a class="rm_nbtn" >已选{{checkedCount}}个</a>
+            </div>
+			<div class="rm_buttoms rm_right">                
+                <span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="previous()">上一步</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>
+

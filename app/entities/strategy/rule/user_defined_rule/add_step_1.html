@@ -1,0 +1,108 @@
+<div class="ud_add_step1">
+    <div class="rm_content_header rm_content_header_step1">
+        <h1 class="title">
+            新增自定义规则 —— {{udrData.strategyInstanceName}}
+            <!--<a class="back" ng-click="backToDefaultStrategy()">返回</a>-->
+            <a class="back" ui-sref="ruleCenter({strategyId:udrData.strategyInstanceId})">返回攻略中心</a>
+        </h1>
+        <span class="tip tip-1">&nbsp;</span>
+
+        <ul class="progressBar">
+            <li class="progressItem active"><span class="pbNum">1</span> 选择规则条件</li>
+            <li class="progressItem"><span class="pbNum">2</span> 定义规则名称和分值</li>
+            <li class="progressItem"><span class="pbNum">3</span> 创建成功</li>
+        </ul>
+    </div>
+
+    <div class="ud_content_normal ud_content_normal_step1">
+    <span class="tip">提示：每次可添加一条或多条规则条件。注意规则条件之间为且的关系，只有满足某一规则下所有的规则条件，该规则才会被触发。</span>
+        <div class="conditionBar" cg-busy="getSolutionPromise">
+            <div class="t">
+                选择规则场景及锦囊
+            </div>
+            <div class="c">
+                <select class="ud_input_lg"
+                        ng-model="udrData.scenarioInstanceIndex" ng-change="getSolutionFieldDTOs()"
+                        ng-options="idx as scenario.name for (idx, scenario) in udrData.scenarioFieldDTOs">
+                    <option selected value="" disabled>请选择场景</option>
+                </select>
+                <select class="ud_input_lg"
+                        ng-model="udrData.solutionInstanceIndex" ng-change="resetSolutionTip()"
+                        ng-options="idx as solution.name for (idx, solution) in udrData.solutionFieldDTOs">
+                    <option selected value="" disabled>请选择锦囊</option>
+                </select>
+                <span ng-class="{ud_text_error: tip_solution.invalid, ud_text_correct: !(tip_solution.invalid)}">{{tip_solution.info}}</span>
+            </div>
+        </div>
+        <table class="ud-tb-addRuleCondition">
+            <thead>
+                <tr>
+                    <th>规则条件：<input type="text" placeholder="请输入规则条件关键词" ng-focus="searchReset()" ng-model="searchText" class="ud-ipt" /></th>
+                    <th class="ud-select">
+                        <i>{{istime || '实时性'}}</i>
+                        <ol ng-click="isinTime($event)">
+                            <li thevalue="-1">全部</li>
+                            <li thevalue="0">实时</li>
+                            <li thevalue="2">准实时</li>
+                            <li thevalue="1">非实时</li>
+                        </ol>
+                    </th>
+                    <th class="ud-select">
+                        <i>{{isfree || '是否收费'}}</i>
+                        <ol ng-click="isinfree($event)">
+                            <li thevalue="-1">全部</li>
+                            <li thevalue="0">免费</li>
+                            <li thevalue="1">付费</li>
+                        </ol>
+                    </th>
+                    <th class="ud-select">
+                        <i>{{isopen || '开通情况'}}</i>
+                        <ol ng-click="isbeopen($event)">
+                            <li thevalue="-2">全部</li>
+                            <li thevalue="0">已开通</li>
+                            <li thevalue="-1">未开通</li>
+                            <li thevalue="2">默认开通</li>
+                        </ol>
+                    </th>
+                </tr>
+            </thead>
+            <tbody cg-busy="getRuleConditionPromise">
+            <tr ng-repeat="ruleCondition in udrData.ruleConditionDTOs | filter:{isSynchronization:timeStatus,isPay:freeStatus,authorization:openStatus} | filter:searchText"
+                title="{{ruleCondition._title}}" ng-class="{nobold: (ruleCondition.authorization == -1)};"
+                ng-click="cart(ruleCondition)">
+                <td>
+                    <input type="checkbox" id="ruleConditionItem{{$index}}" ng-model="ruleCondition.isChosen"
+                           ng-disabled="ruleCondition.authorization == -1" ng-click="cartCheck($event)">
+                    {{ruleCondition.name}}
+                </td>
+                <td>{{isSynchronization[ruleCondition.isSynchronization]}}</td>
+                <td>{{isPay[ruleCondition.isPay]}}</td>
+                <td>{{authorization[ruleCondition.authorization]}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="m-addrule">
+        <button type="button" class="ud_btn" ng-click="showCartDetail()">
+            <span class="glyphicon glyphicon-menu-hamburger"></span>已选择<em id="ud_animation_1"  class="run-animation">{{udrData.sum}}</em>个规则条件
+        </button>
+        <span class="errorTip" ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+        <button type="button" class="ud_btn ud_btn_primary" ng-click="saveAndNext()">保存下一步</button>
+        <div class="cartableScroll" ng-class="{tablehidden: (udrData.istabshow == 0)};">
+            <table class="cartable">
+                <tbody>
+                    <tr ng-repeat="(index,ruleCondition) in udrData.cartDetails">
+                        <td>{{index+1}}</td>
+                        <td>{{ruleCondition.name}}</td>
+                        <td>{{isSynchronization[ruleCondition.isSynchronization]}}</td>
+                        <td>{{isPay[ruleCondition.isPay]}}</td>
+                        <td>{{authorization[ruleCondition.authorization]}}</td>
+                        <td><a href="javascript:void(0)" ng-click="cancelChoice(ruleCondition.id)">取消选择</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+

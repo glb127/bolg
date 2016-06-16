@@ -1,0 +1,65 @@
+<!-- 新建名单窗口 -->
+<div class="rm_modal">
+    <div class="rm_modal_header">
+        <h3 ng-show="showType">新建名单</h3>
+        <h3 ng-hide="showType">新建{{nameListType}}</h3>
+        <a class="iconfont modal_close" ng-click="cancelNameList()">&#xe626;</a>
+    </div>
+    <div class="rm_modal_content">
+        <form class="form-horizontal" role="form" name="nameListForm"  novalidate>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">维度：</label>
+                <div class="col-sm-10">
+                    <select ng-model="blackListManagerForm.dimension" required name="dimensionCh" ng-init="blackListManagerForm.dimension = dimensions[0].name" ng-options="dimension.code as dimension.name for dimension in dimensions">
+                    </select>&nbsp;&nbsp;
+                    <input type="text" name="value" required ng-model="blackListManagerForm.value"  ng-change="init()">
+                    <!--<span ng-show="nameListForm.value.$pristine && nameListForm.value.$invalid" class="rm_text_error">-->
+                    <span ng-show="nameListForm.value.$invalid" class="rm_text_error">
+                        请填写维度
+                    </span>
+                    <span class="rm_text_error">{{msg}}</span>
+                </div>
+            </div>
+            <div class="form-group" ng-show="showType">
+                <label class="col-sm-2 control-label">类型：</label>
+                <div class="col-sm-10">
+                    <select ng-model="blackListManagerForm.type" ng-init="blackListManagerForm.type = types[0].code" ng-options="d.code as d.name for d in types">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">有效期：</label>
+                <div class="col-sm-10">
+                    <select ng-model="blackListManagerForm.validity" ng-options="v for v in validities" ng-init="blackListManagerForm.validity=validities[0]">
+                    </select>&nbsp;&nbsp;
+                    <span ng-show="blackListManagerForm.validity=='自定义'">
+                        <input type="text" width="5" ng-model="validityDefined">&nbsp;&nbsp;天
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <input type="text" value="60" ng-model="blackListManagerForm.comment">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">属性：</label>
+                <div class="col-sm-10">
+                    <textarea ng-model="blackListManagerForm.description"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="rm_modal_footer">
+        <div class="pull-right">
+            <button class="rm_btn rm_btn_default" ng-click="cancelNameList()">
+                取消
+            </button>&nbsp;
+            <button type="submit" class="rm_btn rm_btn_primary" ng-click="saveNameList()" ng-disabled="nameListForm.$invalid">
+                确定新建
+            </button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

@@ -1,0 +1,183 @@
+<right-slide-dialog ng-cloak dialog-name="edit_predicator" back-router="ruleCenter" no-slide="{{noslide}}">
+	<div class="right_slide_width" cg-busy="queryPromise_ep">
+		<div class="rmn_content_header rmn_slide">
+		    <h1 class="title">
+		        指标详情
+		    </h1>		    
+			<a ng-if="false" class="iconfont titleButtomOpen" ng-click="pmDTO.status='1';" ng-show="pmDTO.status=='0'">&#xe71c;</a> 
+	        <a ng-if="false" class="iconfont titleButtomClose" ng-click="pmDTO.status='0';" ng-show="pmDTO.status=='1'">&#xe71b;</a>
+		</div>
+		<div class="rmn_content_normal rmn_footer rmn_slide">
+			<form role="form" class="ud_form_lg">
+                <div class="ud_form_group_lg" ng-show="cpDTO.description">
+                    <label class="t">描述</label>
+                    <div class="c">
+                        <div class="ud_text_indent2" >{{cpDTO.description}}</div>
+                    </div>
+                </div>                 
+                <div class="ud_form_group_lg" ng-show="cpDTO.example">
+                    <label class="t">示例</label>
+                    <div class="c">
+                        <div class="ud_text_indent2" >{{cpDTO.example}}</div>
+                    </div>
+                </div>  
+                <div class="ud_form_group_lg">
+                    <label class="t">指标名称</label>
+                    <div class="c">
+                        <input type="text" placeholder="请填写指标" class="ud_input_lg" ng-model="cpDTO.name" ng-change="validate_namw()" ng-blur=validate_name()><span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+                    </div>
+                </div>
+                <div ng-if="cpDTO.scenarioIsShow=='0'" class="ud_form_group_lg">
+                    <label class="t">选择场景</label>
+                    <div class="c">
+                        <div class="chosen big">
+                            <select chosen data-placeholder-text-single="'选择场景'" disable-search="true" ng-model="cpDTO.scenarioTypeCode"  ng-options="ent.code  as ent.name for ent in scenarioAllList" ng-change="changeScenario();validate_scenario();">
+                                <option value=""></option>
+                            </select> 
+                        </div>
+                        <span ng-class="{ud_text_error: tip_scenario.invalid, ud_text_correct: !(tip_scenario.invalid)}">{{tip_scenario.info}}</span>
+                    </div>
+                </div>
+                <div ng-if="isSolutionShow()" class="ud_form_group_lg">
+                    <label class="t">选择锦囊</label>
+                    <div class="c">
+                        <div class="chosen big">
+                            <select chosen data-placeholder-text-single="'选择锦囊'" data-no-results-text="'该场景下没有锦囊，请先添加锦囊'" disable-search="true" ng-model="cpDTO.solutionId"  ng-options="ent.id as ent.name for ent in solutionAllList" ng-change="validate_solution()">
+                                <option value=""></option>
+                            </select> 
+                        </div>
+                        <span ng-class="{ud_text_error: tip_solution.invalid, ud_text_correct: !(tip_solution.invalid)}">{{tip_solution.info}}</span>
+                    </div>
+                </div>
+                <div ng-show="cpDTO.specialFilterIsShow=='0'" class="ud_form_group_lg rmn_rule_info">
+                    <label class="t">次数统计过滤条件</label>
+                    <div class="c rule_info" >
+                        <div class="rule_info_line"></div>
+                        <div class="rule_line" ng-repeat="cDTO in cpDTO.specialFilter.filterDTOs" >
+                            <div class="chosen rule-chosen mr10" ng-class="{rmn_visibility:$index!=0}">
+                                <select chosen   disable-search="true" ng-model="cpDTO.specialFilter.andOr"  ng-options="ent.id as ent.name for ent in andorList">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+
+                            <div class="udi-typeahead rule-typeahead">
+                                <input type="text" ng-model="cDTO.leftEnt" placeholder="请选择" uib-typeahead="ent as ent.name for ent in  parameterAllList | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-blur="changeGruopLeft(cDTO)">
+                                <!-- <span class="iconfont typeahead-fdj" ng-click="cDTO.leftEnt='';changeGruopLeft(cDTO)">&#xe626;</span> -->
+                                <span class="iconfont typeahead-fdj" ng-click="focusEnt($event,cDTO,1)">&#xe746;</span>
+                            </div>
+                            <div class="chosen rule-chosen">
+                                <select chosen data-placeholder-text-single="'请选择'" disable-search="true" ng-model="cDTO.optionEnt"  ng-options="ent.name for ent in cDTO.operatorList " ng-change="changeGruopOperator(cDTO)">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+                            <div ng-if="!cDTO.dictionary" class="udi-typeahead rule-typeahead">
+                                <input type="text" ng-model="cDTO.rightEnt" placeholder="请选择" uib-typeahead="ent.name for ent in  cDTO.rightList | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-blur="changeGruopRight(cDTO)">
+                                <!-- <span class="iconfont typeahead-fdj" ng-click="cDTO.rightEnt='';changeGruopRight(cDTO)">&#xe626;</span> -->
+                                <span class="iconfont typeahead-fdj" ng-click="focusEnt($event,cDTO,2)">&#xe746;</span>
+                            </div>
+                            <div ng-if="cDTO.dictionary" class="chosen rule2-chosen">
+                                <select chosen data-placeholder-text-single="'请选择'" disable-search="true" ng-model="cDTO.rightEnt"  ng-options="key as value for (key,value) in cDTO.dictionary" ng-change="changeGruopRight(cDTO)">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+                            
+                            <span class="iconfont add_buttom" ng-click="addSpecialConditionGroupSon($index)" tooltip-class="normalClass" uib-tooltip="添加">&#xe69e;</span>&nbsp;
+                            <span ng-show="cpDTO.specialFilter.filterDTOs.length>1" class="iconfont" ng-click="delSpecialConditionGroupSon($index)" tooltip-class="normalClass" uib-tooltip="删除">&#xe69d;</span>
+                            <div class="rmn_empty_line5"></div>
+                        </div>
+                    </div>
+                    <span ng-class="{ud_text_error: tip_condition2.invalid, ud_text_correct: !(tip_condition2.invalid)}">{{tip_condition2.info}}</span>
+                </div>
+	            <div class="ud_form_group_lg" ng-repeat="ppDTO in cpDTO.predicatorParameterDTOs" ng-show="ppDTO.isShow=='0'">
+	                <label class="t">{{ppDTO.name}}<i ng-show="ppDTO.tooltip" class="iconfont fs16" uib-tooltip="{{ppDTO.tooltip}}" tooltip-class="customClass">&#xe6e2;</i></label>
+	                <div class="c">
+	                	<div class="float_margin" ng-repeat="peDTO in ppDTO.parameterElementDTOs">
+
+			                <!-- <div ng-if="elementType0(peDTO)" class="chosen big w120" >
+			                    <select chosen data-placeholder-text-single="'{{isEmptyShow(peDTO)}}'" disable-search="true" ng-model="peDTO.value" ng-options="value as label for (value, label) in peDTO.dictionary" >
+                                    <option value=""></option>
+			                    </select>
+		                    </div> -->
+
+                            <div ng-if="elementType0(peDTO)" class="udi-typeahead rule-typeahead">
+                                <input type="text"  ng-model="peDTO.valueTmp" placeholder="{{isEmptyShow(peDTO)}}" uib-typeahead="dent for dent in  peDTO.dictionaryList|filter:$viewValue" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-blur="changeType0Value(peDTO)" >
+                                <!-- <span class="iconfont typeahead-fdj" ng-click="cDTO.leftEnt='';changeGruopLeft(cDTO)">&#xe626;</span> -->
+                                <span class="iconfont typeahead-fdj" style="top:2px;" ng-click="focusEnt($event,peDTO,3)">&#xe746;</span>
+                            </div>
+
+
+                            <span ng-if="elementType0(peDTO)" ng-show="peDTO.isEmpty=='0'" class="iconfont" ng-click="peDTO.valueTmp=''" tooltip-class="normalClass" uib-tooltip="清空">&#xe69d;</span>
+                            <div ng-if="elementType1(peDTO)" class="chosen big w120" >
+                                <input ng-if="showValueTypeCategory(peDTO.valueTypeCategory,'String')" type="text" class="ud_input_lg w120 mr10" ng-model="peDTO.value" ng-change="validate_predicator()" ng-blur=validate_predicator()>
+                                <uib-timepicker ng-if="showValueTypeCategory(peDTO.valueTypeCategory,'Date')"  ng-model="peDTO.value"  mousewheel="false" show-spinners="false" show-meridian="false"></uib-timepicker>
+                                <div class="chosen big w120 mr10" ng-if="showValueTypeCategory(peDTO.valueTypeCategory,'Boolean')">
+                                    <select chosen   disable-search="true" ng-model="peDTO.value"  ng-options="ent.id as ent.name for ent in boolList">
+                                        <option value=""></option>
+                                    </select> 
+                                </div>
+                                <input ng-if="showValueTypeCategory(peDTO.valueTypeCategory,'Number')" second-step=60 type="number" min="0" class="ud_input_lg w120 mr10" ng-model="peDTO.value" ng-change="validate_predicator()" ng-blur="peDTOnumberChange(peDTO);validate_predicator()">
+                            </div>
+
+		                    <input ng-if="peDTO.elementType=='2'" class="mr10" type="checkbox" ng-model="peDTO.checked" />
+
+		                    <a ng-if="false" class="iconfont fs16" ng-clicK="changeElementType3(peDTO)" >&#xe700;</a>
+		                    <span ng-if="peDTO.text">{{peDTO.text}}</span>
+
+	                    </div>
+	                </div>
+	            </div>
+
+                <span ng-class="{ud_text_error: tip_parameter.invalid, ud_text_correct: !(tip_parameter.invalid)}">{{tip_parameter.info}}</span>
+	            <div class="ud_form_group_lg rmn_rule_info">
+	                <label ng-click="addExtraFilter()" class="t operation"><span class="iconfont">&#xe69e;</span>添加过滤条件</label>
+	                
+                    <div class="c rule_info" >
+                    	<div class="rule_info_line"></div>
+                        <div class="rule_line" ng-repeat="cDTO in cpDTO.extraFilter.filterDTOs" >
+                            <div class="chosen rule-chosen mr10" ng-class="{rmn_visibility:$index!=0}">
+                                <select chosen   disable-search="true" ng-model="cpDTO.extraFilter.andOr"  ng-options="ent.id as ent.name for ent in andorList">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+                             <div class="udi-typeahead rule-typeahead">
+                                <input type="text" ng-model="cDTO.leftEnt" placeholder="请选择" uib-typeahead="ent as ent.name for ent in  parameterAllList | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-blur="changeGruopLeft(cDTO)" >
+                                <!-- <span class="iconfont typeahead-fdj" ng-click="cDTO.leftEnt='';changeGruopLeft(cDTO)">&#xe626;</span> -->
+                                <span class="iconfont typeahead-fdj" ng-click="focusEnt($event,cDTO,1)">&#xe746;</span>
+                            </div>
+                            <div class="chosen rule-chosen">
+                                <select chosen data-placeholder-text-single="'请选择'" disable-search="true" ng-model="cDTO.optionEnt"  ng-options="ent.name for ent in cDTO.operatorList " ng-change="changeGruopOperator(cDTO)">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+                            <div ng-if="!cDTO.dictionary" class="udi-typeahead rule-typeahead">
+                                <input type="text" ng-model="cDTO.rightEnt" placeholder="请选择" uib-typeahead="ent.name for ent in  cDTO.rightList | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0" ng-blur="changeGruopRight(cDTO)">
+                                <!-- <span class="iconfont typeahead-fdj" ng-click="cDTO.rightEnt='';changeGruopRight(cDTO)">&#xe626;</span> -->
+                                <span class="iconfont typeahead-fdj" ng-click="focusEnt($event,cDTO,2)">&#xe746;</span>
+                            </div>
+                            <div ng-if="cDTO.dictionary" class="chosen rule2-chosen">
+                                <select chosen data-placeholder-text-single="'请选择'" disable-search="true" ng-model="cDTO.rightEnt"  ng-options="key as value for (key,value) in cDTO.dictionary" ng-change="changeGruopRight(cDTO)">
+                                    <option value=""></option>
+                                </select> 
+                            </div>
+                            <span class="iconfont add_buttom" ng-click="addConditionGroupSon($index)" tooltip-class="normalClass" uib-tooltip="添加">&#xe69e;</span>&nbsp;
+                            <span class="iconfont" ng-click="delConditionGroupSon($index)" tooltip-class="normalClass" uib-tooltip="删除">&#xe69d;</span>
+                            <div class="rmn_empty_line5"></div>
+                        </div>
+                    </div>
+                    <span ng-class="{ud_text_error: tip_condition.invalid, ud_text_correct: !(tip_condition.invalid)}">{{tip_condition.info}}</span>
+	            </div>
+	        </form>
+            <div class="rmn_empty_line100"></div>
+		</div>
+		<div class="rmn_content_footer rmn_slide">
+			<div class="rm_buttoms rm_right">
+                <span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+
+                <a ng-show="type=='edit'" class="rm_nbtn rm_nbtn_primary" ng-click="close()">取消</a>
+				<a ng-show="type=='new'" class="rm_nbtn rm_nbtn_primary" ng-click="back()">上一步</a>
+				<a class="rm_nbtn rm_nbtn_primary" ng-click="save()">保存</a>
+			</div>
+		</div>
+	</div>
+</right-slide-dialog>
+

@@ -1,0 +1,185 @@
+<div class="rm_content_header">
+	<h1 class="title">
+		历史规则详情
+		<a class="back" ui-sref="deleteRuleHistory">返回上一页</a>
+	</h1>
+</div>
+
+<div class="ud_panel">
+	<div class="ud_panel_header">
+		<p class="title">规则属性</p>
+	</div>
+	<div class="ud_panel_content">
+		<table class="ud_table_B">
+			<tbody>
+			<tr>
+				<th>规则名称</th>
+				<td>
+					<span>{{deleteHistory.name}}</span>
+				</td>
+			</tr>
+			<tr>
+				<th>规则ID</th>
+				<td>
+					<span>{{deleteHistory.code}}</span>
+				</td>
+			</tr>
+			<tr>
+				<th>规则分值</th>
+				<td>
+					<span>{{deleteHistory.score}}</span>
+				</td>
+			</tr>
+			<tr>
+				<th>我的攻略</th>
+				<td colspan="2">{{deleteHistory.strategyInstanceName}}</td>
+			</tr>
+			<tr>
+				<th>场景</th>
+				<td colspan="2">{{deleteHistory.scenarioInstanceName}}</td>
+			</tr>
+			<tr>
+				<th>锦囊</th>
+				<td colspan="2">{{deleteHistory.solutionInstanceName}}</td>
+			</tr>
+			<tr>
+				<th>实时性</th>
+				<td colspan="2" >{{mySynchronization[deleteHistory.isSynchronization]}}</td>
+			</tr>
+			<tr>
+				<th>是否收费</th>
+				<td colspan="2">{{myPay[deleteHistory.isPay]}}</td>
+			</tr>
+			<tr>
+				<th>启用状态</th>
+				<td colspan="2">{{statuss[deleteHistory.status]}}</td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td colspan="2">{{deleteHistory.description}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="ud_panel">
+	<div class="ud_panel_header">
+		<p class="title">规则条件</p>
+	</div>
+
+	<div class="ud_panel_content">
+		<table class="ud_table_B">
+			<tbody>
+			<tr ng-repeat="(index,condition) in deleteHistory.ruleConditionInstanceDTOs">
+				<td  class="tdis">
+					<div  class="tdi coll"  data-toggle="collapse" data-target="#conditionDetail_{{index}}" ng-click="openCloseCondition(index)">
+						{{condition.name}}
+						<span class="glyphicon glyphicon-menu-down rm_right" ng-hide="conditionOpen[index]"></span>
+						<span class="glyphicon glyphicon-menu-up rm_right" ng-show="conditionOpen[index]"></span>
+					</div>
+					<div id="conditionDetail_{{index}}"  class="collapse">
+						<table>
+							<tr>
+								<td ng-show="condition.dataServiceCode">
+									数据服务:{{condition.dataServiceName}}({{condition.dataServiceCode}})
+								</td>
+							</tr>
+							<tr>
+								<td>
+									数据范围:本域本攻略
+								</td>
+							</tr>
+							<tr>
+								<td>
+									实时性:{{mySynchronization[condition.isSynchronization]}}
+								</td>
+							</tr>
+							<tr>
+								<td>
+									是否收费:{{myPay[condition.isPay]}}
+								</td>
+							</tr>
+							<tr ng-repeat="param in condition.ruleParameters">
+								<td ng-hide="param.value == null">{{param.name}}: {{param.value}}</td>
+								<td ng-show="param.value == null">{{param.name}}: {{param.defaultValue}}</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="ud_panel">
+    <div class="ud_panel_header">
+        <p class="title">更新历史</p>
+    </div>
+    <div class="ud_panel_content">
+        <table class="ud_table_B">
+            <tr ng-repeat="(index, history) in ruleHistory" ng-class="{active:historyOpen[index]==true}">
+                <th class="date" ng-class="{active:historyOpen[index]==true, nextactive:historyOpen[index+1]==true}" >
+                    {{history.date | date:'yyyy-MM-dd HH:mm:ss'}}
+                </th>
+                <td class="tdis"  ng-class="{active:historyOpen[index]==true, nextactive:historyOpen[index+1]==true}">
+                    <div class="tdi coll" ng-show="history.displayType == '0'">
+                        <div ng-hide="historyOpen[index]">
+                            <div class="width-limited">{{history.eventSummary}}</div>
+                        </div>
+                    </div>
+                    <div class="tdi coll cols" data-toggle="collapse"  ng-hide="history.displayType == '0'"
+                         data-target="#history_{{index}}" ng-click="openCloseCollapse(index)">
+                        <span class="glyphicon glyphicon-menu-down rm_right" ng-hide="historyOpen[index]"></span>
+                        <span class="glyphicon glyphicon-menu-up rm_right" ng-show="historyOpen[index]"></span>
+                        <div ng-hide="historyOpen[index]">
+                            <div class="width-limited">{{history.eventSummary}}</div>
+                        </div>
+
+                        <div id="history_{{index}}" class="collapse" ng-hide="history.displayType == '0'">
+                            <div class="tdii" ng-repeat="item in history.actions">
+                                <div class="tdii">{{item.title}}</div>
+
+                                <div class="tdii"  ng-show="history.displayType == '1' && item.contents.length!='0'">
+                                    <div ng-repeat="content in item.contents">
+                                        <div class="compare-item before" >
+                                            <span>{{content.field}}</span>
+                                            <span>{{content.value2}}</span>
+                                        </div>
+                                        <div class="compare-item" >
+                                            <span>-></span>
+                                        </div>
+                                        <div class="compare-item">
+                                            <span>{{content.field}}</span>
+                                            <span>{{content.value1}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tdii"  ng-show="history.displayType == '3'  && item.contents.length!='0'">
+                                    <div class="condition-group compare-item before">
+                                        <div>{{item.name}}</div>
+                                        <div ng-repeat="content1 in item.contents">{{content1.field}}: {{content1.value2}}</div>
+                                    </div>
+                                    <div class="compare-item">-></div>
+                                    <div class="condition-group  compare-item">
+                                        <div>{{item.name}}</div>
+                                        <div ng-repeat="content2 in item.contents">{{content2.field}}: {{content2.value1}}</div>
+                                    </div>
+                                </div>
+
+                                <div class="tdii"  ng-show="history.displayType == '2'">
+                                    <div class="condition-group compare-item">
+                                        <div>{{item.name}}</div>
+                                        <div ng-repeat="content3 in item.contents">{{content3.field}}: {{content3.value1}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

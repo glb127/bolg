@@ -1,0 +1,121 @@
+<div class="rm_modal">
+    <div class="rm_modal_header">
+        <h3>修改攻略参数</h3>
+
+        <a class="rm_modal_close" ng-click="cancel()" title="取消修改"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+
+    <form role="form">
+        <div class="rm_modal_content" cg-busy="savePromise">
+            <div class="ud_form_group_lg">
+                <div class="t">选择应用平台</div>
+
+                <div class="c">
+                    <div ng-repeat="platform in platforms" class="rm_options" style="display: inline-block;">
+                        <a class="ud_card ud_card_platform" ng-click="checkPlatform($index)"
+                           ng-class="{checked: platform.check}">
+                            <span class="p_bg {{platform.name}}"></span>
+                            <span class="p_name">{{platform.name}}</span>
+                            <span class="icon"></span>
+                        </a>
+                    </div>
+                    <span ng-class="{ud_text_error: tip_platform.invalid, ud_text_correct: !(tip_platform.invalid)}">{{tip_platform.info}}</span>
+                </div>
+            </div>
+
+            <div class="ud_form_group_lg">
+                <div class="t">攻略名称</div>
+
+                <div class="c">
+                    <div class="ud_form_group">
+                        <input type="text" placeholder="攻略名称" class="ud_input_lg" ng-model="strategyName"
+                               ng-change="validate_name()" ng-blur=validate_name()>
+                        <span ng-class="{ud_text_error: tip_name.invalid, ud_text_correct: !(tip_name.invalid)}">{{tip_name.info}}</span>
+                    </div>
+
+                    <div class="ud_form_group">
+                        <input type="text" placeholder="攻略ID" class="ud_input_lg"
+                               ng-model="strategyConfiguration.code" disabled/>
+                        <span ng-class="{ud_text_error: tip_code.invalid, ud_text_correct: !(tip_code.invalid)}">{{tip_code.info}}</span>
+                    </div>
+
+                    <div>
+                        <a data-toggle="collapse" data-target="#advancedConfiguration" ng-click="switch()"
+                           class="ud_text_link ud_text_sm">
+                            <span ng-hide="collapseFlag">高级配置&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-down"></span></span>
+                            <span ng-show="collapseFlag">收起高级配置&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-up"></span></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="advancedConfiguration" class="collapse ud_form_group_lg">
+                <div class="ud_form_group_ac">
+                    <p class="t_sub">攻略决策方式</p>
+                    <select class="ud_input_lg">
+                        <option checked>最坏匹配</option>
+                    </select>
+                </div>
+
+                <!--<div class="ud_form_group_ac">
+                    <p class="t_sub">风险处理策略</p>
+
+                    <p class="c_desc">设置0-100区间内的分值，当某一事件的决策分值高于该分值时拒绝该事件，低于该分值时放行该事件。</p>
+
+                    <p>
+                        <span>放行&nbsp;&lt;&nbsp;&nbsp;</span>
+                        <input type="text" class="ud_input rds" placeholder="请输入数值"
+                               ng-model="strategyConfiguration.blockScore"
+                               ng-change="validate_dealStrategy()">
+                        <span>&nbsp;&nbsp;&lt;&nbsp;阻止</span>
+                    </p>
+                    <span ng-class="{ud_text_error: tip_riskDealStrategy.invalid, ud_text_correct: !(tip_riskDealStrategy.invalid)}">{{tip_riskDealStrategy.info}}</span>
+                </div>
+
+                <div class="ud_form_group_ac">
+                    <p class="t_sub">风险等级定义</p>
+
+                    <div class="ud_form_group_s" ng-repeat="risklevel in strategyConfiguration.riskLevelVisualizationDefinitions">
+                        <label class="s_t">{{riskLevelMap[risklevel.name]}}</label>
+
+                        <div class="s_c">
+                            <input type="text" class="num" value="{{risklevel.min}}" ng-disabled="$index==0"
+                                   ng-model="strategyConfiguration.riskLevelVisualizationDefinitions[$index].min"
+                                   ng-change="updateMax($index, strategyConfiguration.riskLevelVisualizationDefinitions[$index].min)">
+                            -
+                            <input type="text" class="num" value="{{risklevel.max}}" ng-disabled="$index==4"
+                                   ng-model="strategyConfiguration.riskLevelVisualizationDefinitions[$index].max"
+                                   ng-change="updateMin($index, strategyConfiguration.riskLevelVisualizationDefinitions[$index].max)">
+                            <span ng-class="{ud_text_error: tip_riskLevelList[$index].invalid, ud_text_correct: !(tip_riskLevelList[$index].invalid)}">{{tip_riskLevelList[$index].info}}</span>
+                        </div>
+                    </div>
+                </div>-->
+
+                <div class="ud_form_group_ac">
+                    <p class="t_sub">风险处理策略</p>
+
+                    <p class="c_desc">设置0-100区间内的分值，当某一事件的决策分值高于该分值时拒绝该事件，低于该分值时放行该事件。</p>
+
+                    <div id="riskDealStrategyBar"></div>
+                    <span ng-class="{ud_text_error: tip_riskDealStrategy.invalid, ud_text_correct: !(tip_riskDealStrategy.invalid)}">{{tip_riskDealStrategy.info}}</span>
+                </div>
+
+                <div class="ud_form_group_ac">
+                    <p class="t_sub">风险等级定义</p>
+
+                    <div id="riskLevelDefinitionBar"></div>
+                    <div id="myDots"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rm_modal_footer">
+            <div class="ud_right">
+                <span ng-class="{ud_text_error: tip_all.invalid, ud_text_correct: !(tip_all.invalid)}">{{tip_all.info}}</span>
+                <a class="rm_btn rm_btn_default" ng-click="cancel()">取消修改</a>
+                <a class="rm_btn rm_btn_primary" ng-click="save()">确认修改</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </form>
+</div>

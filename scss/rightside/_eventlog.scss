@@ -1,0 +1,97 @@
+@charset "utf-8";
+.ud_panel_calculate{
+	padding-bottom: 40px;
+	.ud_col4{
+		width: 24%;
+		padding: 16px 14px 17px;
+		margin-right: 1%;
+		border: 1px solid #ecebf0;
+		box-shadow: 0 1px 1px #ebecee;
+		.title{
+			font-size: 12px;
+		}
+		.num{
+			margin: 0;
+			font-size: 22px;
+			line-height: 72px;
+			text-align: center;
+		}
+		.num-1{
+			color: #2d3949;
+		}
+		.num-2{
+			color: #ff4e38;
+		}
+		.num-3{
+			color: #7bce00;
+		}
+		.num-4{
+			color: #b2b6bf;
+		}
+	}
+}
+.ud_table_detail{
+	background-color: #fff;
+	.defaultStatus{
+		display: inline-block;
+		width: 66px;
+		height: 22px;
+		padding: 2px;
+		border: 1px solid #7bd100;
+		border-radius: 16px;
+		font-style: normal;
+		line-height: 16px;
+		color: #7bd100;
+		.circle{
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+    		//margin-right: 10px;
+			border-radius: 8px;
+			text-align: center;
+			background-color: #7bd100;
+			.glyphicon{
+				//left: -1px;
+			}
+			span{
+				transform: scale(0.8);
+				color: #fff;
+			}
+		}
+	}
+	.defaultStatus_stop{
+		border: 1px solid #ff5035;
+		color: #ff5035;
+		.circle{
+    		background-color: #ff5035;
+    	}
+	}
+	.defaultStatus_untarget{
+		border: 1px solid #b2b7bd;
+		color: #b2b7bd;
+		.circle{
+    		//margin-right: 2px;
+    		background-color: #b2b7bd;
+    		.untargetCircle{
+				left: 0;
+				top: 0;
+				width: 10px;
+				height: 10px;
+				border: 1px solid #fff;
+				border-radius: 6px;
+    		}
+    	}
+    	.dealText {
+    		left:-7px;
+    	}
+	}
+
+	.dealText {
+		display: inline-block;
+		width: 36px;
+		text-align: center;
+		vertical-align: middle;
+		position: relative;
+		top: -4px;
+	}
+}
