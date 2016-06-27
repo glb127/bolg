@@ -22,22 +22,30 @@
 			<div class="content">
 				<div id="large-header" class="large-header">
 					<canvas id="demo-canvas"></canvas>
-					<h1 class="main-title">Connect <span class="thin">Htmleaf</span></h1>
-				</div>
-				<div class="codrops-header">
-					<h1>html5 canvas动画背景 <span>通过html5 canvas和javascript创建动画背景</span></h1>
-					<nav class="codrops-demos">
-						<a class="current-demo" href="index.html">Demo 1</a>
-						<a href="index2.html">Demo 2</a>
-						<a href="index3.html">Demo 3</a>
-						<a href="index4.html">Demo 4</a>
-					</nav>
+					<h1 class="main-title">微步 </h1>
 				</div>
 			</div>
 		</div><!-- /container -->
+		<script src="https://cdn1.lncld.net/static/js/av-min-1.0.0.js"></script>
 		<script src="js/TweenLite.min.js"></script>
 		<script src="js/EasePack.min.js"></script>
 		<script src="js/rAF.js"></script>
 		<script src="js/demo-1.js"></script>
+		<script>
+			var APP_ID = 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz';
+			var APP_KEY = 'rQV77q18DvrAp5oPClWJESP7';
+			AV.init({
+				appId: APP_ID,
+				appKey: APP_KEY
+			});
+			var TestObject = AV.Object.extend('TestObject');
+			var testObject = new TestObject();
+			testObject.save({
+				words: 'Hello World!'
+			}).then(function(object) {
+				alert('LeanCloud Rocks!');
+			}) 
+			
+		</script>
 	</body>
 </html>

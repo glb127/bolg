@@ -87,6 +87,7 @@
 
 .main-title .thin {
 	font-weight: 200;
+	display: inline-block;
 }
 
 @media only screen and (max-width : 768px) {
