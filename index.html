@@ -38,14 +38,23 @@
 				appId: APP_ID,
 				appKey: APP_KEY
 			});
-			var TestObject = AV.Object.extend('TestObject');
+			var TestObject = AV.Object.extend('deveceInfo');
 			var testObject = new TestObject();
 			testObject.save({
 				words: 'Hello World!'
 			}).then(function(object) {
-				alert('LeanCloud Rocks!');
-			}) 
-			
+				console.log(object)
+			})
+//			AV.Cloud.run('getUrl', {info: 'Hello World!'}, {
+//				success: function(data) {
+//					console.log(data)
+//				}
+//			});
+			AV.Cloud.run('hello', {}, {
+				success: function(data) {
+					console.log(data)
+				}
+			});
 		</script>
 	</body>
 </html>
