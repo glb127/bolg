@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>百度云 你懂得</title>
+	</head>
+	<body>
+		<div>
+		</div>
+		<script src="https://cdn1.lncld.net/static/js/av-min-1.0.0.js"></script>
+		<script>
+			AV.init({
+				appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
+				appKey: 'rQV77q18DvrAp5oPClWJESP7'
+			});
+
+			AV.Cloud.run('bauduyun', {}, {
+				success: function(data) {
+					console.log(data)
+				}
+			});
+		</script>
+	</body>
+</html>
