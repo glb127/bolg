@@ -16,9 +16,12 @@
 				appKey: 'rQV77q18DvrAp5oPClWJESP7'
 			});
 
-			AV.Cloud.run('bauduyun', {}, {
+			AV.Cloud.run('baiduyuns', {}, {
 				success: function(data) {
-					console.log(data)
+					data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
+		        	for(var i=0;i<data.length;i++){
+		            	document.writeln('<br /><a href="'+data[i].url+'">'+data[i].time+"</a>");
+		            }
 				}
 			});
 		</script>
