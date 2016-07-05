@@ -7,23 +7,27 @@
 		<title>百度云</title>
 	</head>
 	<body>
-		<div>
-		</div>
+		<button onclick="get()">刷新</button>
+		<div id="info"></div>
 		<script src="https://cdn1.lncld.net/static/js/av-min-1.0.0.js"></script>
 		<script>
 			AV.init({
 				appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
 				appKey: 'rQV77q18DvrAp5oPClWJESP7'
 			});
-
-			AV.Cloud.run('baiduyuns', {}, {
-				success: function(data) {
-					data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
-		        	for(var i=0;i<data.length;i++){
-		            	document.writeln('<br /><a href="'+data[i].url+'">'+data[i].time+"</a>");
-		            }
-				}
-			});
+			var get =function(){
+				document.getElementById("info").innerHTML="</br>loading...";
+				AV.Cloud.run('baiduyuns', {}, {
+					success: function(data) {
+						data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
+						var str="";
+			        	for(var i=0;i<data.length;i++){
+			            	str+='<br/><a href="'+data[i].url+'" target="_blank">'+data[i].time+"</a>";
+			            }
+			            document.getElementById("info").innerHTML=str
+					}
+				});
+			}
 		</script>
 	</body>
 </html>
