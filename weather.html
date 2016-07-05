@@ -137,15 +137,15 @@
 		    });
 		}
 
-	    // myChart.on("mapselectchanged",function(data){
-	    // 	currentIdx = provincesText.indexOf(data.name);
-	    // 	if(currentIdx==-1){
-	    // 		getWeather(data.name);
-	    // 	}else{
-	    // 		 showProvince()
-	    // 	}
-	    // 	return true;
-	    // })
+	    myChart.on("mapselectchanged",function(data){
+	    	currentIdx = provincesText.indexOf(data.name);
+	    	if(currentIdx==-1){
+	    		getWeather(data.name);
+	    	}else{
+	    		 showProvince()
+	    	}
+	    	return true;
+	    })
 	    document.getElementById("map").oncontextmenu=function(event) {
 	    	currentIdx=-1;
 	    	showChina();
