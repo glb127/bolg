@@ -20,6 +20,14 @@
 				AV.Cloud.run('baiduyuns', {}, {
 					success: function(data) {
 						data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
+						var chongfu={};
+						for(var i=data.length;i--;){
+							if(chongfu[data[i].url]){
+								data.splice(i,1);
+							}else{
+								chongfu[data[i].url]=1;
+							}
+						}
 						var str="";
 			        	for(var i=0;i<data.length;i++){
 			            	str+='<br/><a href="'+data[i].url+'" target="_blank">'+data[i].time+"</a>";

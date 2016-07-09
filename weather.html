@@ -24,15 +24,9 @@
 	<body>
 		<div id="info" ></div>
 		<div id="map" ></div>
-		<script src="https://cdn1.lncld.net/static/js/av-min-1.0.0.js"></script>
-		<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+		<script src="./js/jquery-1.8.2.min.js"></script>
 		<script src="./echarts.js"></script>
 		<script>
-			// AV.init({
-			// 	appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
-			// 	appKey: 'rQV77q18DvrAp5oPClWJESP7'
-			// });
-			
 		
 		var provinces = ['shanghai', 'hebei','shanxi','neimenggu','liaoning','jilin','heilongjiang','jiangsu','zhejiang','anhui','fujian','jiangxi','shandong','henan','hubei','hunan','guangdong','guangxi','hainan','sichuan','guizhou','yunnan','xizang','shanxi1','gansu','qinghai','ningxia','xinjiang', 'beijing', 'tianjin', 'chongqing', 'xianggang', 'aomen'];
 		var provincesText = ['上海', '河北', '山西', '内蒙古', '辽宁', '吉林','黑龙江',  '江苏', '浙江', '安徽', '福建', '江西', '山东','河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州', '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆', '北京', '天津', '重庆', '香港', '澳门'];
@@ -138,20 +132,31 @@
 		}
 
 	    myChart.on("mapselectchanged",function(data){
-	    	currentIdx = provincesText.indexOf(data.name);
 	    	if(currentIdx==-1){
-	    		getWeather(data.name);
-	    	}else{
-	    		 showProvince()
-	    	}
-	    	return true;
+		    	currentIdx = provincesText.indexOf(data.name);
+		    	if(currentIdx==-1){
+		    		getWeather(data.name);
+		    	}else{
+		    		 showProvince()
+		    	}
+		    }else{
+		    	getWeather(data.name);
+		    }
 	    })
-	    document.getElementById("map").oncontextmenu=function(event) {
-	    	currentIdx=-1;
-	    	showChina();
-		    if (document.all) window.event.returnValue = false;// for IE
-		    else event.preventDefault();
-		};
+	    var clickCount=0
+	    $("#map").on('click', function () {
+	        clickCount++;
+	        setTimeout(function () {
+	            clickCount = 0;
+	        }, 500);
+	        if (clickCount > 1) {
+	        	if(currentIdx!=-1){
+		        	currentIdx=-1;
+		    		showChina();
+		    	}
+	            clickCount = 0;
+	        }
+	    });
 					
 			// var get =function(){
 			// 	document.getElementById("info").innerHTML="</br>loading...";
