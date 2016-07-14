@@ -79,7 +79,9 @@
                                     var json =JSON.parse(xmlhttp.responseText);
                                     document.getElementById("content").innerHTML = 
                                         document.getElementById("content").innerHTML+"</br>"+
-                                        "</br>info : "+JSON.stringify(json)
+                                        "</br>evercookie : "+json.fp_evercookie_code+
+                                        "</br>canvas : "+json.fp_canvas_code+
+                                        "</br></br>info : "+JSON.stringify(json)
                                 }
                                 
                             }else if(xmlhttp.status==401){
