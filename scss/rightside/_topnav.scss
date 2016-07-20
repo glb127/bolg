@@ -1,0 +1,274 @@
+@charset "utf-8";
+// @font-face {font-family: 'iconfont';
+//    src: url('iconfont.eot'); /* IE9*/
+//    src: url('iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+//    url('iconfont.woff') format('woff'), /* chrome、firefox */
+//    url('iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+//    url('iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+// }
+
+/* --------------- START right side HEADER --------------- */
+.ud_navbar_nav ul{
+    float: right;
+    height: 60px;
+    line-height: 60px;
+    margin: 0 220px 0 0;
+    overflow: hidden;
+    li{
+        float: left;
+        padding: 3px 25px;
+        font-size: 14px;
+        .ud_merchant_name {
+            font-size: 18px;
+            cursor: pointer;
+            vertical-align: top;
+        }
+    }
+    li+li{
+        // border-left: 1px solid #e5e5e5;
+    }
+    li+li:before{
+        display: inline-block;
+        position: relative;
+        top: 2px;
+        left: -25px;
+        height: 20px;
+        content: " ";
+        border-left: 1px solid $border_color_grey;
+    }
+    // li {
+    //     height: $height_header;
+    //     width: $height_header;
+    //     border-left: 1px solid $grey_light;
+    //     float: left;
+
+    //     &.ud_navbar_merchant {
+    //         width: 200px;
+    //         padding: 0 25px;
+
+    //         .ud_merchant_profile{
+    //             background: url("../images/admin.png") no-repeat -125px -135px;
+    //             display: block;
+    //             /* margin: 14px 0; */
+    //             border-radius: 50%;
+    //             width: 52px;
+    //             height: 52px;
+    //             position: absolute;
+    //             top: 15px;
+    //             //border: 2px solid $grey_light;
+
+    //             img {
+    //                 border: 0;
+    //                 height:49px;
+    //             }
+    //         }
+
+    //         .ud_merchant_name{
+    //             display: block;
+    //             /* margin: 28px 0 0 60px; */
+    //             color: #2e3848;
+    //             font-size: 16px;
+    //             overflow: hidden;
+    //             width: 90px;
+    //             text-overflow: ellipsis;
+    //             white-space: nowrap;
+    //             top: 28px;
+    //             position: relative;
+    //             left: 60px;
+    //         }
+    //     }
+    // }
+}
+
+.ud_navbar_item {
+    height: $height_header;
+    //width: $height_header;
+
+    a {
+        display: block;
+        height: 80px;
+        width: 80px;
+        padding: 25px;
+
+        span {
+            display: block;
+            height: 30px;
+            width: 30px;
+            background: url("../images/icons.png") no-repeat;
+        }
+
+        #btn1 {  background-position: 0px -135px  }
+        #btn2 {  background-position: -40px -135px;  }
+        #btn3 {  background-position: -81px -134px;  }
+
+
+        &:hover {
+            //background: $grey_light;
+
+            #btn1 {  background-position: 0px -175px;  }
+            #btn2 {  background-position: -40px -175px;  }
+            #btn3 {  background-position: -81px -174px;  }
+        }
+    }
+}
+
+.balance_tip {
+    margin-top: 30px;
+    margin-left: 50px;
+
+    font-size: 12px;
+
+    .badge {
+        display: inline-block;
+        background: $red_light;
+        color: #fff;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        vertical-align: baseline;
+        padding: 3px;
+    }
+
+    .text {
+        color: $red_light;
+    }
+
+    .link {
+        color: $blue;
+        text-decoration: underline;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+/* --------------- END right side HEADER --------------- */
+
+.ud_navbar_nav {
+    .item-bd {
+    }
+
+    .msg-box {
+        font-size: 12px;
+        line-height: 150%;
+        display: none;
+        color: #acb0b9;
+        border: 0;
+        background: #fff;
+        border-radius: 0;
+        width: 439px;
+        box-shadow: 0 1px 3px 0 #bbb;
+        top: 60px;
+        position: absolute;
+        right: 202px;
+        padding: 30px;
+        height: 330px;
+        overflow-y: auto;
+
+        .msg-title {
+            color: $font_color_title;
+            font-weight: bold;
+
+        }
+
+        .msg {
+            margin-top: 15px;
+
+            .msg-tip {
+                display: block;
+                float: right;
+
+                &.operation {
+                    color: $blue;
+                }
+            }
+
+            &.active {
+                color: $font_color_description;
+
+                &:before {
+                    content: '•';
+                    display: block;
+                    position: absolute;
+                    left: 6px;
+                    color: #f04538;
+                    font-size: 26px;
+                }
+
+            }
+
+        }
+    }
+}
+
+.ud_navbar_merchant {
+    .popover {
+        margin-top: 0;
+        color: #acb0b9;
+        border: 0;
+        //box-shadow: 0 0 6px 0 #bbb;
+        background: #fff;
+        border-radius: 0;
+        font-family: inherit;
+        height: auto;
+        width: 320px;
+        max-width: 400px;
+        box-shadow: 0 1px 3px 0 #bbb;
+        left: 1px;
+        top: 81px;
+
+        .arrow {
+            display: none;
+            border-bottom-color: #ccc;
+            border-bottom-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .connection {
+            height: 10px;
+            /* top: -10px; */
+            margin-top: -10px;
+            width: 249px;
+            background: #fff;
+        }
+
+        .popover-inner {
+            .popover-content {
+                font-size: 14px;
+                padding: 30px 36px;
+                // width: 360px;
+                color: #707988;
+
+                .popover-menu {
+
+                    .important {
+                        color: #f04538;
+                    }
+
+                    th, td {
+                        padding: 4px 0;
+                    }
+
+                    th {
+                        text-align: center;
+                        width:30%;
+                        vertical-align: top;
+
+                        a {
+                            color: $red;
+                        }
+                    }
+
+                    td {
+                        width:70%;
+
+                        a {
+                            color: $red;
+                            padding: 0 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

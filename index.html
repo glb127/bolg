@@ -1,23 +1,51 @@
-
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html class="no-js">
 	<head>
 		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>微步</title>
-		<style type="text/css">
+		<base href="/">
+	    <meta name="description" content="">
+	    <meta name="viewport" content="width=device-width">
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	    <link rel="shortcut icon" href="/favicon.png?v=3">
+	    <link rel="icon" href="/favicon.png?v=3">
+	    <!-- build:css content/css/vendor.css -->
+	    <!-- bower:css -->
+	    <!-- endbower -->
+	    <!-- endbuild -->
+	    <!-- build:css content/css/main.css -->
+	    <link rel="stylesheet" href="content/css/main.css"/>
+	    <!-- endbuild -->
+		<style >
 			a{
 				font-size: 26px;
-			    display: block;
-			    margin: 30px;
+			    display: inline-block;
+			    margin: 20px 30px;
 			}
 		</style>
 	</head>
-	<body></br>
+	<body ng-app="myApp"></br>
 		<a href="./show/show.html">主页</a>
+		</br>
 		<a href="./baiduyun.html">百度云</a>
+		</br>
 		<a href="./weather.html">天气</a>
+		</br>		
 		<a href="./fingerprint.html">设备指纹</a>
-		<a href="http://www.kancloud.cn/jsfront/month/160878" target=_blank_百度知道>前端月报</a>
-		<a href="http://old.75team.com/weekly/issue161.html" target=_blank_百度知道>前端周报</a>
+		</br>
+		<a href="./report.html">前端周月报</a>
+		</br>
+
+		<!-- build:js app/vendor.js -->
+		<!-- bower:js -->
+		<!-- endbower -->
+		<!-- endbuild -->
+
+		<!-- build:js({.tmp,webapp}) app.js -->
+		<!-- inject:js -->
+		<!-- endinject -->
+		<!-- endbuild -->
 	</body>
 </html>

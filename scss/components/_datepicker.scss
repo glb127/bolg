@@ -1,0 +1,161 @@
+.ud_datepicker .dropdown-menu {
+
+    margin-top: 12px;
+    margin-bottom: 45px;
+    padding: 0;
+    border: 0;
+
+    table {
+
+        &:focus,
+        &.focus {
+            outline: 0;
+        }
+
+        thead {
+            background: $bg_datepicker;
+            color: #fff;
+            //font-weight: normal;
+
+            button {
+                border: 0;
+                border-radius: 0;
+                background: $bg_datepicker;
+                color: #fff;
+
+
+                &:disabled,
+                &[disabled],
+                &.disabled {
+                    background-color: $bg_datepicker !important;
+                    color: #fff;
+                }
+
+                &:hover,
+                &:focus,
+                &.focus {
+                    background-color: $bg_datepicker;
+                    color: #fff;
+                    -webkit-box-shadow: 0 0 0 0;
+                    -moz-box-shadow: 0 0 0 0 ;
+                    box-shadow: 0 0 0 0 ;
+                    text-decoration: none;
+                    outline: 0;
+                }
+
+
+            }
+
+            tr {
+                &:first-child {
+                    padding:10px 0;
+                    color: $font_grey_light;
+                }
+
+                &:last-child {
+                    padding:0 0 5px 0;
+                    color: $font_grey_light;
+
+                    th {
+                        //&:nth-child(2) {
+                        &:first-child {
+                            padding-left: $padding_datepicker;
+                        }
+                        &:last-child {
+                            padding-right: $padding_datepicker;
+                        }
+                    }
+
+                }
+
+                th {
+                    padding: 5px;
+                    font-weight: normal;
+                }
+            }
+
+        }
+
+        tbody {
+            button {
+                border: 0;
+                color: $font_grey_dark;
+
+                &:active,
+                &.active {
+                    border-radius: 16px;
+                    //border: 1px solid;
+                    background-color: $blue;
+                    //color: #fff;
+                    -webkit-box-shadow: 0 0 0 0;
+                    -moz-box-shadow: 0 0 0 0 ;
+                    box-shadow: 0 0 0 0 ;
+
+                    span {
+                        color: #fff;
+                    }
+
+                    &:disabled,
+                    &[disabled],
+                    &.disabled {
+                        span {
+                            color: $font_grey_dark;
+                        }
+                    }
+
+                }
+
+                &:hover,
+                &:focus,
+                &.focus {
+                    border-radius: 16px;
+                    //background-color: $bg_blue_light;
+                    background-color: $blue_light;
+                    color: #fff;
+                    -webkit-box-shadow: 0 0 0 0;
+                    -moz-box-shadow: 0 0 0 0 ;
+                    box-shadow: 0 0 0 0 ;
+                    text-decoration: none;
+                    outline: 0;
+                }
+
+                &:disabled,
+                &[disabled],
+                &.disabled {
+                    background-color: #fff !important;
+                }
+
+                .text-info {
+                    //color: #fff;
+                    //font-weight: bold;
+                }
+
+                .text-muted {
+                    color: $font_grey_light;
+                }
+            }
+
+            tr {
+                &:first-child td {
+                    padding-top: $padding_datepicker;
+                }
+                &:last-child td {
+                    padding-bottom: $padding_datepicker;
+                }
+
+                td {
+                    //&:nth-child(2) {
+                    &:first-child {
+                        padding-left: $padding_datepicker;
+                    }
+                    &:last-child {
+                        padding-right: $padding_datepicker;
+                    }
+                }
+            }
+
+        }
+    }
+
+}
+

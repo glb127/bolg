@@ -1,0 +1,240 @@
+@charset "UTF-8";
+
+$login-page-min-width: 1300px;
+$login-container-width: 1000px;
+
+$login-header-height: 80px;
+$login-content-height: 510px;
+$login-footer-height: 50px;
+
+$login-logo-height: 60px;
+$login-logo-width: 100px;
+
+$login-shadow-inner: inset 0 0 6px #999;
+$login-shadow-box: 0 0 6px #999;
+$login-shadow-text: 0 0 6px #999;
+
+$login-font-color: #acb0b9;
+
+
+.login_page {
+    background: #fff;
+    min-width: $login-page-min-width;
+}
+
+input, textarea, keygen, select, button {
+    font-family: $font-family;
+}
+
+.login_header {
+    height: $login-header-height;
+}
+
+.login_logo {
+    position: absolute;
+    top: 14px;       
+    background:url("../images/logo_color.png") no-repeat;    
+    width: $login-logo-width;
+    height: $login-logo-height;    
+}
+
+.login_content {
+    height: $login-content-height;
+    background-color: $blue;
+    overflow: hidden;
+    -webkit-box-shadow: $login-shadow-inner;
+    -moz-box-shadow: $login-shadow-inner;
+    box-shadow: $login-shadow-inner;
+}
+
+.login_container {
+    width: $login-container-width;
+    margin: 0 auto;
+    position: relative;
+}
+
+.footer {
+    margin: 0 auto;
+    height: $login-footer-height;
+    text-align: center;
+}
+
+.adBox {
+    color: #fff;
+    text-shadow: $login-shadow-text;
+    top: 132px;
+    left: 74px;
+    position: absolute;
+
+    .text {
+        text-align: center;
+
+        .slogan {
+            font-weight: normal;
+            font-size: 36px;
+        }
+
+        .subSlogan {
+            font-weight: normal;
+            font-size: 12px;
+            margin: 20px auto;
+        }
+    }
+
+    .picture {        
+        display: block;
+        margin: 0 auto;
+        background:url("../images/login_adpic.png") no-repeat;
+        height:220px;
+        width:467px;
+    }
+}
+
+.loginBox_wrapper {
+    position: absolute;
+    background: #fff;
+    top: 80px;
+    right: 30px;
+    //height: 353px;
+    //width: 360px;
+    padding: 40px 30px 50px 30px;
+    border-radius: 2px;
+    -webkit-box-shadow: $login-shadow-box;
+    -moz-box-shadow: $login-shadow-box;
+    box-shadow: $login-shadow-box;
+}
+
+.loginBox{
+    width: 300px;
+
+    form {
+        width: 100%;
+
+        .field input {
+            padding: 0 0 0 10px;
+            border: 1px solid #d4d4d4;
+            height: 48px;
+            display: block;
+            font-size: 14px;
+
+            &:focus {
+                border: 1px solid $blue;
+                height: 48px;
+                -moz-outline-style: none;
+                outline: none;
+            }
+
+            &.name,
+            &.password {
+                width: 100%;
+            }
+
+            &.captcha {
+                width: 190px;
+                float: left;
+            }
+
+            &.remember {
+                height: 14px;
+                width: 14px;
+                border: 1px solid #d4d4d4;
+            }
+
+            &.input_error {
+                border-color: $red;
+
+
+            }
+        }
+
+        input[type="checkbox"]:after,
+        .checkbox input[type="checkbox"]:after,
+        .checkbox-inline input[type="checkbox"]:after {
+            border-radius: 2px;
+        }
+
+        .passwordBox {
+            //border-top: 0;
+            margin: 10px 0 0 0;
+        }
+
+        #captcha {
+            margin: 20px 0 0 0;
+        }
+
+        .captchaBox {
+            margin: 10px 0 0 0;
+            position: relative;
+            
+            .checkcode {
+                position: absolute;
+                left: 160px;
+                top: 14px;
+                display: block;
+                height: 20px;
+                width: 20px;
+            }
+            
+            .checkcode-err {
+                background-image: url("../images/icons.png");
+                background-repeat: no-repeat;
+                background-position: -70px -40px;
+            }
+            
+            .checkcode-suc {
+                background-image: url("../images/icons.png");
+                background-repeat: no-repeat;
+                background-position: -40px -40px;
+            }
+        }
+
+        .captcha_image {
+            margin-left: 10px;
+        }
+
+        .rememberBox {
+            margin: 20px 0;
+        }
+
+        .login_btn {
+            height: 50px;
+            background: $blue;
+            border-radius: 3px;
+            color: #fff;
+            border: 0;
+            width: 100%;
+            font-size: 22px;
+        }
+
+
+
+
+
+
+    }
+}
+
+
+.login_links {
+    margin-top: 18px;
+    color: $login-font-color;
+
+    a {
+        font-size: 10px;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &,
+        &:hover,
+        &:focus {
+            color: $login-font-color;
+        }
+    }
+
+    a, span {
+        display: inline-block;
+        margin: 0 3px;
+    }
+}

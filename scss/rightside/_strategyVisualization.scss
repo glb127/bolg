@@ -1,0 +1,259 @@
+
+
+.sv_header {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.sv_nav_links {
+    display: block;
+
+    $sv_link_color: #6f7987;
+
+    .sv_link_item {
+        display: block;
+        float: left;
+        height: 30px;
+        width: 100px;
+        border: 1px solid $sv_link_color;
+        line-height: 28px;
+        background: white;
+        color: $sv_link_color;
+        border-right: 0;
+
+        &.active {
+            background: $sv_link_color;
+            color: white;
+        }
+
+        &:after {
+            content: ' ';
+            visibility: hidden;
+            display: block;
+            clear: both;
+        }
+        &:first-child {
+            border-radius: 3px 0 0 3px;
+        }
+        &:last-child {
+            border-right: 1px solid $sv_link_color;
+            border-radius: 0 3px 3px 0;
+        }
+    }
+}
+.sv_nav_nlinks {
+    @extend .sv_nav_links;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.table_solutionList {
+
+    thead {
+        th {
+            color: $font_color_title;
+            font-weight: bold;
+            border-bottom: 1px solid $grey_light;
+        }
+
+        tr > th:first-child {
+            width: 240px;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid $grey_light;
+
+            td {
+                padding: 20px 0;
+                vertical-align: top;
+            }
+
+            &>td:first-child {
+                width: 240px;
+            }
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    //choose scenario templates and solution templates
+    .scenario,
+    .solution {
+        display: inline-block;
+        height: 30px;
+        line-height: 28px;
+        border-radius: 15px;
+        padding: 0 40px 0 40px;
+        border: 1px solid #d7dade;
+        background: #d7dade;
+        color: white;
+        margin: 5px 0;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        font-size: 13px;
+    }
+
+    //choose scenario templates
+    .scenario {
+        &.active {
+            border: 1px solid $blue;
+            background: $blue;
+            color: white;
+        }
+    }
+
+    //choose solution templates
+    .solution {
+        margin-right: 10px;
+
+        &.active {
+            border: 1px solid $green_B;
+            color: $font-green;
+            background: white;
+            &:hover {
+                color: white;
+                background: $font-green;
+                border: 1px solid $font-green;
+            }
+        }
+
+
+    }
+}
+
+.strategyPropertyList {
+    .sv_row {
+        border-bottom: 1px solid $grey_light;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        .spl_item {
+            float: left;
+            position: relative;
+
+            .t {
+                position: absolute;
+                width: 112px;
+                display: inline-block;
+                padding: 14px 0;
+                color: $font_grey_light;
+            }
+
+            .c {
+                display: inline-block;
+                position: relative;
+                margin-left: 112px;
+                padding: 14px;
+                color: $font_grey_dark;
+
+                span {
+                    padding-right: 10px;
+                }
+            }
+        }
+
+        &:before, &:after {
+            content: '';
+            display: table;
+        }
+        &:after {
+            clear: both;
+        }
+    }
+}
+
+
+//panel
+//--strategy parameters list
+//--scenario and solution list
+
+.sv_panel {
+    background: white;
+
+    .sv_panel_header {
+        padding: 30px 50px 10px 50px;
+        border-bottom: 1px solid $grey_light;
+
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: $font_color_title;
+        }
+
+        .back {
+            font-size: 12px;
+            color: $blue;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 12px;
+            font-weight: normal;
+        }
+
+        .panel_th {
+            display: inline-block;
+
+            &:first-child {
+                width: 240px;
+            }
+        }
+    }
+
+    .sv_panel_footer {
+        padding-bottom: 30px;
+    }
+
+    .sv_panel_content {
+        padding: 0 50px;
+        border-bottom: 1px solid $grey_light;
+    }
+}
+
+.rm_modal_content.rm_modal_text_content.table_solution_modal {
+
+    thead {
+        th {
+            padding: 20px 0;
+            border-bottom: 1px solid $grey_light;
+        }
+
+        th:first-child {
+            padding: 20px 30px;
+        }
+
+        tr > th:first-child {
+            width: 240px;
+        }
+    }
+
+    tbody {
+        tr {
+            color: $font_color_title;
+            border-bottom: 1px solid $grey_light;
+
+            td:first-child {
+                padding: 20px 30px;
+            }
+
+            td {
+                padding: 20px 0;
+                vertical-align: top;
+            }
+
+            &>td:first-child {
+                width: 240px;
+            }
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+    }
+}

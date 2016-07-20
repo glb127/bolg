@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<title>微步</title>
+		<style >
+			a{
+				font-size: 26px;
+			    display: inline-block;
+			    margin: 20px 30px;
+			}
+		</style>
+		<script src="./js/angular.min.js"></script>	
+		<script src="./js/av-min-1.0.0.js"></script>	
+		
+	</head>
+	<body >
+		<div ng-app="myApp" ng-controller="myCtrl">
+			<a href="http://old.75team.com/weekly/issue{{monthPage}}.html" target="_blank">前端周报({{monthPage}})周</a>
+			<input ng-model="monthPage" style="width:80px;"></input>
+			<button ng-click="a('1')">修改</button>
+			</br>
+			<a href="http://www.kancloud.cn/jsfront/month/160878" target="_blank">前端月报</a>
+			</br>
+		</div>
+	</body>
+	<script type="text/javascript">
+			var app = angular.module('myApp', []);
+			app.controller('myCtrl', function ($scope) {
+		    	$scope.monthPage=160;
+				AV.init({
+					appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
+					appKey: 'rQV77q18DvrAp5oPClWJESP7'
+				});
+				var a =function(ent){
+					console.log(ent)
+				}
+				var pageObject = AV.Object.extend('Page');
+				var changeMonthPage =function(){
+					var pageMonthObject = new pageObject();
+					testObject.set('type', "month");
+					testObject.set('page', $scope.monthPage);
+					testObject.save().then(function(data) {
+						console.log(data)
+					}, function(error) {
+						console.log(error)
+					});
+				}
+		    })
+			
+		</script>
+</html>

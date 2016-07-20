@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+.rm_modal {
+    border-radius: 0 0 2px 2px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.rm_modal_header {
+    height: 50px;
+    background: $grey_modal;
+    color: #2d3747;
+    overflow: hidden;
+    position: relative;
+    padding: 16px 30px;
+}
+
+.rm_modal_content {
+    min-height: 219px;
+    padding: 16px 30px;
+}
+
+.rm_modal_footer {
+    height: 90px;
+    border-top: 1px solid $grey_modal;
+    padding: 20px 30px 30px 30px;
+    text-align: center;
+}
+.pull_center{
+    margin: 0 auto;
+}
+a.rm_modal_close {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    text-decoration: none;
+}
+
+.rm_modal_header h3 {
+    line-height: 1;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+.rm_modal_nav {
+    padding: 12px 30px;
+    font-size: 10px;
+    height: 41px;
+    border-bottom: 1px solid $grey_modal;
+    text-align: center;
+    color: $font_color;
+}
+
+.rm_modal_nav_item {
+    color: $font_color;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.rm_modal_nav_item.active {
+    color: $card_hover_font;
+}
+
+.rm_modal_nav_gt {
+    content: '&gt';
+    width: 22px;
+    display: inline-block;
+}
+
+.rm_modal_content.rm_modal_text_content {
+    text-align:center;
+    padding: inherit;
+    min-height:80px;
+    font-size: 20px;
+}
+.rm_modal_content .fontsize16 {
+    font-size: 16px;
+}
+.rm_modal_text_item {
+    padding: 60px 40px 80px 40px;
+}
+
+.rm_create_title {
+    color: $ncolor_orange;
+}
+.rm_modal_form {
+    text-align: left;
+    padding-left: 100px;
+}
+
+.error_tip_frame{
+    position:fixed;
+    left:50%;
+    top:50%; 
+    z-index:10001;
+    .error_tip_inner{
+        padding: 30px 50px;
+        background-color:#000;
+        color:#fff;
+        font-size:16px;
+        margin-top: -50%;
+        margin-left: -150px;
+        opacity: .8;
+        border-radius: 6px;
+        -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+        width: 300px;
+        text-align: center;
+    }
+}

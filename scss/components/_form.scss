@@ -1,0 +1,849 @@
+@charset "UTF-8";
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number],
+select {
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid #d4d5d7;
+    font-size: 12px;
+    min-width: 115px;
+
+    &.ud_input_lg {
+        height: 36px;
+        //min-width: 300px;
+        font-size: 14px;
+    }
+}
+input[type=number]{
+    padding-right: 0px;
+}
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number]
+{
+
+    &.ud_input_lg {
+        min-width: 300px;
+
+        // name list：modify effective date of name list
+        &.w160 {
+            width: 160px;
+            min-width: 160px;
+        }
+        &.w80 {
+            width: 80px;
+            min-width: 80px;
+        }
+        &.w120 {
+            width: 120px;
+            min-width: 120px;
+        }
+        &.ud_input_read {
+            border: none;
+        }
+    }
+}
+.ud_text_indent2 {
+    text-indent: 1em;
+}
+.input_time{
+    height: 36px;
+    line-height: 36px;
+    padding: 6px 0 6px 6px;
+    width: 120px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    border: 1px solid #d4d5d7;
+}
+select.ud_input_lg {
+    min-width: 300px;
+    margin-right: 10px;
+    & option {
+        height:40px;
+    }
+}
+
+//--add user defined rule step 2
+textarea.ud_input_lg {
+    min-width: 450px;
+}
+
+//input[type=text] {
+//    min-width: 162px;
+//}
+
+textarea {
+    border: 1px solid #d4d5d7;
+    resize: none;
+    overflow: auto;
+    padding: 0 10px;
+    color: $font_grey_dark;
+}
+
+input,
+select,
+textarea {
+
+    &:focus {
+        border: 1px solid $blue;
+        color: $font_grey_dark;
+        -moz-outline-style: none;
+        outline: none;
+    }
+}
+
+input.invalid {
+    border: 1px solid $red;
+}
+
+input.num {
+    width: 4em;
+    min-width: 4em;
+}
+
+.ud_textarea_lg {
+    width: 160px;
+}
+
+// BEGIN ------ copy from bootswatch ------
+//Forms ======================================================================
+
+label {
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+select,
+select.form-control {
+    //border: 0;
+    //border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    //padding-left: 0;
+    padding-right: 30px;
+    padding-right: 0\9; // remove padding for < ie9 since default arrow can't be removed
+    //background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAJ1BMVEVmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmaP/QSjAAAADHRSTlMAAgMJC0uWpKa6wMxMdjkoAAAANUlEQVR4AeXJyQEAERAAsNl7Hf3X6xt0QL6JpZWq30pdvdadme+0PMdzvHm8YThHcT1H7K0BtOMDniZhWOgAAAAASUVORK5CYII=);
+    background-image: url("../images/arrow_d.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    //font-size: 16px;
+    //line-height: 1.5;
+
+    &::-ms-expand {
+        display: none;
+    }
+
+    &.input {
+        &-sm {
+            font-size: $font-size-small;
+        }
+
+        &-lg {
+            font-size: $font-size-large;
+        }
+    }
+
+    &:focus {
+        //@include box-shadow(inset 0 -2px 0 $brand-primary);
+        //background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAJ1BMVEUhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISF8S9ewAAAADHRSTlMAAgMJC0uWpKa6wMxMdjkoAAAANUlEQVR4AeXJyQEAERAAsNl7Hf3X6xt0QL6JpZWq30pdvdadme+0PMdzvHm8YThHcT1H7K0BtOMDniZhWOgAAAAASUVORK5CYII=);
+    }
+
+    &[multiple] {
+        background: none;
+    }
+}
+
+.radio,
+.radio-inline,
+.checkbox,
+.checkbox-inline {
+    label {
+        padding-left: 25px;
+        vertical-align: top;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin-left: -25px;
+    }
+}
+
+input[type="radio"],
+.radio input[type="radio"],
+.radio-inline input[type="radio"] {
+    height: 14px;
+    position: relative;
+    margin-top: 5px;
+    margin-right: 4px;
+    vertical-align: -4px;
+    border: none;
+    background-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:before,
+    &:after {
+        content: "";
+        display: block;
+        width: 16px;
+        height: 16px;
+        margin-top: -3px;
+        border-radius: 50%;
+        @include transition(240ms);
+    }
+
+    &:before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: $brand-primary;
+        @include scale(0);
+    }
+
+    &:after {
+        border: 1px solid $gray;
+    }
+
+    &:checked:before {
+        @include scale(0.5);
+    }
+
+    &:disabled:checked:before {
+        background-color: $gray-light;
+    }
+
+    &:checked:after {
+        border-color: $brand-primary;
+    }
+
+    &:disabled:after,
+    &:disabled:checked:after {
+        border-color: $gray-light;
+    }
+}
+
+input[type="checkbox"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+    position: relative;
+    vertical-align: -4px;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        width: 16px;
+        height: 16px;
+        margin-top: -2px;
+        margin-right: 5px;
+        //border: 1px solid $blue;
+        border: 1px solid #9da6b6;
+        //background-color: $bg_grey;
+        border-radius: 3px;
+        @include transition(240ms);
+    }
+
+    &:checked:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 5px;
+        display: table;
+        width: 6px;
+        height: 10px;
+        border: 2px solid #fff;
+        border-top-width: 0;
+        border-left-width: 0;
+        @include rotate(45deg);
+    }
+
+    &:checked:after {
+        background-color: $blue;
+        border-color: $blue;
+
+        /*background-color: $brand-primary;
+        border-color: $brand-primary;*/
+    }
+
+    &:disabled:after {
+        border-color: $gray-light;
+    }
+
+    &:disabled:checked:after {
+        background-color: $gray-light;
+        border-color: transparent;
+    }
+}
+
+.has-warning {
+    input:not([type=checkbox]),
+    .form-control,
+    input:not([type=checkbox]):focus,
+    .form-control:focus {
+        @include box-shadow(inset 0 -2px 0 $brand-warning);
+    }
+}
+
+.has-error {
+    input:not([type=checkbox]),
+    .form-control,
+    input:not([type=checkbox]):focus,
+    .form-control:focus {
+        @include box-shadow(inset 0 -2px 0 $brand-danger);
+    }
+}
+
+.has-success {
+    input:not([type=checkbox]),
+    .form-control,
+    input:not([type=checkbox]):focus,
+    .form-control:focus {
+        @include box-shadow(inset 0 -2px 0 $brand-success);
+    }
+}
+//END ------ copy from bootswatch ------
+.rm_checkbox_sm{
+    label {
+        padding-left: 25px;
+        vertical-align: top;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin-left: -25px;
+    }
+}
+
+
+.rm_checkbox_sm input[type="checkbox"] {
+    position: relative;
+    vertical-align: -4px;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        width: 14px;
+        height: 14px;
+        margin-top: -2px;
+        margin-right: 5px;
+        border: 1px solid #9da6b6;
+        border-radius: 2px;
+        @include transition(240ms);
+    }
+
+    &:checked:before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 4px;
+        display: table;
+        width: 6px;
+        height: 10px;
+        border: 2px solid #fff;
+        border-top-width: 0;
+        border-left-width: 0;
+        @include rotate(45deg);
+    }
+
+    &:checked:after {
+        background-color: #87CEFA;
+        border-color: #87CEFA;
+        //background-color: #9da6b6;
+        //border-color: #9da6b6;
+    }
+
+    &:disabled:after {
+        border-color: $gray-light;
+    }
+
+    &:disabled:checked:after {
+        background-color: $gray-light;
+        border-color: transparent;
+    }
+}
+
+//create strategy -> choose scenario & solution
+//list of chechboxes
+.rm_checkboxlist {
+    .checkboxgroup  .checkbox-inline{
+        margin-left: 0;
+        margin-right: 10px;
+    }
+}
+
+.rm_checkboxlist .rm_checkboxlist_item:last-child {
+    border-bottom: 0;
+}
+
+.rm_checkboxlist_item {
+
+    padding: 10px 0;
+    border-bottom: 1px dashed $bg_grey;
+
+    .title {
+        color: $font_grey_dark;
+    }
+
+    .detail {
+        color: #9da6b6;
+        margin-left: 25px;
+    }
+}
+
+.rm_table_bordered {
+    input[type="checkbox"],
+    .checkbox input[type="checkbox"],
+    .checkbox-inline input[type="checkbox"] {
+
+        &:after {
+            border: 1px solid #9da6b6;
+            background-color: $bg_grey;
+        }
+
+        &:checked:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 5px;
+            display: table;
+            width: 6px;
+            height: 10px;
+            border: 2px solid #fff;
+            border-top-width: 0;
+            border-left-width: 0;
+            @include rotate(45deg);
+        }
+
+        &:checked:after {
+            background-color: $blue;
+            border-color: $blue;
+
+            /*background-color: $brand-primary;
+            border-color: $brand-primary;*/
+        }
+
+        &:disabled:after {
+            border-color: $gray-light;
+        }
+
+        &:disabled:checked:after {
+            background-color: $gray-light;
+            border-color: transparent;
+        }
+    }
+}
+
+
+.ud_datepicker>input {
+    min-width: 90px;
+    //width: 90px;
+    width: 100px;    //for num with font 'hiragino sans gb'
+}
+
+//create strategy step 1
+.ud_form_group {
+    margin-bottom: 15px;
+}
+
+//create strategy step 1
+.ud_form_lg {
+    width: 500px;
+    margin: 0 auto;
+}
+.ud_form_group_lg {
+    padding: 10px 0;
+    position: relative;
+    font-size: 14px;
+    &:after {
+        @extend .clearfix;
+    }
+
+    .t,
+    .c,
+    .tip {
+        vertical-align: top;
+    }
+
+    //title
+    .t {
+        width: 150px;
+        text-align: left;
+        color: $ncolor_grey;
+        min-height: 20px;
+        top: 19px;
+        margin-bottom: 5px;
+        &.operation {
+            color: $blue;
+            cursor: pointer;
+        }
+
+    }
+
+    .c {
+        position: relative;
+        .ext{
+            position: absolute;
+            left: 10px;
+            top: 8px;
+        }
+        .ud_input_ext{
+            padding-left: 36px;
+        }
+        //description of risk dealing strategy
+        .c_desc {
+            padding-top: 7px;
+        }
+
+        input.num {
+            margin: 0;
+            width: 4em;
+            min-width: 4em;
+            padding: 0 7px;
+            text-align: right;
+        }
+        .radio_span {
+            font-size: 14px;
+            margin: 0 30px 0 5px
+        }
+        .ud_text_error {
+            line-height: 35px;
+            margin-left: 5px;
+            vertical-align: top;
+        }
+        .ud_text_correct {
+            line-height: 35px;
+            margin-left: 5px;
+            vertical-align: top;
+        }
+        .float_margin{
+            float: left;
+            margin-right: 10px;
+            height: 36px;
+            line-height: 36px;
+        }
+
+    }
+
+    .tip {
+        float: left;
+        width: 180px;
+    }
+    .tip_strategy{
+        margin-top: 5px;
+        margin-left: 180px;
+    }
+    .tip_strategy_1{
+        margin-top: -5px;
+        margin-bottom: 15px;
+    }
+
+    .threshold {
+        font-size:14px;
+        margin: 20px 0;
+        .t_green { color: $ncolor_green;}
+        .t_orange { color: $ncolor_orange;}
+        .t_red { color: $ncolor_red;}
+        .t_input {
+            width: 60px;
+            min-width: 60px;
+            height: 34px;
+            font-size: 14px;
+        }
+        .t_bold {
+            font-weight: bolder;
+        }
+        .t_text {
+            margin-top: 30px;
+            margin-left: 20px;
+            position: absolute;
+        }
+    }
+}
+
+//form group in advanced configuration
+.ud_form_group_ac{
+    margin-bottom: 30px;
+    margin-left: 180px;
+
+    //sub titile in advanced configuration
+    .t_sub {
+        font-size: 12px;
+        color: $font_color_title;
+    }
+
+    //input of risk dealing strategy
+    input.rds {
+        margin: 0;
+        width: 80px;
+        min-width: 80px;
+        padding: 0 7px;
+        text-align: center;
+    }
+}
+
+//risk level definition
+.ud_form_group_s {
+    margin-bottom: 10px;
+
+    &:after {
+        @extend .clearfix;
+    }
+
+    //title
+    .s_t {
+        font-size: 10px;
+        width: 60px;
+        float: left;
+        padding: 6px 6px 0 0;
+        text-align: right;
+    }
+
+    //content
+    .s_c {
+        float: left;
+
+        input.num {
+            margin: 0;
+            width: 44px;
+            min-width: 44px;
+            padding: 0 7px;
+            text-align: right;
+        }
+    }
+}
+
+//add user defined rule step 2
+.ud_form_group_udr {
+    padding: 10px 0;
+    position: relative;
+
+    &:after {
+        @extend .clearfix;
+    }
+
+    //title
+    .t {
+        width: 150px;
+        text-align: right;
+        color: $font_color_title;
+        font-weight: bold;
+        min-height: 20px;
+        position: absolute;
+        top: 19px;
+        vertical-align: top;
+    }
+
+    //content
+    .c {
+        margin-left: 180px;
+        vertical-align: top;
+    }
+}
+//choose scenario templates and solution templates
+.checkbox_cs {
+    position: relative;
+    display: inline-block;
+    height: 30px;
+    line-height: 28px;
+    padding: 0 10px;
+    min-width: 150px;
+    border: 1px solid #d7dade;
+    color: #b0b5bd;
+    margin: 5px 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    margin-right: 10px;
+
+    &:hover {
+        cursor: pointer;
+        border: 1px solid $nbuttom_blue2;
+
+    }
+
+    &.checked {
+        border: 1px solid $nbuttom_blue2;
+        color: $nbuttom_blue2;
+    }
+
+    input:checked:after {
+        background-color: $nbuttom_blue2;
+        border-color: $nbuttom_blue2;
+    }
+    
+    input {
+        position: absolute;
+        vertical-align: -3px;
+        border: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        right: 5px;
+        top: 1px;
+        &:focus {
+            outline: none;
+        }
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            display: table;
+            width: 6px;
+            height: 8px;
+            border: 2px solid #b0b5bd;
+            border-top-width: 0;
+            border-left-width: 0;
+            @include rotate(45deg);
+        }
+
+        &:after {
+            content: "";
+            display: block;
+            width: 18px;
+            height: 18px;
+            margin-top: 0;
+            margin-right: 0;
+            border: 1px solid #d7dade;
+            @include transition(240ms);
+        }
+
+        &:checked:before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            display: table;
+            width: 6px;
+            height: 8px;
+            border: 2px solid #fff;
+            border-top-width: 0;
+            border-left-width: 0;
+            @include rotate(45deg);
+        }
+
+        &:checked:after {
+            background-color: $blue;
+            border-color: $blue;
+        }
+
+        &:disabled:after {
+            border-color: $gray-light;
+        }
+
+        &:disabled:checked:after {
+            background-color: $gray-light;
+            border-color: transparent;
+        }
+    }
+
+}
+
+
+
+//add user defined rule step 1
+.table_ruleConditions {
+    position: relative;
+
+    //rule condition title
+    .ruleCondition_title {
+        .ruleConditionName {
+            display: inline-block;
+            margin-right: 400px;
+        }
+
+        .ruleConditionInfos {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+
+        .ruleConditionInfo {
+            display: inline-block;
+            width: 120px;
+            text-align: center;
+        }
+    }
+
+    //rule condition item (checkbox)
+    .ruleCondition {
+        //margin-top: 30px;
+        display: block;
+        vertical-align: top;
+        position: relative;
+
+        &:hover {
+            color: $font_color_title;
+            font-weight: bold;
+        }
+
+        &.disabled {
+            color: #b0b5bd;
+
+            &:hover {
+                color: #b0b5bd;
+                font-weight: normal;
+                cursor: not-allowed;
+            }
+
+            input:after {
+                border-color: #b0b5bd;
+            }
+        }
+
+        input {
+            vertical-align: top;
+            position: absolute;
+            margin-left: 0;
+            top: 0;
+            left: 0;
+        }
+
+        .ruleConditionName {
+            display: inline-block;
+            margin-right: 400px;
+        }
+
+        .ruleConditionInfos {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+
+        .ruleConditionInfo {
+            display: inline-block;
+            width: 120px;
+            text-align: center;
+        }
+    }
+
+}
+
