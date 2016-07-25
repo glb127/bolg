@@ -40,11 +40,12 @@ module.exports = function() {
         .pipe(useref({}, initTask))
         //append html templates
         .pipe(gulpIf('**/app.js', footer(templates)))
-        .pipe(gulpIf('*.js', jsTask()))
+        //会导致打包太慢
+        //.pipe(gulpIf('*.js', jsTask()))
         .pipe(gulpIf('*.css', cssTask()))
         .pipe(gulpIf('*.html', htmlmin({collapseWhitespace: true})))
         .pipe(gulpIf('**/*.!(html)', rev()))
         .pipe(revReplace({manifest: manifest}))
-        .pipe(sourcemaps.write('.'))
+        //.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.dist));
 }

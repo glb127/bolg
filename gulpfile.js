@@ -128,6 +128,7 @@ gulp.task('inject:vendor', function () {
 });
 
 gulp.task('inject:test', function () {
+    return;
     return gulp.src(config.test + 'karma.conf.js')
         .pipe(plumber({errorHandler: handleErrors}))
         .pipe(inject(gulp.src(bowerFiles({includeDev: true, filter: ['**/*.js']}), {read: false}), {
