@@ -36,37 +36,20 @@
                     <ul class="dropdown-menu" uib-dropdown-menu>
                         <li ui-sref-active="active">
                             <a ui-sref="baiduyun" ng-click="vm.collapseNavbar()">
-                                <span>百度云</span>&nbsp;
+                                <span class="glyphicon glyphicon-cloud"></span>&nbsp;
+                                <span>百度云</span>
                             </a>
                         </li>
                         <li ui-sref-active="active">
                             <a ui-sref="weather" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
+                                <span class="glyphicon glyphicon-globe"></span>&nbsp;
                                 <span>天气</span>
                             </a>
                         </li>
-                        <li ui-sref-active="active" ng-switch-when="true">
-                            <a ui-sref="sessions" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-cloud"></span>&nbsp;
-                                <span>Sessions</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active" ng-switch-when="true">
-                            <a href="" ng-click="vm.logout()" id="logout">
-                                <span class="glyphicon glyphicon-log-out"></span>&nbsp;
-                                <span>Sign out</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active" ng-switch-when="false">
-                            <a href="" ng-click="vm.login()" id="login">
-                                <span class="glyphicon glyphicon-log-in"></span>&nbsp;
-                                <span>Sign in</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active" ng-switch-when="false">
-                            <a ui-sref="register" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-plus-sign"></span>&nbsp;
-                                <span>Register</span>
+                        <li ui-sref-active="active">
+                            <a ui-sref="showDemo" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon glyphicon-gbp"></span>&nbsp;
+                                <span>粒子</span>
                             </a>
                         </li>
                     </ul>
@@ -139,13 +122,13 @@
                         <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->                        
                         <li ui-sref-active="active" >
                             <a href="http://old.75team.com/weekly/issue1.html" target="_blank" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
+                                <span class="glyphicon glyphicon-tree-conifer"></span>&nbsp;
                                 <span>周报</span>
                             </a>
                         </li>
                         <li ui-sref-active="active" >
                             <a href="http://www.kancloud.cn/jsfront/month/82796" target="_blank" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
+                                <span class="glyphicon glyphicon-tree-deciduous"></span>&nbsp;
                                 <span>月报</span>
                             </a>
                         </li>

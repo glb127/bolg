@@ -5831,17 +5831,17 @@ button.close {
     display: none !important; } }
 
 @font-face {
-  font-family: "iconfont-web";
-  src: url("../fonts/web/iconfont.eot");
+  font-family: "iconfont-icon";
+  src: url("../fonts/iconfont.eot");
   /* IE9*/
-  src: url("../fonts/web/iconfont.eot?#iefix") format("embedded-opentype"), url("../fonts/web/iconfont.woff") format("woff"), url("../fonts/web/iconfont.ttf") format("truetype"), url("../fonts/web/iconfont.svg#iconfont") format("svg");
+  src: url("../fonts/iconfont.eot?#iefix") format("embedded-opentype"), url("../fonts/iconfont.woff") format("woff"), url("../fonts/iconfont.ttf") format("truetype"), url("../fonts/iconfont.svg#iconfont") format("svg");
   /* iOS 4.1- */ }
 
 .iconfont {
-  font-family: "iconfont-web" !important;
+  font-family: "iconfont-icon" !important;
   font-size: 16px;
   font-style: normal;
-  -webkit-font-smoothing: antialiased;
+  -pathkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   cursor: pointer; }
 
@@ -6251,33 +6251,50 @@ Social button
     margin-top: 0px; } }
 
 .wb-people .wb-people-head {
-  font-size: 4vw;
+  font-size: 8vw;
   position: absolute;
   top: 7.5vw;
   left: 12vw;
   color: #f5f5f5;
-  -webkit-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s; }
+  -webkit-transition: color 1s;
+  -o-transition: color 1s;
+  transition: color 1s; }
 
 .wb-people .wb-people-body {
-  font-size: 24vw;
+  font-size: 48vw;
   margin-left: -15px;
   background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(black), to(whitesmoke));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent; }
 
+@media (min-width: 992px) {
+  .wb-people .wb-people-head {
+    font-size: 4vw; }
+  .wb-people .wb-people-body {
+    font-size: 24vw; } }
+
 /* ==========================================================================
-    show css
+    tools css
 ========================================================================== */
-.large-header {
+.wb-large-header {
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 99999;
   overflow: hidden;
   background-size: cover;
   background-position: center center;
   background-image: url("../images/demo-1-bg.jpg"); }
+
+.wb-weather-tmp {
+  position: absolute;
+  color: #555;
+  margin: 10px 20px;
+  font-size: 20px;
+  z-index: 1; }
+
+#wb_my_map {
+  height: 500px; }
+  #wb_my_map:focus {
+    outline: none; }

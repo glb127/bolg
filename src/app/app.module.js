@@ -3,7 +3,6 @@
 
     angular
         .module('bolgApp', [
-            'ngStorage', 
             'ngResource',
             'ngCookies',
             'ngAria',
@@ -22,9 +21,5 @@
 
     function run(stateHandler) {
         stateHandler.initialize();
-        AV.init({
-            appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
-            appKey: 'rQV77q18DvrAp5oPClWJESP7'
-        });
     }
 })();

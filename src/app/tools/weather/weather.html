@@ -1,8 +1,8 @@
 <div>
-    <div class="row">
-        <div class="col-md-12">
-			<div id="info" ></div>
-			<div id="map" style="height:600px"></div>
-        </div>
+    <div class="row" style="height: 100%;">
+        
+			<span ng-bind-html="vm.info" class="wb-weather-tmp"></span>
+			<div id="wb_my_map" ng-click="vm.mapClick()"></div>
+       
     </div>
 </div>

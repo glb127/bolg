@@ -42,6 +42,21 @@
                 }
             }
         });
+        $stateProvider.state('showDemo', {
+            parent: 'tools',
+            url: '/showDemo',
+            data: {
+                authorities: [],
+                pageTitle: '天气'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/tools/showDemo/showDemo.html',
+                    controller: 'ShowDemoController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
 
     }
 })();

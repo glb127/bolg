@@ -3,12 +3,12 @@
 
     angular
         .module('bolgApp')
-        .controller('DemoController', DemoController);
+        .controller('ShowDemoController', ShowDemoController);
 
 
-    DemoController.$inject = [ '$timeout'];
+    ShowDemoController.$inject = [ '$timeout'];
 
-    function DemoController ($timeout) {
+    function ShowDemoController ($timeout) {
         var vm = this;
         vm.isDay = (new Date).getHours()>=6 && (new Date).getHours()<18;
         vm.isPhone = navigator.userAgent.match(/(iPhone|iPod|Android|ios|iPad|SymbianOS)/i);

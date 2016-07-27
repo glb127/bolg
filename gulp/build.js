@@ -33,7 +33,6 @@ module.exports = function() {
 
     return gulp.src([config.app + '**/*.html',
         '!' + config.app + 'app/**/*.html',
-        '!' + config.app + 'swagger-ui/**/*',
         '!' + config.bower + '**/*.html'])
         .pipe(plumber({errorHandler: handleErrors}))
         //init sourcemaps and prepend semicolon
@@ -46,6 +45,7 @@ module.exports = function() {
         .pipe(gulpIf('*.html', htmlmin({collapseWhitespace: true})))
         .pipe(gulpIf('**/*.!(html)', rev()))
         .pipe(revReplace({manifest: manifest}))
+        //不需要map文件
         //.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.dist));
 }

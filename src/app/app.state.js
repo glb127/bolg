@@ -12,17 +12,10 @@
             abstract: true,
             views: {
                 'navbar@': {
-                    templateUrl: 'app/layouts/navbar/navbar.html',
+                    templateUrl: 'app/common/navbar/navbar.html',
                     controller: 'NavbarController',
                     controllerAs: 'vm'
                 }
-            },
-            resolve: {
-                authorize: ['Auth',
-                    function (Auth) {
-                        return Auth.authorize();
-                    }
-                ]
             }
         });
     }

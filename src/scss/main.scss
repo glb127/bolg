@@ -436,34 +436,55 @@ Social button
         }
     }
     .wb-people-head{
-        font-size: 4vw;
+        font-size: 8vw;
         position: absolute;
         top: 7.5vw;
         left: 12vw;
         color: #f5f5f5;
-        @include transition(0.5s)
+        @include transition(color 1s);
     }
     .wb-people-body{
-        font-size: 24vw;
+        font-size: 48vw;
         margin-left: -15px;
         background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgb(0, 0, 0)), to(rgb(245, 245, 245)));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+    }    
+    @media (min-width: 992px) {
+        .wb-people-head{
+            font-size: 4vw;
+        }
+        .wb-people-body{
+            font-size: 24vw;
+        }
     }
 }
 /* ==========================================================================
-    show css
+    tools css
 ========================================================================== */
 
-.large-header{
+.wb-large-header{
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 99999;
     overflow: hidden;
     background-size: cover;
     background-position: center center;
     background-image: url('../images/demo-1-bg.jpg');
+}
+
+.wb-weather-tmp{
+    position: absolute;
+    color: #555;
+    margin: 10px 20px;
+    font-size: 20px;
+    z-index: 1;
+}
+#wb_my_map{
+    height: 500px;
+    &:focus {
+        outline: none;
+    }
 }

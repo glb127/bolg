@@ -5,11 +5,10 @@
         .module('bolgApp')
         .factory('stateHandler', stateHandler);
 
-    stateHandler.$inject = ['$rootScope', '$state', '$sessionStorage',  '$window',
-        'Auth', 'Principal', 'VERSION'];
+    stateHandler.$inject = ['$rootScope', '$state', '$window', 'Principal', 'VERSION'];
 
-    function stateHandler($rootScope, $state, $sessionStorage,  $window,
-        Auth, Principal, VERSION) {
+    function stateHandler($rootScope, $state,  $window,
+         Principal, VERSION) {
         return {
             initialize: initialize
         };
@@ -27,11 +26,6 @@
                     event.preventDefault();
                     $window.open(toState.url, '_self');
                 }
-
-                if (Principal.isIdentityResolved()) {
-                    Auth.authorize();
-                }
-
                 
             });
 

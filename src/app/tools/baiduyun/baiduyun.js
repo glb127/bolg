@@ -6,15 +6,17 @@
         .controller('BaiduyunController', BaiduyunController);
 
 
-    BaiduyunController.$inject = [ '$timeout'];
+    BaiduyunController.$inject = ['LeanCloud'];
 
-    function BaiduyunController ($timeout) {
+    function BaiduyunController (LeanCloud) {
         var vm = this;
-        vm.info="123"
+        vm.info = [];
+        vm.wait = false;
+
         vm.getBaiduyun = function(){
-            document.getElementById("info").innerHTML="</br>loading...";
-            AV.Cloud.run('baiduyuns', {}, {
-                success: function(data) {
+            vm.wait=true;
+            LeanCloud.functions("baiduyuns").then(
+                function(data){
                     data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
                     var chongfu={};
                     for(var i=data.length;i--;){
@@ -24,13 +26,14 @@
                             chongfu[data[i].url]=1;
                         }
                     }
-                    var str="";
-                    for(var i=0;i<data.length;i++){
-                        str+='<br/><a href="'+data[i].url+'" target="_blank">'+data[i].time+"</a>";
-                    }
-                    document.getElementById("info").innerHTML=str
-                }
-            });
+                    vm.wait=false;
+                    vm.info = data;
+                },function(error){
+                    alert("error");
+                    vm.wait=false;
+                    vm.info = [];
+                });
+
         }
     }
 })();

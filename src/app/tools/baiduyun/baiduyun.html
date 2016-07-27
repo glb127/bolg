@@ -1,8 +1,9 @@
 <div>
     <div class="row">
         <div class="col-md-12">
-        	<button ng-click="vm.getBaiduyun()">刷新</button>
-            <div id="info">{{vm.info}}</div>
+        	<button ng-click="vm.getBaiduyun()" ng-disabled="vm.wait" style="margin-bottom: 20px;">刷新</button>
+            <div ng-hide="vm.wait" ng-repeat="ent in vm.info"><a href="{{ent.url}}" target="_blank">{{ent.time}}</a></div>
+            <div ng-show="vm.wait" >waiting...</div>
         </div>
     </div>
 </div>
