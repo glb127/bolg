@@ -3,7 +3,6 @@
 
     angular
         .module('bolgApp', [
-            'ngStorage', 
             'ngResource',
             'ngCookies',
             'ngAria',
@@ -22,10 +21,6 @@
 
     function run(stateHandler) {
         stateHandler.initialize();
-        AV.init({
-            appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
-            appKey: 'rQV77q18DvrAp5oPClWJESP7'
-        });
     }
 })();
 ;
@@ -37,39 +32,63 @@
         .controller('WeatherController', WeatherController);
 
 
-    WeatherController.$inject = [ '$timeout'];
+    WeatherController.$inject = [ '$timeout', '$sce', 'MyApi'];
 
-    function WeatherController ($timeout) {
+    function WeatherController ($timeout,$sce,MyApi) {
+    	var vm = this;
+    	var tempSave = {};
+    	var waitTime=5;	//重新查询间隔几分钟
         var provinces = ['shanghai', 'hebei','shanxi','neimenggu','liaoning','jilin','heilongjiang','jiangsu','zhejiang','anhui','fujian','jiangxi','shandong','henan','hubei','hunan','guangdong','guangxi','hainan','sichuan','guizhou','yunnan','xizang','shanxi1','gansu','qinghai','ningxia','xinjiang', 'beijing', 'tianjin', 'chongqing', 'xianggang', 'aomen'];
 		var provincesText = ['上海', '河北', '山西', '内蒙古', '辽宁', '吉林','黑龙江',  '江苏', '浙江', '安徽', '福建', '江西', '山东','河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州', '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆', '北京', '天津', '重庆', '香港', '澳门'];
-		var myChart = echarts.init(document.getElementById('map'));
+		var myChart = echarts.init(document.getElementById('wb_my_map'));
 		var currentIdx=-1;
+
+		vm.info = $sce.trustAsHtml("");
 
 		var getTem = function(data){
 			if(data.error){
 				return "未知";
 			}
 			var str = data.results[0].weather_data[0].date;
-			return str.substring(str.indexOf("：")+1,str.indexOf(")"));
+			return str.substring(str.indexOf("：")+1,str.indexOf(")")-1);
+		}
+		var getInfo = function(data){
+			if(data.error){
+				return "";
+			}
+			var str = data.results[0].currentCity+"：";
+			for(var i=0;i<data.results[0].weather_data.length;i++){
+				str+=data.results[0].weather_data[i].date+" ";
+				if(i==0){str+="</br>&nbsp;&nbsp;&nbsp;&nbsp;";}
+				str+=data.results[0].weather_data[i].weather+" "
+					+data.results[0].weather_data[i].temperature+"</br>";
+			}
+
+			return str;
 		}
 		var getWeather = function(city){
-			var url = "http://api.map.baidu.com/telematics/v3/weather?location="+city+"&output=json&ak=VNzVAdKLqIs3RQ1br2UB10Wf&callback=?";
-			$.getJSON(url,function(data){
-				$("#info").html(city+"："+getTem(data))
-			});
+			if(tempSave[city]&&tempSave[city].data){
+				vm.info = $sce.trustAsHtml(getInfo(tempSave[city].data));
+			}else{
+				vm.info = "";
+			}
 		}
+
 		function showChina() {	
 			$.get('./json/map/china.json', function (chinaJson) {
 			    echarts.registerMap('china', chinaJson);			    
 			    myChart.setOption({
-			    	backgroundColor: '#404a59',
 				    title: {
 		                text: "中国",
 		                left: 'center',
 		                textStyle: {
-		                    color: '#fff'
+		                    color: '#222'
 		                }
 		            },
+		            tooltip: {
+				        trigger: 'item',
+				        formatter: '{b}'
+				    },
 				    series: [
 				        {
 				            name: '中国',
@@ -79,14 +98,14 @@
 		                    label: {
 		                        emphasis: {
 		                            textStyle: {
-		                                color: '#fff'
+		                                color: '#555'
 		                            }
 		                        }
 		                    },
 		                    itemStyle: {
 		                        normal: {
 		                            borderColor: '#389BB7',
-		                            areaColor: '#fff',
+		                            areaColor: '#eee',
 		                        },
 		                        emphasis: {
 		                            areaColor: '#389BB7',
@@ -104,42 +123,93 @@
 		    var name = provinces[currentIdx];
 			myChart.showLoading();
 		    $.get('./json/map/' + name + '.json', function (geoJson) {
-				myChart.hideLoading();
-		        echarts.registerMap(name, geoJson);
-		        myChart.setOption({
-		            backgroundColor: '#404a59',
-		            title: {
-		                text: provincesText[currentIdx],
-		                left: 'center',
-		                textStyle: {
-		                    color: '#fff'
-		                }
-		            },
-		            series: [
-		                {
-		                    type: 'map',
-		                    mapType: name,
-		                    selectedMode : 'single',
-		                    label: {
-		                        emphasis: {
-		                            textStyle: {
-		                                color: '#fff'
-		                            }
-		                        }
-		                    },
-		                    itemStyle: {
-		                        normal: {
-		                            borderColor: '#389BB7',
-		                            areaColor: '#fff',
-		                        },
-		                        emphasis: {
-		                            areaColor: '#389BB7',
-		                            borderWidth: 0
-		                        }
-		                    }
-		                }
-		            ]
-		        });
+				var _eachtmp=[];
+				var AllCount=0;
+				for(var i=0;i<geoJson.features.length;i++){
+					var _cityName = geoJson.features[i].properties.name;
+					(function(_cityName){
+						if(tempSave[_cityName]&&tempSave[_cityName].time>+new Date-waitTime*60000){
+							if(tempSave[_cityName].data){
+								_eachtmp.push({
+									name:_cityName,
+									value:getTem(tempSave[_cityName].data)
+								});
+								AllCount++;
+								if(AllCount==geoJson.features.length){
+									loadProvinces();
+								}
+							}else{
+								AllCount++;
+								if(AllCount==geoJson.features.length){
+									loadProvinces();
+								}					
+							}
+						}else{
+							MyApi.baiduWeather({location:_cityName},function(data){
+								_eachtmp.push({
+									name:_cityName,
+									value:getTem(data)
+								});
+								tempSave[_cityName]={
+									data:data,
+									time:+new Date
+								}
+								AllCount++;
+								if(AllCount==geoJson.features.length){
+									loadProvinces();
+								}
+							},function(){
+								AllCount++;
+								if(AllCount==geoJson.features.length){
+									loadProvinces();
+								}
+							});
+						}
+					})(_cityName)
+				}
+				function loadProvinces(){
+					myChart.hideLoading();
+			        echarts.registerMap(name, geoJson);
+			        myChart.setOption({
+			            title: {
+			                text: provincesText[currentIdx],
+	        				subtext: '双击返回',
+			                left: 'center',
+			                textStyle: {
+			                    color: '#222'
+			                }
+			            },
+			            tooltip: {
+					        trigger: 'item',
+					        formatter: '{b}：{c}℃'
+					    },
+			            series: [
+			                {
+			                    type: 'map',
+			                    mapType: name,
+			                    selectedMode : 'single',
+			                    label: {
+			                        emphasis: {
+			                            textStyle: {
+			                                color: '#555'
+			                            }
+			                        }
+			                    },
+			                    itemStyle: {
+			                        normal: {
+			                            borderColor: '#389BB7',
+			                            areaColor: '#eee',
+			                        },
+			                        emphasis: {
+			                            areaColor: '#389BB7',
+			                            borderWidth: 0
+			                        }
+			                    },
+			                    data:_eachtmp
+			                }
+			            ]
+			        });
+			    }
 		    });
 		}
 
@@ -154,13 +224,15 @@
 		    }else{
 		    	getWeather(data.name);
 		    }
-	    })
-	    var clickCount=0
-	    $("#map").on('click', function () {
+		    return true;
+	    });
+	    window.onresize = myChart.resize;
+	    var clickCount=0;
+	    vm.mapClick = function () {
 	        clickCount++;
-	        setTimeout(function () {
+	        $timeout(function () {
 	            clickCount = 0;
-	        }, 500);
+	        }, 300);
 	        if (clickCount > 1) {
 	        	if(currentIdx!=-1){
 		        	currentIdx=-1;
@@ -168,7 +240,7 @@
 		    	}
 	            clickCount = 0;
 	        }
-	    });
+	    }
 				
     }
 })();
@@ -220,72 +292,22 @@
                 }
             }
         });
-
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .controller('BaiduyunController', BaiduyunController);
-
-
-    BaiduyunController.$inject = [ '$timeout'];
-
-    function BaiduyunController ($timeout) {
-        var vm = this;
-        vm.info="123"
-        vm.getBaiduyun = function(){
-            document.getElementById("info").innerHTML="</br>loading...";
-            AV.Cloud.run('baiduyuns', {}, {
-                success: function(data) {
-                    data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
-                    var chongfu={};
-                    for(var i=data.length;i--;){
-                        if(chongfu[data[i].url]){
-                            data.splice(i,1);
-                        }else{
-                            chongfu[data[i].url]=1;
-                        }
-                    }
-                    var str="";
-                    for(var i=0;i<data.length;i++){
-                        str+='<br/><a href="'+data[i].url+'" target="_blank">'+data[i].time+"</a>";
-                    }
-                    document.getElementById("info").innerHTML=str
-                }
-            });
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .config(stateConfig);
-
-    stateConfig.$inject = ['$stateProvider'];
-
-    function stateConfig($stateProvider) {
-        $stateProvider.state('demo1', {
-            parent: 'account',
-            url: '/demo',
+        $stateProvider.state('showDemo', {
+            parent: 'tools',
+            url: '/showDemo',
             data: {
                 authorities: [],
-                pageTitle: 'demo'
+                pageTitle: '天气'
             },
             views: {
                 'content@': {
-                    templateUrl: 'app/show/demo1.html',
-                    controller: 'DemoController',
+                    templateUrl: 'app/tools/showDemo/showDemo.html',
+                    controller: 'ShowDemoController',
                     controllerAs: 'vm'
                 }
             }
         });
+
     }
 })();
 ;
@@ -294,12 +316,12 @@
 
     angular
         .module('bolgApp')
-        .controller('DemoController', DemoController);
+        .controller('ShowDemoController', ShowDemoController);
 
 
-    DemoController.$inject = [ '$timeout'];
+    ShowDemoController.$inject = [ '$timeout'];
 
-    function DemoController ($timeout) {
+    function ShowDemoController ($timeout) {
         var vm = this;
         vm.isDay = (new Date).getHours()>=6 && (new Date).getHours()<18;
         vm.isPhone = navigator.userAgent.match(/(iPhone|iPod|Android|ios|iPad|SymbianOS)/i);
@@ -492,28 +514,64 @@
     }
 })();
 ;
-(function () {
+(function() {
     'use strict';
 
     angular
         .module('bolgApp')
-        .factory('User', User);
+        .controller('BaiduyunController', BaiduyunController);
 
-    User.$inject = ['$resource'];
 
-    function User ($resource) {
-        var service = $resource('api/users/:login', {}, {
-            'query': {method: 'GET', isArray: true},
-            'get': {
-                method: 'GET',
+    BaiduyunController.$inject = ['LeanCloud'];
+
+    function BaiduyunController (LeanCloud) {
+        var vm = this;
+        vm.info = [];
+        vm.wait = false;
+
+        vm.getBaiduyun = function(){
+            vm.wait=true;
+            LeanCloud.functions("baiduyuns").then(
+                function(data){
+                    data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
+                    var chongfu={};
+                    for(var i=data.length;i--;){
+                        if(chongfu[data[i].url]){
+                            data.splice(i,1);
+                        }else{
+                            chongfu[data[i].url]=1;
+                        }
+                    }
+                    vm.wait=false;
+                    vm.info = data;
+                },function(error){
+                    alert("error");
+                    vm.wait=false;
+                    vm.info = [];
+                });
+
+        }
+    }
+})();
+;
+(function() {
+    'use strict';
+
+    angular
+        .module('bolgApp')
+        .factory('MyApi', MyApi);
+
+    MyApi.$inject = ['$resource'];
+
+    function MyApi ($resource) {
+        var service = $resource('http://api.map.baidu.com/telematics/v3/weather', {}, {
+            'baiduWeather': { 
+                method: 'JSONP', 
+                params: {location:'@location',output:'json',ak:'VNzVAdKLqIs3RQ1br2UB10Wf',callback : 'JSON_CALLBACK'},
                 transformResponse: function (data) {
-                    data = angular.fromJson(data);
                     return data;
                 }
-            },
-            'save': { method:'POST' },
-            'update': { method:'PUT' },
-            'delete':{ method:'DELETE'}
+            }
         });
 
         return service;
@@ -525,85 +583,31 @@
 
     angular
         .module('bolgApp')
-        .factory('ProfileService', ProfileService);
+        .factory('LeanCloud', LeanCloud);
 
-    ProfileService.$inject = ['$q', '$http'];
-
-    function ProfileService($q, $http) {
-
-        var dataPromise;
-
+    LeanCloud.$inject = ['$q'];
+       
+    function LeanCloud ($q) {
+        AV.init({
+            appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
+            appKey: 'rQV77q18DvrAp5oPClWJESP7'
+        });
         var service = {
-            getProfileInfo : getProfileInfo
-        };
-
-        return service;
-
-        function getProfileInfo() {
-            if (angular.isUndefined(dataPromise)) {
-                dataPromise = $http.get('api/profile-info').then(function(result) {
-                    if (result.data.activeProfiles) {
-                        var response = {};
-                        response.activeProfiles = result.data.activeProfiles;
-                        response.ribbonEnv = result.data.ribbonEnv;
-                        response.inProduction = result.data.activeProfiles.indexOf("prod") !== -1;
-                        response.swaggerDisabled = result.data.activeProfiles.indexOf("no-swagger") !== -1;
-                        return response;
+            functions : function(fname){
+                var deferred = $q.defer();
+                AV.Cloud.run('baiduyuns', {}, {
+                    success: function(data) {
+                        deferred.resolve(data);
+                    },error:function(error){
+                        deferred.reject(error);
                     }
                 });
+                return deferred.promise;
             }
-            return dataPromise;
         }
+        return service;
     }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .directive('pageRibbon', pageRibbon);
-
-    pageRibbon.$inject = ['ProfileService', '$rootScope'];
-
-    function pageRibbon(ProfileService, $rootScope) {
-        var directive = {
-            replace : true,
-            restrict : 'AE',
-            template : '<div class="ribbon hidden"><a href="" >{{ribbonEnv}}</a></div>',
-            link : linkFunc
-        };
-
-        return directive;
-
-        function linkFunc(scope, element, attrs) {
-            ProfileService.getProfileInfo().then(function(response) {
-                if (response.ribbonEnv) {
-                    scope.ribbonEnv = response.ribbonEnv;
-                    element.addClass(response.ribbonEnv);
-                    element.removeClass('hidden');
-                }
-            });
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .factory('Sessions', Sessions);
-
-    Sessions.$inject = ['$resource'];
-
-    function Sessions ($resource) {
-        return $resource('api/account/sessions/:series', {}, {
-            'getAll': { method: 'GET', isArray: true}
-        });
-    }
-})();
-;
+})();;
 (function () {
     'use strict';
 
@@ -939,9 +943,9 @@
         .module('bolgApp')
         .factory('Auth', Auth);
 
-    Auth.$inject = ['$rootScope', '$state', '$sessionStorage', '$q', 'Principal', 'AuthServerProvider', 'Account', 'LoginService', 'Register', 'Activate', 'Password', 'PasswordResetInit', 'PasswordResetFinish'];
+    Auth.$inject = ['$rootScope', '$state', '$sessionStorage', '$q', 'Principal', 'AuthServerProvider', 'Account', 'Register', 'Activate', 'Password', 'PasswordResetInit', 'PasswordResetFinish'];
 
-    function Auth ($rootScope, $state, $sessionStorage, $q, Principal, AuthServerProvider, Account, LoginService, Register, Activate, Password, PasswordResetInit, PasswordResetFinish) {
+    function Auth ($rootScope, $state, $sessionStorage, $q, Principal, AuthServerProvider, Account, Register, Activate, Password, PasswordResetInit, PasswordResetFinish) {
         var service = {
             activateAccount: activateAccount,
             authorize: authorize,
@@ -1003,7 +1007,7 @@
 
                         // now, send them to the signin state so they can log in
                         $state.go('accessdenied').then(function() {
-                            LoginService.open();
+                           
                         });
                     }
                 }
@@ -1216,143 +1220,6 @@ w.keys=function(e){if(!w.isObject(e))return[];if(v)return v(e);var t=[];for(var 
 return e.Object._deepSaveAsync(t,null,n)._thenRunCallbacks(n)},r.extend(e.Object.prototype,e.Events,{_fetchWhenSave:!1,initialize:function(){},fetchWhenSave:function(e){if(console.warn("AV.Object#fetchWhenSave is deprecated, use AV.Object#save with options.fetchWhenSave instead."),!r.isBoolean(e))throw"Expect boolean value for fetchWhenSave";this._fetchWhenSave=e},getObjectId:function(){return this.id},getCreatedAt:function(){return this.createdAt||this.get("createdAt")},getUpdatedAt:function(){return this.updatedAt||this.get("updatedAt")},toJSON:function(){var t=this._toFullJSON();return e._arrayEach(["__type","className"],function(e){delete t[e]}),t},_toFullJSON:function(t){var n=r.clone(this.attributes);return e._objectEach(n,function(r,i){n[i]=e._encode(r,t)}),e._objectEach(this._operations,function(e,t){n[t]=e}),r.has(this,"id")&&(n.objectId=this.id),r.has(this,"createdAt")&&(r.isDate(this.createdAt)?n.createdAt=this.createdAt.toJSON():n.createdAt=this.createdAt),r.has(this,"updatedAt")&&(r.isDate(this.updatedAt)?n.updatedAt=this.updatedAt.toJSON():n.updatedAt=this.updatedAt),n.__type="Object",n.className=this.className,n},_refreshCache:function(){var t=this;t._refreshingCache||(t._refreshingCache=!0,e._objectEach(this.attributes,function(n,i){n instanceof e.Object?n._refreshCache():r.isObject(n)&&t._resetCacheForKey(i)&&t.set(i,new e.Op.Set(n),{silent:!0})}),delete t._refreshingCache)},dirty:function(e){this._refreshCache();var t=r.last(this._opSetQueue);return e?t[e]?!0:!1:this.id?r.keys(t).length>0?!0:!1:!0},_toPointer:function(){return{__type:"Pointer",className:this.className,objectId:this.id}},get:function(e){switch(e){case"objectId":return this.id;default:return void 0===this.attributes[e]?this[e]:this.attributes[e]}},relation:function(t){var n=this.get(t);if(n){if(!(n instanceof e.Relation))throw"Called relation() on non-relation field "+t;return n._ensureParentAndKey(this,t),n}return new e.Relation(this,t)},escape:function(e){var t=this._escapedAttributes[e];if(t)return t;var n,i=this.attributes[e];return n=o.isNullOrUndefined(i)?"":r.escape(i.toString()),this._escapedAttributes[e]=n,n},has:function(e){return!o.isNullOrUndefined(this.attributes[e])},_mergeMagicFields:function(t){var n=this,i=["id","objectId","createdAt","updatedAt"];e._arrayEach(i,function(i){t[i]&&("objectId"===i?n.id=t[i]:"createdAt"!==i&&"updatedAt"!==i||r.isDate(t[i])?n[i]=t[i]:n[i]=e._parseDate(t[i]),delete t[i])})},_startSave:function(){this._opSetQueue.push({})},_cancelSave:function(){var t=r.first(this._opSetQueue);this._opSetQueue=r.rest(this._opSetQueue);var n=r.first(this._opSetQueue);e._objectEach(t,function(e,r){var i=t[r],s=n[r];i&&s?n[r]=s._mergeWithPrevious(i):i&&(n[r]=i)}),this._saving=this._saving-1},_finishSave:function(t){var n={};e._traverse(this.attributes,function(t){t instanceof e.Object&&t.id&&t._hasData&&(n[t.id]=t)});var i=r.first(this._opSetQueue);this._opSetQueue=r.rest(this._opSetQueue),this._applyOpSet(i,this._serverData),this._mergeMagicFields(t);var s=this;e._objectEach(t,function(t,r){s._serverData[r]=e._decode(r,t);var i=e._traverse(s._serverData[r],function(t){return t instanceof e.Object&&n[t.id]?n[t.id]:void 0});i&&(s._serverData[r]=i)}),this._rebuildAllEstimatedData(),this._saving=this._saving-1},_finishFetch:function(t,n){this._opSetQueue=[{}],this._mergeMagicFields(t);var r=this;e._objectEach(t,function(t,n){r._serverData[n]=e._decode(n,t)}),this._rebuildAllEstimatedData(),this._refreshCache(),this._opSetQueue=[{}],this._hasData=n},_applyOpSet:function(t,n){var r=this;e._objectEach(t,function(t,i){n[i]=t._estimate(n[i],r,i),n[i]===e.Op._UNSET&&delete n[i]})},_resetCacheForKey:function(t){var n=this.attributes[t];if(r.isObject(n)&&!(n instanceof e.Object)&&!(n instanceof e.File)){n=n.toJSON?n.toJSON():n;var i=JSON.stringify(n);if(this._hashedJSON[t]!==i){var s=!!this._hashedJSON[t];return this._hashedJSON[t]=i,s}}return!1},_rebuildEstimatedDataForKey:function(t){var n=this;delete this.attributes[t],this._serverData[t]&&(this.attributes[t]=this._serverData[t]),e._arrayEach(this._opSetQueue,function(r){var i=r[t];i&&(n.attributes[t]=i._estimate(n.attributes[t],n,t),n.attributes[t]===e.Op._UNSET?delete n.attributes[t]:n._resetCacheForKey(t))})},_rebuildAllEstimatedData:function(){var t=this,n=r.clone(this.attributes);this.attributes=r.clone(this._serverData),e._arrayEach(this._opSetQueue,function(n){t._applyOpSet(n,t.attributes),e._objectEach(n,function(e,n){t._resetCacheForKey(n)})}),e._objectEach(n,function(e,n){t.attributes[n]!==e&&t.trigger("change:"+n,t,t.attributes[n],{})}),e._objectEach(this.attributes,function(e,i){r.has(n,i)||t.trigger("change:"+i,t,e,{})})},set:function(t,n,i){var s;if(r.isObject(t)||o.isNullOrUndefined(t)?(s=t,e._objectEach(s,function(t,n){s[n]=e._decode(n,t)}),i=n):(s={},s[t]=e._decode(t,n)),i=i||{},!s)return this;s instanceof e.Object&&(s=s.attributes),i.unset&&e._objectEach(s,function(t,n){s[n]=new e.Op.Unset});var a=r.clone(s),u=this;if(e._objectEach(a,function(t,n){t instanceof e.Op&&(a[n]=t._estimate(u.attributes[n],u,n),a[n]===e.Op._UNSET&&delete a[n])}),!this._validate(s,i))return!1;this._mergeMagicFields(s),i.changes={};var c=this._escapedAttributes;this._previousAttributes||{};return e._arrayEach(r.keys(s),function(t){var n=s[t];n instanceof e.Relation&&(n.parent=u),n instanceof e.Op||(n=new e.Op.Set(n));var o=!0;n instanceof e.Op.Set&&r.isEqual(u.attributes[t],n.value)&&(o=!1),o&&(delete c[t],i.silent?u._silent[t]=!0:i.changes[t]=!0);var a=r.last(u._opSetQueue);a[t]=n._mergeWithPrevious(a[t]),u._rebuildEstimatedDataForKey(t),o?(u.changed[t]=u.attributes[t],i.silent||(u._pending[t]=!0)):(delete u.changed[t],delete u._pending[t])}),i.silent||this.change(i),this},unset:function(e,t){return t=t||{},t.unset=!0,this.set(e,null,t)},increment:function(t,n){return(r.isUndefined(n)||r.isNull(n))&&(n=1),this.set(t,new e.Op.Increment(n))},add:function(t,n){return this.set(t,new e.Op.Add([n]))},addUnique:function(t,n){return this.set(t,new e.Op.AddUnique([n]))},remove:function(t,n){return this.set(t,new e.Op.Remove([n]))},op:function(e){return r.last(this._opSetQueue)[e]},clear:function(e){e=e||{},e.unset=!0;var t=r.extend(this.attributes,this._operations);return this.set(t,e)},_getSaveJSON:function(){var t=r.clone(r.first(this._opSetQueue));return e._objectEach(t,function(e,n){t[n]=e.toJSON()}),t},_canBeSerialized:function(){return e.Object._canBeSerializedAsValue(this.attributes)},fetch:function(){var e={},t={};1===arguments.length?e=arguments[0]:2===arguments.length&&(t=arguments[0],e=arguments[1]||{}),t&&t.include&&r.isArray(t.include)&&(t.include=t.include.join(","));var n=this,i=s("classes",this.className,this.id,"GET",t,e.sessionToken);return i.then(function(e){return n._finishFetch(n.parse(e),!0),n})._thenRunCallbacks(e,this)},save:function(t,n,i){var a,u,c;if(r.isObject(t)||o.isNullOrUndefined(t)?(a=t,c=n):(a={},a[t]=n,c=i),!c&&a){var l=r.reject(a,function(e,t){return r.include(["success","error","wait"],t)});if(0===l.length){var h=!0;if(r.has(a,"success")&&!r.isFunction(a.success)&&(h=!1),r.has(a,"error")&&!r.isFunction(a.error)&&(h=!1),h)return this.save(null,a)}}c=r.clone(c)||{},c.wait&&(u=r.clone(this.attributes));var f=r.clone(c)||{};f.wait&&(f.silent=!0);var d;if(f.error=function(e,t){d=t},a&&!this.set(a,f))return e.Promise.error(d)._thenRunCallbacks(c,this);var p=this;p._refreshCache();var _=[],m=[];return e.Object._findUnsavedChildren(p.attributes,_,m),_.length+m.length>0?e.Object._deepSaveAsync(this.attributes,p,c).then(function(){return p.save(null,c)},function(t){return e.Promise.error(t)._thenRunCallbacks(c,p)}):(this._startSave(),this._saving=(this._saving||0)+1,this._allPreviousSaves=this._allPreviousSaves||e.Promise.as(),this._allPreviousSaves=this._allPreviousSaves._continueWith(function(){var t=p.id?"PUT":"POST",n=p._getSaveJSON();if(p._fetchWhenSave&&(n._fetchWhenSave=!0),c.fetchWhenSave&&(n._fetchWhenSave=!0),c.query){var i;if("function"==typeof c.query.toJSON&&(i=c.query.toJSON(),i&&(n._where=i.where)),!n._where){var o=new Error("options.query is not an AV.Query");return e.Promise.error(o)._thenRunCallbacks(c,p)}}var l="classes",h=p.className;"_User"!==p.className||p.id||(l="users",h=null);var d=c._makeRequest||s,_=d(l,h,p.id,t,n,c.sessionToken);return _=_.then(function(e){var t=p.parse(e);return c.wait&&(t=r.extend(a||{},t)),p._finishSave(t),c.wait&&p.set(u,f),p},function(t){return p._cancelSave(),e.Promise.error(t)})._thenRunCallbacks(c,p)}),this._allPreviousSaves)},destroy:function(e){e=e||{};var t=this,n=function(){t.trigger("destroy",t,t.collection,e)};if(!this.id)return n();e.wait||n();var r=s("classes",this.className,this.id,"DELETE",null,e.sessionToken);return r.then(function(){return e.wait&&n(),t})._thenRunCallbacks(e,this)},parse:function(t){var n=r.clone(t);return r(["createdAt","updatedAt"]).each(function(t){n[t]&&(n[t]=e._parseDate(n[t]))}),n.updatedAt||(n.updatedAt=n.createdAt),n},clone:function(){return new this.constructor(this.attributes)},isNew:function(){return!this.id},change:function(t){t=t||{};var n=this._changing;this._changing=!0;var i=this;e._objectEach(this._silent,function(e){i._pending[e]=!0});var s=r.extend({},t.changes,this._silent);if(this._silent={},e._objectEach(s,function(e,n){i.trigger("change:"+n,i,i.get(n),t)}),n)return this;for(var o=function(e,t){i._pending[t]||i._silent[t]||delete i.changed[t]};!r.isEmpty(this._pending);)this._pending={},this.trigger("change",this,t),e._objectEach(this.changed,o),i._previousAttributes=r.clone(this.attributes);return this._changing=!1,this},existed:function(){return console.warn("AV.Object.prototype.existed() is deprecated."),!1},hasChanged:function(e){return arguments.length?this.changed&&r.has(this.changed,e):!r.isEmpty(this.changed)},changedAttributes:function(t){if(!t)return this.hasChanged()?r.clone(this.changed):!1;var n={},i=this._previousAttributes;return e._objectEach(t,function(e,t){r.isEqual(i[t],e)||(n[t]=e)}),n},previous:function(e){return arguments.length&&this._previousAttributes?this._previousAttributes[e]:null},previousAttributes:function(){return r.clone(this._previousAttributes)},isValid:function(){return!this.validate(this.attributes)},validate:function(t,n){return!r.has(t,"ACL")||t.ACL instanceof e.ACL?!1:new i(i.OTHER_CAUSE,"ACL must be a AV.ACL.")},_validate:function(e,t){if(t.silent||!this.validate)return!0;e=r.extend({},this.attributes,e);var n=this.validate(e,t);return n?(t&&t.error?t.error(this,n,t):this.trigger("error",this,n,t),!1):!0},getACL:function(){return this.get("ACL")},setACL:function(e,t){return this.set("ACL",e,t)}}),e.Object.createWithoutData=function(t,n,r){var i=new e.Object(t);return i.id=n,i._hasData=r,i},e.Object.destroyAll=function(t,n){if(n=n||{},!t||0===t.length)return e.Promise.as()._thenRunCallbacks(n);var r=t[0].className,i="",o=!0;t.forEach(function(e){if(e.className!=r)throw"AV.Object.destroyAll requires the argument object array's classNames must be the same";if(!e.id)throw"Could not delete unsaved object";o?(i=e.id,o=!1):i=i+","+e.id});var a=s("classes",r,i,"DELETE",null,n.sessionToken);return a._thenRunCallbacks(n)},e.Object._getSubclass=function(t){if(!r.isString(t))throw"AV.Object._getSubclass requires a string argument.";var n=e.Object._classMap[t];return n||(n=e.Object.extend(t),e.Object._classMap[t]=n),n},e.Object._create=function(t,n,r){var i=e.Object._getSubclass(t);return new i(n,r)},e.Object._classMap={},e.Object._extend=e._extend,e.Object["new"]=function(t,n){return new e.Object(t,n)},e.Object.extend=function(t,n,i){if(!r.isString(t)){if(t&&r.has(t,"className"))return e.Object.extend(t.className,t,n);throw new Error("AV.Object.extend's first argument should be the className.")}"User"===t&&(t="_User");var s=null;if(r.has(e.Object._classMap,t)){var o=e.Object._classMap[t];s=o._extend(n,i)}else n=n||{},n.className=t,s=this._extend(n,i);return s.extend=function(n){if(r.isString(n)||n&&r.has(n,"className"))return e.Object.extend.apply(s,arguments);var i=[t].concat(r.toArray(arguments));return e.Object.extend.apply(s,i)},s["new"]=function(e,t){return new s(e,t)},e.Object._classMap[t]=s,s},e.Object._findUnsavedChildren=function(t,n,r){e._traverse(t,function(t){return t instanceof e.Object?(t._refreshCache(),void(t.dirty()&&n.push(t))):t instanceof e.File?void(t.url()||t.id||r.push(t)):void 0})},e.Object._canBeSerializedAsValue=function(t){var n=!0;return t instanceof e.Object||t instanceof e.File?n=!!t.id:r.isArray(t)?e._arrayEach(t,function(t){e.Object._canBeSerializedAsValue(t)||(n=!1)}):r.isObject(t)&&e._objectEach(t,function(t){e.Object._canBeSerializedAsValue(t)||(n=!1)}),n},e.Object._deepSaveAsync=function(t,n,o){var a=[],u=[];e.Object._findUnsavedChildren(t,a,u),n&&(a=r.filter(a,function(e){return e!=n}));var c=e.Promise.as();r.each(u,function(e){c=c.then(function(){return e.save()})});var l=r.uniq(a),h=r.uniq(l);return c.then(function(){return e.Promise._continueWhile(function(){return h.length>0},function(){var t=[],n=[];if(e._arrayEach(h,function(e){return t.length>20?void n.push(e):void(e._canBeSerialized()?t.push(e):n.push(e))}),h=n,0===t.length)return e.Promise.error(new i(i.OTHER_CAUSE,"Tried to save a batch with a cycle."));var a=e.Promise.when(r.map(t,function(t){return t._allPreviousSaves||e.Promise.as()})),u=new e.Promise;return e._arrayEach(t,function(e){e._allPreviousSaves=u}),a._continueWith(function(){return s("batch",null,null,"POST",{requests:r.map(t,function(e){var t=e._getSaveJSON(),n="POST",r="/1.1/classes/"+e.className;return e.id&&(r=r+"/"+e.id,n="PUT"),e._startSave(),{method:n,path:r,body:t}})},o&&o.sessionToken).then(function(n){var r;return e._arrayEach(t,function(e,t){n[t].success?e._finishSave(e.parse(n[t].success)):(r=r||n[t].error,e._cancelSave())}),r?e.Promise.error(new i(r.code,r.error)):void 0}).then(function(e){return u.resolve(e),e},function(t){return u.reject(t),e.Promise.error(t)})})})}).then(function(){return t})}}},{"./error":24,"./request":36,"./utils":43,underscore:17}],31:[function(e,t,n){var r=e("underscore");t.exports=function(e){e.Op=function(){this._initialize.apply(this,arguments)},e.Op.prototype={_initialize:function(){}},r.extend(e.Op,{_extend:e._extend,_opDecoderMap:{},_registerDecoder:function(t,n){e.Op._opDecoderMap[t]=n},_decode:function(t){var n=e.Op._opDecoderMap[t.__op];return n?n(t):void 0}}),e.Op._registerDecoder("Batch",function(t){var n=null;return e._arrayEach(t.ops,function(t){t=e.Op._decode(t),n=t._mergeWithPrevious(n)}),n}),e.Op.Set=e.Op._extend({_initialize:function(e){this._value=e},value:function(){return this._value},toJSON:function(){return e._encode(this.value())},_mergeWithPrevious:function(e){return this},_estimate:function(e){return this.value()}}),e.Op._UNSET={},e.Op.Unset=e.Op._extend({toJSON:function(){return{__op:"Delete"}},_mergeWithPrevious:function(e){return this},_estimate:function(t){return e.Op._UNSET}}),e.Op._registerDecoder("Delete",function(t){return new e.Op.Unset}),e.Op.Increment=e.Op._extend({_initialize:function(e){this._amount=e},amount:function(){return this._amount},toJSON:function(){return{__op:"Increment",amount:this._amount}},_mergeWithPrevious:function(t){if(t){if(t instanceof e.Op.Unset)return new e.Op.Set(this.amount());if(t instanceof e.Op.Set)return new e.Op.Set(t.value()+this.amount());if(t instanceof e.Op.Increment)return new e.Op.Increment(this.amount()+t.amount());throw"Op is invalid after previous op."}return this},_estimate:function(e){return e?e+this.amount():this.amount()}}),e.Op._registerDecoder("Increment",function(t){return new e.Op.Increment(t.amount)}),e.Op.Add=e.Op._extend({_initialize:function(e){this._objects=e},objects:function(){return this._objects},toJSON:function(){return{__op:"Add",objects:e._encode(this.objects())}},_mergeWithPrevious:function(t){if(t){if(t instanceof e.Op.Unset)return new e.Op.Set(this.objects());if(t instanceof e.Op.Set)return new e.Op.Set(this._estimate(t.value()));if(t instanceof e.Op.Add)return new e.Op.Add(t.objects().concat(this.objects()));throw"Op is invalid after previous op."}return this},_estimate:function(e){return e?e.concat(this.objects()):r.clone(this.objects())}}),e.Op._registerDecoder("Add",function(t){return new e.Op.Add(e._decode(void 0,t.objects))}),e.Op.AddUnique=e.Op._extend({_initialize:function(e){this._objects=r.uniq(e)},objects:function(){return this._objects},toJSON:function(){return{__op:"AddUnique",objects:e._encode(this.objects())}},_mergeWithPrevious:function(t){if(t){if(t instanceof e.Op.Unset)return new e.Op.Set(this.objects());if(t instanceof e.Op.Set)return new e.Op.Set(this._estimate(t.value()));if(t instanceof e.Op.AddUnique)return new e.Op.AddUnique(this._estimate(t.objects()));throw"Op is invalid after previous op."}return this},_estimate:function(t){if(t){var n=r.clone(t);return e._arrayEach(this.objects(),function(t){if(t instanceof e.Object&&t.id){var i=r.find(n,function(n){return n instanceof e.Object&&n.id===t.id});if(i){var s=r.indexOf(n,i);n[s]=t}else n.push(t)}else r.contains(n,t)||n.push(t)}),n}return r.clone(this.objects())}}),e.Op._registerDecoder("AddUnique",function(t){return new e.Op.AddUnique(e._decode(void 0,t.objects))}),e.Op.Remove=e.Op._extend({_initialize:function(e){this._objects=r.uniq(e)},objects:function(){return this._objects},toJSON:function(){return{__op:"Remove",objects:e._encode(this.objects())}},_mergeWithPrevious:function(t){if(t){if(t instanceof e.Op.Unset)return t;if(t instanceof e.Op.Set)return new e.Op.Set(this._estimate(t.value()));if(t instanceof e.Op.Remove)return new e.Op.Remove(r.union(t.objects(),this.objects()));throw"Op is invalid after previous op."}return this},_estimate:function(t){if(t){var n=r.difference(t,this.objects());return e._arrayEach(this.objects(),function(t){t instanceof e.Object&&t.id&&(n=r.reject(n,function(n){return n instanceof e.Object&&n.id===t.id}))}),n}return[]}}),e.Op._registerDecoder("Remove",function(t){return new e.Op.Remove(e._decode(void 0,t.objects))}),e.Op.Relation=e.Op._extend({_initialize:function(t,n){this._targetClassName=null;var i=this,s=function(t){if(t instanceof e.Object){if(!t.id)throw"You can't add an unsaved AV.Object to a relation.";if(i._targetClassName||(i._targetClassName=t.className),i._targetClassName!==t.className)throw"Tried to create a AV.Relation with 2 different types: "+i._targetClassName+" and "+t.className+".";return t.id}return t};this.relationsToAdd=r.uniq(r.map(t,s)),this.relationsToRemove=r.uniq(r.map(n,s))},added:function(){var t=this;return r.map(this.relationsToAdd,function(n){var r=e.Object._create(t._targetClassName);return r.id=n,r})},removed:function(){var t=this;return r.map(this.relationsToRemove,function(n){var r=e.Object._create(t._targetClassName);return r.id=n,r})},toJSON:function(){var e=null,t=null,n=this,i=function(e){return{__type:"Pointer",className:n._targetClassName,objectId:e}},s=null;return this.relationsToAdd.length>0&&(s=r.map(this.relationsToAdd,i),e={__op:"AddRelation",objects:s}),this.relationsToRemove.length>0&&(s=r.map(this.relationsToRemove,i),t={__op:"RemoveRelation",objects:s}),e&&t?{__op:"Batch",ops:[e,t]}:e||t||{}},_mergeWithPrevious:function(t){if(t){if(t instanceof e.Op.Unset)throw"You can't modify a relation after deleting it.";if(t instanceof e.Op.Relation){if(t._targetClassName&&t._targetClassName!==this._targetClassName)throw"Related object must be of class "+t._targetClassName+", but "+this._targetClassName+" was passed in.";var n=r.union(r.difference(t.relationsToAdd,this.relationsToRemove),this.relationsToAdd),i=r.union(r.difference(t.relationsToRemove,this.relationsToAdd),this.relationsToRemove),s=new e.Op.Relation(n,i);return s._targetClassName=this._targetClassName,s}throw"Op is invalid after previous op."}return this},_estimate:function(t,n,r){if(t){if(t instanceof e.Relation){if(this._targetClassName)if(t.targetClassName){if(t.targetClassName!==this._targetClassName)throw"Related object must be a "+t.targetClassName+", but a "+this._targetClassName+" was passed in."}else t.targetClassName=this._targetClassName;return t}throw"Op is invalid after previous op."}var i=new e.Relation(n,r);i.targetClassName=this._targetClassName}}),e.Op._registerDecoder("AddRelation",function(t){return new e.Op.Relation(e._decode(void 0,t.objects),[])}),e.Op._registerDecoder("RemoveRelation",function(t){return new e.Op.Relation([],e._decode(void 0,t.objects))})}},{underscore:17}],32:[function(e,t,n){(function(n){var r=e("underscore"),i=t.exports=function(e){this._resolved=!1,this._rejected=!1,this._resolvedCallbacks=[],this._rejectedCallbacks=[],this.doResolve(e)},s=function(e){return r.isNull(e)||r.isUndefined(e)},o=!1;"undefined"!=typeof n&&n.versions&&n.versions.node&&(o=!0),r.extend(i,{_isPromisesAPlusCompliant:!o,_debugError:!1,setPromisesAPlusCompliant:function(e){i._isPromisesAPlusCompliant=e},setDebugError:function(e){i._debugError=e},is:function(e){return e&&e.then&&r.isFunction(e.then)},as:function(){var e=new i;return arguments[0]&&r.isFunction(arguments[0].then)?arguments[0].then(function(t){e.resolve.call(e,t)},function(t){e.reject.call(e,t)}):e.resolve.apply(e,arguments),e},error:function(){var e=new i;return e.reject.apply(e,arguments),e},when:function(e){var t;t=e&&s(e.length)?arguments:e;var n=r.last(arguments);n=r.isBoolean(n)?n:!1;var o=t.length,a=!1,u=[],c=[];if(u.length=t.length,c.length=t.length,0===o)return n?i.as.call(this,u):i.as.apply(this,u);var l=new i,h=function(e){return o-=1,a&&!l._rejected&&n?void l.reject.call(l,c[e]):void(0===o&&(a&&!l._rejected?l.reject.call(l,c):n?l._rejected||l.resolve.call(l,u):l.resolve.apply(l,u)))};return r.each(t,function(e,t){i.is(e)?e.then(function(e){u[t]=e,h(t)},function(e){c[t]=e,a=!0,h(t)}):(u[t]=e,h(t))}),l},race:function(e){var t;t=e&&s(e.length)?arguments:e;var n=t.length,o=!1,a=[],u=[];if(a.length=u.length=t.length,0===n)return i.as.call(this);var c=new i,l=function(e){c._resolved||c._rejected||(o?c.reject.call(c,u[e]):c.resolve.call(c,a[e]))};return r.each(t,function(e,t){i.is(e)?e.then(function(e){a[t]=e,l(t)},function(e){u[t]=e,o=!0,l(t)}):(a[t]=e,l(t))}),c},_continueWhile:function(e,t){return e()?t().then(function(){return i._continueWhile(e,t)}):i.as()}}),i.all=function(e){return i.when(e,!0)},r.extend(i.prototype,{resolve:function(e){if(this._resolved||this._rejected)throw"A promise was resolved even though it had already been "+(this._resolved?"resolved":"rejected")+".";this._resolved=!0,this._result=arguments;var t=arguments;r.each(this._resolvedCallbacks,function(e){e.apply(this,t)}),this._resolvedCallbacks=[],this._rejectedCallbacks=[]},doResolve:function(e){if(e){var t=!1,n=this;try{e(function(e){t||(t=!0,n.resolve.call(n,e))},function(e){t||(t=!0,n.reject.call(n,e))})}catch(r){if(t)return;t=!0,n.reject.call(n,r)}}},reject:function(e){if(this._resolved||this._rejected)throw"A promise was rejected even though it had already been "+(this._resolved?"resolved":"rejected")+".";this._rejected=!0,this._error=e,r.each(this._rejectedCallbacks,function(t){t(e)}),this._resolvedCallbacks=[],this._rejectedCallbacks=[]},then:function(e,t){var s=new i,o=function(){var t=arguments;if(e)if(i._isPromisesAPlusCompliant)try{t=[e.apply(this,t)]}catch(n){i._debugError&&n&&console.error("Error occurred in promise resolve callback.",n.stack||n),t=[i.error(n)]}else t=[e.apply(this,t)];1===t.length&&i.is(t[0])?t[0].then(function(){s.resolve.apply(s,arguments)},function(e){s.reject(e)}):s.resolve.apply(s,t)},a=function(e){var n=[];if(t){if(i._isPromisesAPlusCompliant)try{n=[t(e)]}catch(r){i._debugError&&r&&console.error("Error occurred in promise reject callback.",r.stack||r),n=[i.error(r)]}else n=[t(e)];1===n.length&&i.is(n[0])?n[0].then(function(){s.resolve.apply(s,arguments)},function(e){s.reject(e)}):i._isPromisesAPlusCompliant?s.resolve.apply(s,n):s.reject(n[0])}else s.reject(e)},u=function(e){e.call()};i._isPromisesAPlusCompliant&&("undefined"!=typeof window&&r.isFunction(window.setImmediate)?u=function(e){window.setImmediate(e)}:"undefined"!=typeof n&&n.nextTick?u=function(e){n.nextTick(e)}:"undefined"!=typeof setTimeout&&r.isFunction(setTimeout)&&(u=function(e){setTimeout(e,0)}));var c=this;return this._resolved?u(function(){o.apply(c,c._result)}):this._rejected?u(function(){a.apply(c,[c._error])}):(this._resolvedCallbacks.push(o),this._rejectedCallbacks.push(a)),s},"catch":function(e){return this.then(void 0,e)},always:function(e){return this.then(e,e)},done:function(e){return this.then(e)},fail:function(e){return this.then(null,e)},_thenRunCallbacks:function(e,t){var n;if(r.isFunction(e)){var s=e;n={success:function(e){s(e,null)},error:function(e){s(null,e)}}}else n=r.clone(e);return n=n||{},this.then(function(e){return n.success?n.success.apply(this,arguments):t&&t.trigger("sync",t,e,n),i.as.apply(i,arguments)},function(e){return n.error?r.isUndefined(t)?n.error(e):n.error(t,e):t&&t.trigger("error",t,e,n),i.error(e)})},_continueWith:function(e){return this.then(function(){return e(arguments,null)},function(t){return e(null,t)})}}),i.prototype["finally"]=i.prototype.always,i.prototype["try"]=i.prototype.done}).call(this,e("_process"))},{_process:2,underscore:17}],33:[function(e,t,n){var r=e("./request").request;t.exports=function(e){e.Installation=e.Object.extend("_Installation"),e.Push=e.Push||{},e.Push.send=function(e,t){if(e.where&&(e.where=e.where.toJSON().where),e.where&&e.cql)throw"Both where and cql can't be set";if(e.push_time&&(e.push_time=e.push_time.toJSON()),e.expiration_time&&(e.expiration_time=e.expiration_time.toJSON()),e.expiration_time&&e.expiration_time_interval)throw"Both expiration_time and expiration_time_interval can't be set";var n=r("push",null,null,"POST",e);return n._thenRunCallbacks(t)}}},{"./request":36}],34:[function(e,t,n){var r=e("underscore"),i=e("./error"),s=e("./request").request;t.exports=function(e){e.Query=function(t){r.isString(t)&&(t=e.Object._getSubclass(t)),this.objectClass=t,this.className=t.prototype.className,this._where={},this._include=[],this._limit=-1,this._skip=0,this._extraOptions={}},e.Query.or=function(){var t=r.toArray(arguments),n=null;e._arrayEach(t,function(e){if(r.isNull(n)&&(n=e.className),n!==e.className)throw"All queries must be for the same class"});var i=new e.Query(n);return i._orQuery(t),i},e.Query.and=function(){var t=r.toArray(arguments),n=null;e._arrayEach(t,function(e){if(r.isNull(n)&&(n=e.className),n!==e.className)throw"All queries must be for the same class"});var i=new e.Query(n);return i._andQuery(t),i},e.Query.doCloudQuery=function(t,n,i){var o={cql:t};r.isArray(n)?o.pvalues=n:i=n;var a=s("cloudQuery",null,null,"GET",o,i&&i.sessionToken);return a.then(function(t){var n=new e.Query(t.className),i=r.map(t.results,function(e){var r=n._newObject(t);return r._finishFetch(n._processResult(e),!0),r});return{results:i,count:t.count,className:t.className}})._thenRunCallbacks(i)},e.Query._extend=e._extend,e.Query.prototype={_processResult:function(e){return e},get:function(t,n){if(!t){var s=new i(i.OBJECT_NOT_FOUND,"Object not found.");throw s}var o=this;return o.equalTo("objectId",t),o.first().then(function(t){if(!r.isEmpty(t))return t;var n=new i(i.OBJECT_NOT_FOUND,"Object not found.");return e.Promise.error(n)})._thenRunCallbacks(n,null)},toJSON:function(){var t={where:this._where};return this._include.length>0&&(t.include=this._include.join(",")),this._select&&(t.keys=this._select.join(",")),this._limit>=0&&(t.limit=this._limit),this._skip>0&&(t.skip=this._skip),void 0!==this._order&&(t.order=this._order),e._objectEach(this._extraOptions,function(e,n){t[n]=e}),t},_newObject:function(t){var n;return n=t&&t.className?new e.Object(t.className):new this.objectClass},_createRequest:function(e,t){return s("classes",this.className,null,"GET",e||this.toJSON(),t&&t.sessionToken)},find:function(e){var t=this,n=this._createRequest(null,e);return n.then(function(e){return r.map(e.results,function(n){var r=t._newObject(e);return r._finishFetch(t._processResult(n),!0),r})})._thenRunCallbacks(e)},destroyAll:function(t){var n=this;return n.find().then(function(t){return e.Object.destroyAll(t)})._thenRunCallbacks(t)},count:function(e){var t=this.toJSON();t.limit=0,t.count=1;var n=this._createRequest(t,e);return n.then(function(e){return e.count})._thenRunCallbacks(e)},first:function(e){var t=this,n=this.toJSON();n.limit=1;var i=this._createRequest(n,e);return i.then(function(e){return r.map(e.results,function(e){var n=t._newObject();return n._finishFetch(t._processResult(e),!0),n})[0]})._thenRunCallbacks(e)},collection:function(t,n){return n=n||{},new e.Collection(t,r.extend(n,{model:this._objectClass||this.objectClass,query:this}))},skip:function(e){return this._skip=e,this},limit:function(e){return this._limit=e,this},equalTo:function(t,n){return this._where[t]=e._encode(n),this},_addCondition:function(t,n,r){return this._where[t]||(this._where[t]={}),this._where[t][n]=e._encode(r),this},sizeEqualTo:function(e,t){this._addCondition(e,"$size",t)},notEqualTo:function(e,t){return this._addCondition(e,"$ne",t),this},lessThan:function(e,t){return this._addCondition(e,"$lt",t),this},greaterThan:function(e,t){return this._addCondition(e,"$gt",t),this},lessThanOrEqualTo:function(e,t){return this._addCondition(e,"$lte",t),this},greaterThanOrEqualTo:function(e,t){return this._addCondition(e,"$gte",t),this},containedIn:function(e,t){return this._addCondition(e,"$in",t),this},notContainedIn:function(e,t){return this._addCondition(e,"$nin",t),this},containsAll:function(e,t){return this._addCondition(e,"$all",t),this},exists:function(e){return this._addCondition(e,"$exists",!0),this},doesNotExist:function(e){return this._addCondition(e,"$exists",!1),this},matches:function(e,t,n){return this._addCondition(e,"$regex",t),n||(n=""),t.ignoreCase&&(n+="i"),t.multiline&&(n+="m"),n&&n.length&&this._addCondition(e,"$options",n),this},matchesQuery:function(e,t){var n=t.toJSON();return n.className=t.className,this._addCondition(e,"$inQuery",n),this},doesNotMatchQuery:function(e,t){var n=t.toJSON();return n.className=t.className,this._addCondition(e,"$notInQuery",n),this},matchesKeyInQuery:function(e,t,n){var r=n.toJSON();return r.className=n.className,this._addCondition(e,"$select",{key:t,query:r}),this},doesNotMatchKeyInQuery:function(e,t,n){var r=n.toJSON();return r.className=n.className,this._addCondition(e,"$dontSelect",{key:t,query:r}),this},_orQuery:function(e){var t=r.map(e,function(e){return e.toJSON().where});return this._where.$or=t,this},_andQuery:function(e){var t=r.map(e,function(e){return e.toJSON().where});return this._where.$and=t,this},_quote:function(e){return"\\Q"+e.replace("\\E","\\E\\\\E\\Q")+"\\E"},contains:function(e,t){return this._addCondition(e,"$regex",this._quote(t)),this},startsWith:function(e,t){return this._addCondition(e,"$regex","^"+this._quote(t)),this},endsWith:function(e,t){return this._addCondition(e,"$regex",this._quote(t)+"$"),this},ascending:function(e){return this._order=e,this},addAscending:function(e){return this._order?this._order+=","+e:this._order=e,this},descending:function(e){return this._order="-"+e,this},addDescending:function(e){return this._order?this._order+=",-"+e:this._order="-"+e,e},near:function(t,n){return n instanceof e.GeoPoint||(n=new e.GeoPoint(n)),this._addCondition(t,"$nearSphere",n),this},withinRadians:function(e,t,n){return this.near(e,t),this._addCondition(e,"$maxDistance",n),this},withinMiles:function(e,t,n){return this.withinRadians(e,t,n/3958.8)},withinKilometers:function(e,t,n){return this.withinRadians(e,t,n/6371)},withinGeoBox:function(t,n,r){return n instanceof e.GeoPoint||(n=new e.GeoPoint(n)),r instanceof e.GeoPoint||(r=new e.GeoPoint(r)),this._addCondition(t,"$within",{$box:[n,r]}),this},include:function(){var t=this;return e._arrayEach(arguments,function(e){r.isArray(e)?t._include=t._include.concat(e):t._include.push(e)}),this},select:function(){var t=this;return this._select=this._select||[],e._arrayEach(arguments,function(e){r.isArray(e)?t._select=t._select.concat(e):t._select.push(e)}),this},each:function(t,n){
 if(n=n||{},this._order||this._skip||this._limit>=0){var i="Cannot iterate on a query with sort, skip, or limit.";return e.Promise.error(i)._thenRunCallbacks(n)}var s=(new e.Promise,new e.Query(this.objectClass));s._limit=n.batchSize||100,s._where=r.clone(this._where),s._include=r.clone(this._include),s.ascending("objectId");var o=!1;return e.Promise._continueWhile(function(){return!o},function(){return s.find().then(function(n){var i=e.Promise.as();return r.each(n,function(e){i=i.then(function(){return t(e)})}),i.then(function(){n.length>=s._limit?s.greaterThan("objectId",n[n.length-1].id):o=!0})})})._thenRunCallbacks(n)}},e.FriendShipQuery=e.Query._extend({_objectClass:e.User,_newObject:function(){return new e.User},_processResult:function(e){if(e&&e[this._friendshipTag]){var t=e[this._friendshipTag];return"Pointer"===t.__type&&"_User"===t.className&&(delete t.__type,delete t.className),t}return null}})}},{"./error":24,"./request":36,underscore:17}],35:[function(e,t,n){var r=e("underscore");t.exports=function(e){e.Relation=function(e,t){if(!r.isString(t))throw new TypeError("key must be a string");this.parent=e,this.key=t,this.targetClassName=null},e.Relation.reverseQuery=function(t,n,r){var i=new e.Query(t);return i.equalTo(n,r._toPointer()),i},e.Relation.prototype={_ensureParentAndKey:function(e,t){if(this.parent=this.parent||e,this.key=this.key||t,this.parent!==e)throw"Internal Error. Relation retrieved from two different Objects.";if(this.key!==t)throw"Internal Error. Relation retrieved from two different keys."},add:function(t){r.isArray(t)||(t=[t]);var n=new e.Op.Relation(t,[]);this.parent.set(this.key,n),this.targetClassName=n._targetClassName},remove:function(t){r.isArray(t)||(t=[t]);var n=new e.Op.Relation([],t);this.parent.set(this.key,n),this.targetClassName=n._targetClassName},toJSON:function(){return{__type:"Relation",className:this.targetClassName}},query:function t(){var n,t;return this.targetClassName?(n=e.Object._getSubclass(this.targetClassName),t=new e.Query(n)):(n=e.Object._getSubclass(this.parent.className),t=new e.Query(n),t._extraOptions.redirectClassNameForKey=this.key),t._addCondition("$relatedTo","object",this.parent._toPointer()),t._addCondition("$relatedTo","key",this.key),t}}}},{underscore:17}],36:[function(e,t,n){(function(n){var r=e("superagent"),i=e("debug")("request"),s=e("md5"),o=e("./promise"),a=e("./cache"),u=e("./error"),c=e("./av"),l=function(e,t){var n=(new Date).getTime(),r=s(n+e);return t?r+","+n+",master":r+","+n},h=function(e){var t=["batch","classes","files","date","functions","call","login","push","search/select","requestPasswordReset","requestEmailVerify","requestPasswordResetBySmsCode","resetPasswordBySmsCode","requestMobilePhoneVerify","requestLoginSmsCode","verifyMobilePhone","requestSmsCode","verifySmsCode","users","usersByMobilePhone","cloudQuery","qiniu","fileTokens","statuses","bigquery","search/select","subscribe/statuses/count","subscribe/statuses","installations"];if(-1===t.indexOf(e)&&!/users\/[^\/]+\/updatePassword/.test(e)&&!/users\/[^\/]+\/friendship\/[^\/]+/.test(e))throw new Error("Bad router: "+e+".")},f=function(e,t,n){var s=arguments.length<=3||void 0===arguments[3]?{}:arguments[3],a=arguments[4];i(e,t,n,s);var u=new o,c=r(e,t).set(s).send(n).end(function(e,t){return t&&i(t.status,t.body,t.text),e?(t&&(e.statusCode=t.status,e.responseText=t.text,e.response=t.body),u.reject(e)):u.resolve(t.body,t.status,t)});return a&&c.on("progress",a),u},d=function(e){var t={"X-LC-Id":c.applicationId,"Content-Type":"application/json;charset=UTF-8"};c.masterKey&&c._useMasterKey?t["X-LC-Sign"]=l(c.masterKey,!0):t["X-LC-Sign"]=l(c.applicationKey),null!==c._config.applicationProduction&&(t["X-LC-Prod"]=c._config.applicationProduction),c._config.isNode?t["User-Agent"]=c._config.userAgent||"AV/"+c.version+"; Node.js/"+n.version:t["X-LC-UA"]="AV/"+c.version;var r=new o;return e?(t["X-LC-Session"]=e,r.resolve(t)):c._config.disableCurrentUser?r.resolve(t):c.User.currentAsync().then(function(e){e&&e._sessionToken&&(t["X-LC-Session"]=e._sessionToken),r.resolve(t)}),r},p=function(e,t,n,r,i){c.serverURL&&(c._config.APIServerURL=c.serverURL,console.warn("Please use AV._config.APIServerURL to replace AV.serverURL, and it is an internal interface."));var s=c._config.APIServerURL;if("/"!==s.charAt(s.length-1)&&(s+="/"),s+="1.1/"+e,t&&(s+="/"+t),n&&(s+="/"+n),"users"!==e&&"classes"!==e||!i||(s+="?",i._fetchWhenSave&&(delete i._fetchWhenSave,s+="&new=true"),i._where&&(s+="&where="+encodeURIComponent(JSON.stringify(i._where)),delete i._where)),"get"===r.toLowerCase()){-1===s.indexOf("?")&&(s+="?");for(var o in i)"object"===_typeof(i[o])&&(i[o]=JSON.stringify(i[o])),s+="&"+o+"="+encodeURIComponent(i[o])}return s},_=function(e,t){"number"!=typeof t&&(t=3600),a.set("APIServerURL",e,1e3*t)},m=function(e){var t=new o;if(410===e.statusCode)_(e.response.api_server,e.response.ttl),t.resolve(e.response.location);else{var n={code:-1,error:e.responseText};if(e.response&&e.response.code)n=e.response;else if(e.responseText)try{n=JSON.parse(e.responseText)}catch(r){}var i=new u(n.code,n.error);t.reject(i)}return t},v=function(){var e=arguments.length<=0||void 0===arguments[0]?"cn":arguments[0],t={cn:"https://api.leancloud.cn",us:"https://us-api.leancloud.cn"},n=c._config;n.region=e,n.APIServerURL||(n.APIServerURL=t[e],"cn"===e&&a.get("APIServerURL").then(function(e){return e?e:f("get","https://app-router.leancloud.cn/1/route?appId="+c.applicationId).then(function(e){return e.api_server?(_(e.api_server,e.ttl),e.api_server):void 0})}).then(function(r){n.APIServerURL===t[e]&&(n.APIServerURL="https://"+r)}))},g=function(e,t,n,r){var i=arguments.length<=4||void 0===arguments[4]?{}:arguments[4],s=arguments[5];if(!c.applicationId)throw new Error("You must specify your applicationId using AV.init()");if(!c.applicationKey&&!c.masterKey)throw new Error("You must specify a AppKey using AV.init()");h(e);var o=p(e,t,n,r,i);return d(s).then(function(e){return f(r,o,i,e).then(null,function(t){return m(t).then(function(t){return f(r,t,i,e)})})})};t.exports={ajax:f,request:g,setServerUrlByRegion:v}}).call(this,e("_process"))},{"./av":19,"./cache":22,"./error":24,"./promise":32,_process:2,debug:4,md5:8,superagent:13}],37:[function(e,t,n){var r=e("underscore"),i=e("./error");t.exports=function(e){e.Role=e.Object.extend("_Role",{constructor:function(t,n){if(r.isString(t)?(e.Object.prototype.constructor.call(this,null,null),this.setName(t)):e.Object.prototype.constructor.call(this,t,n),void 0===n){var i=new e.ACL;i.setPublicReadAccess(!0),this.getACL()||this.setACL(i)}else{if(!(n instanceof e.ACL))throw new TypeError("acl must be an instance of AV.ACL");this.setACL(n)}},getName:function(){return this.get("name")},setName:function(e,t){return this.set("name",e,t)},getUsers:function(){return this.relation("users")},getRoles:function(){return this.relation("roles")},validate:function(t,n){if("name"in t&&t.name!==this.getName()){var s=t.name;if(this.id&&this.id!==t.objectId)return new i(i.OTHER_CAUSE,"A role's name can only be set before it has been saved.");if(!r.isString(s))return new i(i.OTHER_CAUSE,"A role's name must be a String.");if(!/^[0-9a-zA-Z\-_ ]+$/.test(s))return new i(i.OTHER_CAUSE,"A role's name can only contain alphanumeric characters, _, -, and spaces.")}return e.Object.prototype.validate?e.Object.prototype.validate.call(this,t,n):!1}})}},{"./error":24,underscore:17}],38:[function(e,t,n){var r=e("underscore"),i=e("./request").request;t.exports=function(e){e.SearchSortBuilder=function(){this._sortFields=[]},e.SearchSortBuilder.prototype={_addField:function(e,t,n,r){var i={};return i[e]={order:t||"asc",mode:n||"avg",missing:"_"+(r||"last")},this._sortFields.push(i),this},ascending:function(e,t,n){return this._addField(e,"asc",t,n)},descending:function(e,t,n){return this._addField(e,"desc",t,n)},whereNear:function(e,t,n){n=n||{};var r={},i={lat:t.latitude,lon:t.longitude},s={order:n.order||"asc",mode:n.mode||"avg",unit:n.unit||"km"};return s[e]=i,r._geo_distance=s,this._sortFields.push(r),this},build:function(){return JSON.stringify(e._encode(this._sortFields))}},e.SearchQuery=e.Query._extend({_sid:null,_hits:0,_queryString:null,_highlights:null,_sortBuilder:null,_createRequest:function(e,t){return i("search/select",null,null,"GET",e||this.toJSON(),t&&t.sessionToken)},sid:function(e){return this._sid=e,this},queryString:function(e){return this._queryString=e,this},highlights:function(e){var t;return t=e&&r.isString(e)?arguments:e,this._highlights=t,this},sortBy:function(e){return this._sortBuilder=e,this},hits:function(){return this._hits||(this._hits=0),this._hits},_processResult:function(e){return delete e.className,delete e._app_url,delete e._deeplink,e},hasMore:function(){return!this._hitEnd},reset:function(){this._hitEnd=!1,this._sid=null,this._hits=0},find:function(e){var t=this,n=this._createRequest();return n.then(function(e){return e.sid?(t._oldSid=t._sid,t._sid=e.sid):(t._sid=null,t._hitEnd=!0),t._hits=e.hits||0,r.map(e.results,function(n){n.className&&(e.className=n.className);var r=t._newObject(e);return r.appURL=n._app_url,r._finishFetch(t._processResult(n),!0),r})})._thenRunCallbacks(e)},toJSON:function(){var t=e.SearchQuery.__super__.toJSON.call(this);if(delete t.where,this.className&&(t.clazz=this.className),this._sid&&(t.sid=this._sid),!this._queryString)throw"Please set query string.";if(t.q=this._queryString,this._highlights&&(t.highlights=this._highlights.join(",")),this._sortBuilder&&t.order)throw"sort and order can not be set at same time.";return this._sortBuilder&&(t.sort=this._sortBuilder.build()),t}})}},{"./request":36,underscore:17}],39:[function(e,t,n){var r=e("underscore"),i=e("./request").request;t.exports=function(e){e.Status=function(e,t){return this.data={},this.inboxType="default",this.query=null,e&&"object"===("undefined"==typeof e?"undefined":_typeof(e))?this.data=e:(e&&(this.data.image=e),t&&(this.data.message=t)),this},e.Status.prototype={get:function(e){return this.data[e]},set:function(e,t){return this.data[e]=t,this},destroy:function(t){if(!this.id)return e.Promise.error("The status id is not exists.")._thenRunCallbacks(t);var n=i("statuses",null,this.id,"DELETE",t&&t.sessionToken);return n._thenRunCallbacks(t)},toObject:function(){return this.id?e.Object.createWithoutData("_Status",this.id):null},_getDataJSON:function(){var t=r.clone(this.data);return e._encode(t)},send:function(t){if(!e.User.current())throw"Please signin an user.";if(!this.query)return e.Status.sendStatusToFollowers(this,t);var n=this.query.toJSON();n.className=this.query.className;var r={};r.query=n,this.data=this.data||{};var s=e.Object.createWithoutData("_User",e.User.current().id)._toPointer();this.data.source=this.data.source||s,r.data=this._getDataJSON(),r.inboxType=this.inboxType||"default";var o=i("statuses",null,null,"POST",r,t&&t.sessionToken),a=this;return o.then(function(t){return a.id=t.objectId,a.createdAt=e._parseDate(t.createdAt),a})._thenRunCallbacks(t)},_finishFetch:function(t){this.id=t.objectId,this.createdAt=e._parseDate(t.createdAt),this.updatedAt=e._parseDate(t.updatedAt),this.messageId=t.messageId,delete t.messageId,delete t.objectId,delete t.createdAt,delete t.updatedAt,this.data=e._decode(void 0,t)}},e.Status.sendStatusToFollowers=function(t,n){if(!e.User.current())throw"Please signin an user.";var r={};r.className="_Follower",r.keys="follower";var s=e.Object.createWithoutData("_User",e.User.current().id)._toPointer();r.where={user:s};var o={};o.query=r,t.data=t.data||{},t.data.source=t.data.source||s,o.data=t._getDataJSON(),o.inboxType=t.inboxType||"default";var a=i("statuses",null,null,"POST",o,n&&n.sessionToken);return a.then(function(n){return t.id=n.objectId,t.createdAt=e._parseDate(n.createdAt),t})._thenRunCallbacks(n)},e.Status.sendPrivateStatus=function(t,n,s){if(!e.User.current())throw"Please signin an user.";if(!n)throw"Invalid target user.";var o=r.isString(n)?n:n.id;if(!o)throw"Invalid target user.";var a={};a.className="_User";var u=e.Object.createWithoutData("_User",e.User.current().id)._toPointer();a.where={objectId:o};var c={};c.query=a,t.data=t.data||{},t.data.source=t.data.source||u,c.data=t._getDataJSON(),c.inboxType="private",t.inboxType="private";var l=i("statuses",null,null,"POST",c,s&&s.sessionToken);return l.then(function(n){return t.id=n.objectId,t.createdAt=e._parseDate(n.createdAt),t})._thenRunCallbacks(s)},e.Status.countUnreadStatuses=function(t){if(!e.User.current()&&null==t)throw"Please signin an user or pass the owner objectId.";t=t||e.User.current();var n=r.isString(arguments[1])?arguments[2]:arguments[1],s=r.isString(arguments[1])?arguments[1]:"default",o={};o.inboxType=e._encode(s),o.owner=e._encode(t);var a=i("subscribe/statuses/count",null,null,"GET",o,n&&n.sessionToken);return a._thenRunCallbacks(n)},e.Status.statusQuery=function(t){var n=new e.Query("_Status");return t&&n.equalTo("source",t),n},e.InboxQuery=e.Query._extend({_objectClass:e.Status,_sinceId:0,_maxId:0,_inboxType:"default",_owner:null,_newObject:function(){return new e.Status},_createRequest:function(e,t){return i("subscribe/statuses",null,null,"GET",e||this.toJSON(),t&&t.sessionToken)},sinceId:function(e){return this._sinceId=e,this},maxId:function(e){return this._maxId=e,this},owner:function(e){return this._owner=e,this},inboxType:function(e){return this._inboxType=e,this},toJSON:function(){var t=e.InboxQuery.__super__.toJSON.call(this);return t.owner=e._encode(this._owner),t.inboxType=e._encode(this._inboxType),t.sinceId=e._encode(this._sinceId),t.maxId=e._encode(this._maxId),t}}),e.Status.inboxQuery=function(t,n){var r=new e.InboxQuery(e.Status);return t&&(r._owner=t),n&&(r._inboxType=n),r}}},{"./request":36,underscore:17}],40:[function(e,t,n){var r=e("superagent"),i=e("debug")("cos"),s=e("../promise");t.exports=function(e,t,n){var o=arguments.length<=3||void 0===arguments[3]?{}:arguments[3];n.attributes.url=e.url,n._bucket=e.bucket,n.id=e.objectId;var a=e.upload_url+"?sign="+encodeURIComponent(e.token),u=new s,c=r("POST",a).field("fileContent",t).field("op","upload").end(function(e,t){return t&&i(t.status,t.body,t.text),e?(t&&(e.statusCode=t.status,e.responseText=t.text,e.response=t.body),u.reject(e)):void u.resolve(n)});return o.onprogress&&c.on("progress",o.onprogress),u}},{"../promise":32,debug:4,superagent:13}],41:[function(e,t,n){var r=e("superagent"),i=e("../promise"),s=e("debug")("qiniu");t.exports=function(e,t,n){var o=arguments.length<=3||void 0===arguments[3]?{}:arguments[3];n.attributes.url=e.url,n._bucket=e.bucket,n.id=e.objectId;var a=e.token,u=new i,c=r("POST","https://up.qbox.me").field("file",t).field("name",n.attributes.name).field("key",n._qiniu_key).field("token",a).end(function(e,t){return t&&s(t.status,t.body,t.text),e?(t&&(e.statusCode=t.status,e.responseText=t.text,e.response=t.body),u.reject(e)):void u.resolve(n)});return o.onprogress&&c.on("progress",o.onprogress),u}},{"../promise":32,debug:4,superagent:13}],42:[function(e,t,n){function r(e){var t=i.clone(e)||{};return delete t.success,delete t.error,t}var i=e("underscore"),s=e("./error"),o=e("./request").request;t.exports=function(e){e.User=e.Object.extend("_User",{_isCurrentUser:!1,_mergeMagicFields:function(t){t.sessionToken&&(this._sessionToken=t.sessionToken,delete t.sessionToken),e.User.__super__._mergeMagicFields.call(this,t)},_cleanupAuthData:function(){if(this.isCurrent()){var t=this.get("authData");t&&e._objectEach(this.get("authData"),function(e,n){t[n]||delete t[n]})}},_synchronizeAllAuthData:function(){var t=this.get("authData");if(t){var n=this;e._objectEach(this.get("authData"),function(e,t){n._synchronizeAuthData(t)})}},_synchronizeAuthData:function(t){if(this.isCurrent()){var n;i.isString(t)?(n=t,t=e.User._authProviders[n]):n=t.getAuthType();var r=this.get("authData");if(r&&t){var s=t.restoreAuthentication(r[n]);s||this._unlinkFrom(t)}}},_handleSaveResult:function(t){return t&&!e._config.disableCurrentUser&&(this._isCurrentUser=!0),this._cleanupAuthData(),this._synchronizeAllAuthData(),delete this._serverData.password,this._rebuildEstimatedDataForKey("password"),this._refreshCache(),!t&&!this.isCurrent()||e._config.disableCurrentUser?e.Promise.as():e.Promise.as(e.User._saveCurrentUser(this))},_linkWith:function(t,n){var s;if(i.isString(t)?(s=t,t=e.User._authProviders[t]):s=t.getAuthType(),i.has(n,"authData")){var o=this.get("authData")||{};return o[s]=n.authData,this.set("authData",o),this.save({authData:o},r(n)).then(function(e){return e._handleSaveResult(!0).then(function(){return e})})._thenRunCallbacks(n)}var a=this,u=new e.Promise;return t.authenticate({success:function(e,t){a._linkWith(e,{authData:t,success:n.success,error:n.error}).then(function(){u.resolve(a)})},error:function(e,t){n.error&&n.error(a,t),u.reject(t)}}),u},_unlinkFrom:function(t,n){var r;i.isString(t)?(r=t,t=e.User._authProviders[t]):r=t.getAuthType();var s=i.clone(n),o=this;return s.authData=null,s.success=function(e){o._synchronizeAuthData(t),n.success&&n.success.apply(this,arguments)},this._linkWith(t,s)},_isLinked:function(e){var t;t=i.isString(e)?e:e.getAuthType();var n=this.get("authData")||{};return!!n[t]},logOut:function(){this._logOutWithAll(),this._isCurrentUser=!1},_logOutWithAll:function(){var t=this.get("authData");if(t){var n=this;e._objectEach(this.get("authData"),function(e,t){n._logOutWith(t)})}},_logOutWith:function(t){this.isCurrent()&&(i.isString(t)&&(t=e.User._authProviders[t]),t&&t.deauthenticate&&t.deauthenticate())},signUp:function(e,t){var n;t=t||{};var i=e&&e.username||this.get("username");if(!i||""===i)throw n=new s(s.OTHER_CAUSE,"Cannot sign up user with an empty name."),t&&t.error&&t.error(this,n),n;var o=e&&e.password||this.get("password");if(!o||""===o)throw n=new s(s.OTHER_CAUSE,"Cannot sign up user with an empty password."),t&&t.error&&t.error(this,n),n;return this.save(e,r(t)).then(function(e){return e._handleSaveResult(!0).then(function(){return e})})._thenRunCallbacks(t,this)},signUpOrlogInWithMobilePhone:function(e,t){var n;t=t||{};var i=e&&e.mobilePhoneNumber||this.get("mobilePhoneNumber");if(!i||""===i)throw n=new s(s.OTHER_CAUSE,"Cannot sign up or login user by mobilePhoneNumber with an empty mobilePhoneNumber."),t&&t.error&&t.error(this,n),n;var a=e&&e.smsCode||this.get("smsCode");if(!a||""===a)throw n=new s(s.OTHER_CAUSE,"Cannot sign up or login user by mobilePhoneNumber  with an empty smsCode."),t&&t.error&&t.error(this,n),n;var u=r(t);return u._makeRequest=function(e,t,n,r,i){return o("usersByMobilePhone",null,null,"POST",i)},this.save(e,u).then(function(e){return delete e.attributes.smsCode,delete e._serverData.smsCode,e._handleSaveResult(!0).then(function(){return e})})._thenRunCallbacks(t)},logIn:function(e){var t=this,n=o("login",null,null,"GET",this.toJSON());return n.then(function(e,n,r){var i=t.parse(e,n,r);return t._finishFetch(i),t._handleSaveResult(!0).then(function(){return i.smsCode||delete t.attributes.smsCode,t})})._thenRunCallbacks(e,this)},save:function(t,n,s){var o,a;return i.isObject(t)||i.isNull(t)||i.isUndefined(t)?(o=t,a=n):(o={},o[t]=n,a=s),a=a||{},e.Object.prototype.save.call(this,o,r(a)).then(function(e){return e._handleSaveResult(!1).then(function(){return e})})._thenRunCallbacks(a)},follow:function(e,t){if(!this.id)throw"Please signin.";if(!e)throw"Invalid target user.";var n=i.isString(e)?e:e.id;if(!n)throw"Invalid target user.";var r="users/"+this.id+"/friendship/"+n,s=o(r,null,null,"POST",null,t&&t.sessionToken);return s._thenRunCallbacks(t)},unfollow:function(e,t){if(!this.id)throw"Please signin.";if(!e)throw"Invalid target user.";var n=i.isString(e)?e:e.id;if(!n)throw"Invalid target user.";var r="users/"+this.id+"/friendship/"+n,s=o(r,null,null,"DELETE",null,t&&t.sessionToken);return s._thenRunCallbacks(t)},followerQuery:function(){return e.User.followerQuery(this.id)},followeeQuery:function(){return e.User.followeeQuery(this.id)},fetch:function(){var t=null,n={};return 1===arguments.length?t=arguments[0]:2===arguments.length&&(n=arguments[0],t=arguments[1]),e.Object.prototype.fetch.call(this,n,{}).then(function(e){return e._handleSaveResult(!1).then(function(){return e})})._thenRunCallbacks(t)},updatePassword:function(e,t,n){var r="users/"+this.id+"/updatePassword",i={old_password:e,new_password:t},s=o(r,null,null,"PUT",i,n&&n.sessionToken);return s._thenRunCallbacks(n,this)},isCurrent:function(){return this._isCurrentUser},getUsername:function(){return this.get("username")},getMobilePhoneNumber:function(){return this.get("mobilePhoneNumber")},setMobilePhoneNumber:function(e,t){return this.set("mobilePhoneNumber",e,t)},setUsername:function(e,t){return this.set("username",e,t)},setPassword:function(e,t){return this.set("password",e,t)},getEmail:function(){return this.get("email")},setEmail:function(e,t){return this.set("email",e,t)},authenticated:function(){return!!this._sessionToken&&!e._config.disableCurrentUser&&e.User.current()&&e.User.current().id===this.id},getSessionToken:function(){return this._sessionToken}},{_currentUser:null,_currentUserMatchesDisk:!1,_CURRENT_USER_KEY:"currentUser",_authProviders:{},signUp:function(t,n,r,i){r=r||{},r.username=t,r.password=n;var s=e.Object._create("_User");return s.signUp(r,i)},logIn:function(t,n,r){var i=e.Object._create("_User");return i._finishFetch({username:t,password:n}),i.logIn(r)},become:function(t,n){n=n||{};var r=e.Object._create("_User");return o("users","me",null,"GET",{useMasterKey:n.useMasterKey,session_token:t}).then(function(e,t,n){var i=r.parse(e,t,n);return r._finishFetch(i),r._handleSaveResult(!0).then(function(){return r})})._thenRunCallbacks(n,r)},logInWithMobilePhoneSmsCode:function(t,n,r){var i=e.Object._create("_User");return i._finishFetch({mobilePhoneNumber:t,smsCode:n}),i.logIn(r)},signUpOrlogInWithMobilePhone:function(t,n,r,i){r=r||{},r.mobilePhoneNumber=t,r.smsCode=n;var s=e.Object._create("_User");return s.signUpOrlogInWithMobilePhone(r,i)},logInWithMobilePhone:function(t,n,r){var i=e.Object._create("_User");return i._finishFetch({mobilePhoneNumber:t,password:n}),i.logIn(r)},signUpOrlogInWithAuthData:function(t,n,r){return e.User._logInWith(n,{authData:t,success:function(e){r.success(e)},error:function(e){r.error(e)}})},logOut:function(){return e._config.disableCurrentUser?(console.warn("AV.User.current() was disabled in multi-user environment, call logOut() from user object instead https://leancloud.cn/docs/leanengine-node-sdk-upgrade-1.html"),e.Promise.as(null)):(null!==e.User._currentUser&&(e.User._currentUser._logOutWithAll(),e.User._currentUser._isCurrentUser=!1),e.User._currentUserMatchesDisk=!0,e.User._currentUser=null,e.localStorage.removeItemAsync(e._getAVPath(e.User._CURRENT_USER_KEY)))},followerQuery:function(t){if(!t||!i.isString(t))throw"Invalid user object id.";var n=new e.FriendShipQuery("_Follower");return n._friendshipTag="follower",n.equalTo("user",e.Object.createWithoutData("_User",t)),n},followeeQuery:function(t){if(!t||!i.isString(t))throw"Invalid user object id.";var n=new e.FriendShipQuery("_Followee");return n._friendshipTag="followee",n.equalTo("user",e.Object.createWithoutData("_User",t)),n},requestPasswordReset:function(e,t){var n={email:e},r=o("requestPasswordReset",null,null,"POST",n);return r._thenRunCallbacks(t)},requestEmailVerify:function(e,t){var n={email:e},r=o("requestEmailVerify",null,null,"POST",n);return r._thenRunCallbacks(t)},requestEmailVerfiy:function(e,t){var n={email:e},r=o("requestEmailVerify",null,null,"POST",n);return r._thenRunCallbacks(t)},requestMobilePhoneVerify:function(e,t){var n={mobilePhoneNumber:e},r=o("requestMobilePhoneVerify",null,null,"POST",n);return r._thenRunCallbacks(t)},requestPasswordResetBySmsCode:function(e,t){var n={mobilePhoneNumber:e},r=o("requestPasswordResetBySmsCode",null,null,"POST",n);return r._thenRunCallbacks(t)},resetPasswordBySmsCode:function(e,t,n){var r={password:t},i=o("resetPasswordBySmsCode",null,e,"PUT",r);return i._thenRunCallbacks(n)},verifyMobilePhone:function(e,t){var n=o("verifyMobilePhone",null,e,"POST",null);return n._thenRunCallbacks(t)},requestLoginSmsCode:function(e,t){var n={mobilePhoneNumber:e},r=o("requestLoginSmsCode",null,null,"POST",n);return r._thenRunCallbacks(t)},currentAsync:function(){return e._config.disableCurrentUser?(console.warn("AV.User.currentAsync() was disabled in multi-user environment, access user from request instead https://leancloud.cn/docs/leanengine-node-sdk-upgrade-1.html"),e.Promise.as(null)):e.User._currentUser?e.Promise.as(e.User._currentUser):e.User._currentUserMatchesDisk?e.Promise.as(e.User._currentUser):e.localStorage.getItemAsync(e._getAVPath(e.User._CURRENT_USER_KEY)).then(function(t){if(!t)return null;e.User._currentUserMatchesDisk=!0,e.User._currentUser=e.Object._create("_User"),e.User._currentUser._isCurrentUser=!0;var n=JSON.parse(t);return e.User._currentUser.id=n._id,delete n._id,e.User._currentUser._sessionToken=n._sessionToken,delete n._sessionToken,e.User._currentUser._finishFetch(n),e.User._currentUser._synchronizeAllAuthData(),e.User._currentUser._refreshCache(),e.User._currentUser._opSetQueue=[{}],e.User._currentUser})},current:function(){if(e._config.disableCurrentUser)return console.warn("AV.User.current() was disabled in multi-user environment, access user from request instead https://leancloud.cn/docs/leanengine-node-sdk-upgrade-1.html"),null;if(e.User._currentUser)return e.User._currentUser;if(e.User._currentUserMatchesDisk)return e.User._currentUser;e.User._currentUserMatchesDisk=!0;var t=e.localStorage.getItem(e._getAVPath(e.User._CURRENT_USER_KEY));if(!t)return null;e.User._currentUser=e.Object._create("_User"),e.User._currentUser._isCurrentUser=!0;var n=JSON.parse(t);return e.User._currentUser.id=n._id,delete n._id,e.User._currentUser._sessionToken=n._sessionToken,delete n._sessionToken,e.User._currentUser._finishFetch(n),e.User._currentUser._synchronizeAllAuthData(),e.User._currentUser._refreshCache(),e.User._currentUser._opSetQueue=[{}],e.User._currentUser},_saveCurrentUser:function(t){var n;return n=e.User._currentUser!==t?e.User.logOut():e.Promise.as(),n.then(function(){t._isCurrentUser=!0,e.User._currentUser=t;var n=t.toJSON();return n._id=t.id,n._sessionToken=t._sessionToken,e.localStorage.setItemAsync(e._getAVPath(e.User._CURRENT_USER_KEY),JSON.stringify(n)).then(function(){e.User._currentUserMatchesDisk=!0})})},_registerAuthenticationProvider:function(t){e.User._authProviders[t.getAuthType()]=t,!e._config.disableCurrentUser&&e.User.current()&&e.User.current()._synchronizeAuthData(t.getAuthType())},_logInWith:function(t,n){var r=e.Object._create("_User");return r._linkWith(t,n)}})}},{"./error":24,"./request":36,underscore:17}],43:[function(e,t,n){(function(n){var r=e("underscore"),i=e("./request"),s=function(e){return r.isNull(e)||r.isUndefined(e)},o=function(e){var t=e._config;r.extend(t,{region:"cn",APIServerURL:t.APIServerURL||"",isNode:!1,disableCurrentUser:!1,userAgent:null,applicationProduction:null}),"undefined"!=typeof n&&n.versions&&n.versions.node&&(t.isNode=!0);var o=function(){},a=function(e,t,n){var i;return i=t&&t.hasOwnProperty("constructor")?t.constructor:function(){e.apply(this,arguments)},r.extend(i,e),o.prototype=e.prototype,i.prototype=new o,t&&r.extend(i.prototype,t),n&&r.extend(i,n),i.prototype.constructor=i,i.__super__=e.prototype,i},u=function(t,n,r){e.applicationId&&t!==e.applicationId&&n!==e.applicationKey&&r!==e.masterKey&&console.warn("LeanCloud SDK is already initialized, please do not reinitialize it."),e.applicationId=t,e.applicationKey=n,e.masterKey=r,e._useMasterKey=!1};e.init=function(){var e=function(){console.warn("MasterKey should not be used in the browser. The permissions of MasterKey can be across all the server permissions, including the setting of ACL .")};switch(arguments.length){case 1:var n=arguments.length<=0?void 0:arguments[0];if("object"!==("undefined"==typeof n?"undefined":_typeof(n)))throw new Error("AV.init(): Parameter is not correct.");!t.isNode&&n.masterKey&&e(),u(n.appId,n.appKey,n.masterKey),i.setServerUrlByRegion(n.region),t.disableCurrentUser=n.disableCurrentUser;break;case 2:case 3:console.warn("Please use AV.init() to replace AV.initialize() ."),t.isNode||3!==arguments.length||e(),u.apply(void 0,arguments),i.setServerUrlByRegion("cn")}},t.isNode&&(e.Cloud=e.Cloud||{},e.Cloud.useMasterKey=function(){e._useMasterKey=!0}),e.initialize=e.init,e.setProduction=function(e){s(e)?t.applicationProduction=null:t.applicationProduction=e?1:0},e.useAVCloudCN=function(){i.setServerUrlByRegion("cn"),console.warn("Do not use AV.useAVCloudCN. Please use AV.init(), you can set the region of server.")},e.useAVCloudUS=function(){i.setServerUrlByRegion("us"),console.warn("Do not use AV.useAVCloudUS. Please use AV.init(), you can set the region of server.")},e._getAVPath=function(t){if(!e.applicationId)throw"You need to call AV.initialize before using AV.";if(t||(t=""),!r.isString(t))throw"Tried to get a localStorage path that wasn't a String.";return"/"===t[0]&&(t=t.substring(1)),"AV/"+e.applicationId+"/"+t},e._installationId=null,e._getInstallationId=function(){if(e._installationId)return e.Promise.as(e._installationId);var t=e._getAVPath("installationId");return e.localStorage.getItemAsync(t).then(function(n){if(e._installationId=n,e._installationId)return n;var r=function(){return Math.floor(65536*(1+Math.random())).toString(16).substring(1)};return e._installationId=r()+r()+"-"+r()+"-"+r()+"-"+r()+"-"+r()+r()+r(),e.localStorage.setItemAsync(t,e._installationId)})},e._parseDate=function(e){var t=new RegExp("^([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2})T([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(.([0-9]+))?Z$"),n=t.exec(e);if(!n)return null;var r=n[1]||0,i=(n[2]||1)-1,s=n[3]||0,o=n[4]||0,a=n[5]||0,u=n[6]||0,c=n[8]||0;return new Date(Date.UTC(r,i,s,o,a,u,c))},e._ajax=function(){console.warn("AV._ajax is deprecated, and will be removed in next release."),i.ajax.apply(i,arguments)},e._request=function(){console.warn("AV._request is deprecated, and will be removed in next release."),i.request.apply(i,arguments)},e._extend=function(e,t){var n=a(this,e,t);return n.extend=this.extend,n},e._getValue=function(e,t){return e&&e[t]?r.isFunction(e[t])?e[t]():e[t]:null},e._encode=function(t,n,i){if(t instanceof e.Object){if(i)throw"AV.Objects not allowed here";if(!n||r.include(n,t)||!t._hasData)return t._toPointer();if(!t.dirty())return n=n.concat(t),e._encode(t._toFullJSON(n),n,i);throw"Tried to save an object with a pointer to a new, unsaved object."}if(t instanceof e.ACL)return t.toJSON();if(r.isDate(t))return{__type:"Date",iso:t.toJSON()};if(t instanceof e.GeoPoint)return t.toJSON();if(r.isArray(t))return r.map(t,function(t){return e._encode(t,n,i)});if(r.isRegExp(t))return t.source;if(t instanceof e.Relation)return t.toJSON();if(t instanceof e.Op)return t.toJSON();if(t instanceof e.File){if(!t.url()&&!t.id)throw"Tried to save an object containing an unsaved file.";return{__type:"File",id:t.id,name:t.name(),url:t.url()}}if(r.isObject(t)){var s={};return e._objectEach(t,function(t,r){s[r]=e._encode(t,n,i)}),s}return t},e._decode=function(t,n){if(!r.isObject(n))return n;if(r.isArray(n))return e._arrayEach(n,function(t,r){n[r]=e._decode(r,t)}),n;if(n instanceof e.Object)return n;if(n instanceof e.File)return n;if(n instanceof e.Op)return n;if(n.__op)return e.Op._decode(n);var i;if("Pointer"===n.__type){i=n.className;var s=e.Object._create(i);return Object.keys(n).length>3?(delete n.__type,delete n.className,s._finishFetch(n,!0)):s._finishFetch({objectId:n.objectId},!1),s}if("Object"===n.__type){i=n.className,delete n.__type,delete n.className;var o=e.Object._create(i);return o._finishFetch(n,!0),o}if("Date"===n.__type)return e._parseDate(n.iso);if("GeoPoint"===n.__type)return new e.GeoPoint({latitude:n.latitude,longitude:n.longitude});if("ACL"===t)return n instanceof e.ACL?n:new e.ACL(n);if("Relation"===n.__type){var a=new e.Relation(null,t);return a.targetClassName=n.className,a}if("File"===n.__type){var u=new e.File(n.name);return u.attributes.metaData=n.metaData||{},
 u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[r]=e._decode(r,t)}),n},e._encodeObjectOrArray=function(t){var n=function(t){return t&&t._toFullJSON&&(t=t._toFullJSON([])),r.mapObject(t,function(t){return e._encode(t,[])})};return r.isArray(t)?t.map(function(e){return n(e)}):n(t)},e._arrayEach=r.each,e._traverse=function(t,n,i){if(t instanceof e.Object){if(i=i||[],r.indexOf(i,t)>=0)return;return i.push(t),e._traverse(t.attributes,n,i),n(t)}return t instanceof e.Relation||t instanceof e.File?n(t):r.isArray(t)?(r.each(t,function(r,s){var o=e._traverse(r,n,i);o&&(t[s]=o)}),n(t)):r.isObject(t)?(e._each(t,function(r,s){var o=e._traverse(r,n,i);o&&(t[s]=o)}),n(t)):n(t)},e._objectEach=e._each=function(e,t){r.isObject(e)?r.each(r.keys(e),function(n){t(e[n],n)}):r.each(e,t)}};t.exports={init:o,isNullOrUndefined:s}}).call(this,e("_process"))},{"./request":36,_process:2,underscore:17}],44:[function(e,t,n){t.exports="js1.0.0"},{}]},{},[19])(19)});;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .controller('NavbarController', NavbarController);
-
-    NavbarController.$inject = ['$state'];
-
-    function NavbarController ($state) {
-        var vm = this;
-        vm.isNavbarCollapsed = true;
-
-        vm.toggleNavbar = function() {
-            vm.isNavbarCollapsed = !vm.isNavbarCollapsed;
-        }
-
-        vm.collapseNavbar = function() {
-            vm.isNavbarCollapsed = true;
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .directive('activeLink', activeLink);
-
-    function activeLink() {
-        var directive = {
-            restrict: 'A',
-            link: linkFunc
-        };
-
-        return directive;
-
-        function linkFunc(scope, element, attrs) {
-            var clazz = attrs.activeLink;
-            var path = attrs.href;
-            path = path.substring(1); //hack because path does bot return including hashbang
-            scope.location = location;
-            scope.$watch('location.path()', function(newPath) {
-                if (path === newPath) {
-                    element.addClass(clazz);
-                } else {
-                    element.removeClass(clazz);
-                }
-            });
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .config(stateConfig);
-
-    stateConfig.$inject = ['$stateProvider'];
-
-    function stateConfig($stateProvider) {
-        $stateProvider
-            .state('error', {
-                parent: 'app',
-                url: '/error',
-                data: {
-                    authorities: [],
-                    pageTitle: 'Error page!'
-                },
-                views: {
-                    'content@': {
-                        templateUrl: 'app/layouts/error/error.html'
-                    }
-                }
-            })
-            .state('accessdenied', {
-                parent: 'app',
-                url: '/accessdenied',
-                data: {
-                    authorities: []
-                },
-                views: {
-                    'content@': {
-                        templateUrl: 'app/layouts/error/accessdenied.html'
-                    }
-                }
-            });
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .config(stateConfig);
-
-    stateConfig.$inject = ['$stateProvider'];
-
-    function stateConfig($stateProvider) {
-        $stateProvider.state('home', {
-            parent: 'app',
-            url: '/',
-            data: {
-                authorities: [],
-                pageTitle: '微步'
-            },
-            views: {
-                'content@': {
-                    templateUrl: 'app/home/home.html',
-                    controller: 'HomeController',
-                    controllerAs: 'vm'
-                }
-            }
-        });
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .controller('HomeController', HomeController);
-
-    HomeController.$inject = ['$scope'];
-
-    function HomeController ($scope ) {
-        var vm = this;
-        
-
-    }
-})();
-;
 (function() {
     'use strict';
 
@@ -1878,637 +1745,12 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
 
     angular
         .module('bolgApp')
-        .factory('LoginService', LoginService);
-
-    LoginService.$inject = ['$uibModal'];
-
-    function LoginService ($uibModal) {
-        var service = {
-            open: open
-        };
-
-        var modalInstance = null;
-        var resetModal = function () {
-            modalInstance = null;
-        };
-
-        return service;
-
-        function open () {
-            if (modalInstance !== null) return;
-            modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'app/components/login/login.html',
-                controller: 'LoginController',
-                controllerAs: 'vm'
-            });
-            modalInstance.result.then(
-                resetModal,
-                resetModal
-            );
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .controller('LoginController', LoginController);
-
-    LoginController.$inject = ['$rootScope', '$state', '$timeout', 'Auth', '$uibModalInstance'];
-
-    function LoginController ($rootScope, $state, $timeout, Auth, $uibModalInstance) {
-        var vm = this;
-
-        vm.authenticationError = false;
-        vm.cancel = cancel;
-        vm.credentials = {};
-        vm.login = login;
-        vm.password = null;
-        vm.register = register;
-        vm.rememberMe = true;
-        vm.requestResetPassword = requestResetPassword;
-        vm.username = null;
-
-        $timeout(function (){angular.element('#username').focus();});
-
-        function cancel () {
-            vm.credentials = {
-                username: null,
-                password: null,
-                rememberMe: true
-            };
-            vm.authenticationError = false;
-            $uibModalInstance.dismiss('cancel');
-        }
-
-        function login (event) {
-            event.preventDefault();
-            Auth.login({
-                username: vm.username,
-                password: vm.password,
-                rememberMe: vm.rememberMe
-            }).then(function () {
-                vm.authenticationError = false;
-                $uibModalInstance.close();
-                if ($state.current.name === 'register' || $state.current.name === 'activate' ||
-                    $state.current.name === 'finishReset' || $state.current.name === 'requestReset') {
-                    $state.go('home');
-                }
-
-                $rootScope.$broadcast('authenticationSuccess');
-
-                // previousState was set in the authExpiredInterceptor before being redirected to login modal.
-                // since login is succesful, go to stored previousState and clear previousState
-                if (Auth.getPreviousState()) {
-                    var previousState = Auth.getPreviousState();
-                    Auth.resetPreviousState();
-                    $state.go(previousState.name, previousState.params);
-                }
-            }).catch(function () {
-                vm.authenticationError = true;
-            });
-        }
-
-        function register () {
-            $uibModalInstance.dismiss('cancel');
-            $state.go('register');
-        }
-
-        function requestResetPassword () {
-            $uibModalInstance.dismiss('cancel');
-            $state.go('requestReset');
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .directive('showValidation', showValidation);
-
-    function showValidation () {
-        var directive = {
-            restrict: 'A',
-            require: 'form',
-            link: linkFunc
-        };
-
-        return directive;
-
-        function linkFunc (scope, element) {
-            element.find('.form-group').each(function() {
-                var $formGroup = angular.element(this);
-                var $inputs = $formGroup.find('input[ng-model],textarea[ng-model],select[ng-model]');
-
-                if ($inputs.length > 0) {
-                    $inputs.each(function() {
-                        var $input = angular.element(this);
-                        scope.$watch(function() {
-                            return $input.hasClass('ng-invalid') && $input.hasClass('ng-dirty');
-                        }, function(isInvalid) {
-                            $formGroup.toggleClass('has-error', isInvalid);
-                        });
-                    });
-                }
-            });
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .constant('paginationConstants', {
-            'itemsPerPage': 20
-        });
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .directive('minbytes', minbytes);
-
-    function minbytes () {
-        var directive = {
-            restrict: 'A',
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return directive;
-
-        function linkFunc (scope, element, attrs, ngModel) {
-            if (!ngModel) {
-                return;
-            }
-
-            ngModel.$validators.minbytes = function (modelValue) {
-                return ngModel.$isEmpty(modelValue) || numberOfBytes(modelValue) >= attrs.minbytes;
-            };
-        }
-
-        function endsWith(suffix, str) {
-            return str.indexOf(suffix, str.length - suffix.length) !== -1;
-        }
-
-        function paddingSize(base64String) {
-            if (endsWith('==', base64String)) {
-                return 2;
-            }
-            if (endsWith('=', base64String)) {
-                return 1;
-            }
-            return 0;
-        }
-
-        function numberOfBytes(base64String) {
-            return base64String.length / 4 * 3 - paddingSize(base64String);
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .directive('maxbytes', maxbytes);
-
-    function maxbytes () {
-        var directive = {
-            restrict: 'A',
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return directive;
-
-        function linkFunc (scope, element, attrs, ngModel) {
-            if (!ngModel) {
-                return;
-            }
-
-            ngModel.$validators.maxbytes = function (modelValue) {
-                return ngModel.$isEmpty(modelValue) || numberOfBytes(modelValue) <= attrs.maxbytes;
-            };
-        }
-
-        function endsWith(suffix, str) {
-            return str.indexOf(suffix, str.length - suffix.length) !== -1;
-        }
-
-        function paddingSize(base64String) {
-            if (endsWith('==', base64String)) {
-                return 2;
-            }
-            if (endsWith('=', base64String)) {
-                return 1;
-            }
-            return 0;
-        }
-
-        function numberOfBytes(base64String) {
-            return base64String.length / 4 * 3 - paddingSize(base64String);
-        }
-    }
-
-})();
-;
-(function() {
-    'use strict';
-
-    var jhiAlertError = {
-        template: '<div class="alerts" ng-cloak="">' +
-                        '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
-                            '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre>{{ alert.msg }}</pre></uib-alert>' +
-                        '</div>' +
-                  '</div>',
-        controller: jhiAlertErrorController
-    };
-
-    angular
-        .module('bolgApp')
-        .component('jhiAlertError', jhiAlertError);
-
-    jhiAlertErrorController.$inject = ['$scope', 'AlertService', '$rootScope'];
-
-    function jhiAlertErrorController ($scope, AlertService, $rootScope) {
-        var vm = this;
-
-        vm.alerts = [];
-
-        function addErrorAlert (message, key, data) {
-            vm.alerts.push(
-                AlertService.add(
-                    {
-                        type: 'danger',
-                        msg: message,
-                        timeout: 5000,
-                        toast: AlertService.isToast(),
-                        scoped: true
-                    },
-                    vm.alerts
-                )
-            );
-        }
-
-        var cleanHttpErrorListener = $rootScope.$on('bolgApp.httpError', function (event, httpResponse) {
-            var i;
-            event.stopPropagation();
-            switch (httpResponse.status) {
-            // connection refused, server not reachable
-            case 0:
-                addErrorAlert('Server not reachable','error.server.not.reachable');
-                break;
-
-            case 400:
-                var errorHeader = httpResponse.headers('X-bolgApp-error');
-                var entityKey = httpResponse.headers('X-bolgApp-params');
-                if (errorHeader) {
-                    var entityName = entityKey;
-                    addErrorAlert(errorHeader, errorHeader, {entityName: entityName});
-                } else if (httpResponse.data && httpResponse.data.fieldErrors) {
-                    for (i = 0; i < httpResponse.data.fieldErrors.length; i++) {
-                        var fieldError = httpResponse.data.fieldErrors[i];
-                        // convert 'something[14].other[4].id' to 'something[].other[].id' so translations can be written to it
-                        var convertedField = fieldError.field.replace(/\[\d*\]/g, '[]');
-                        var fieldName = convertedField.charAt(0).toUpperCase() + convertedField.slice(1);
-                        addErrorAlert('Field ' + fieldName + ' cannot be empty', 'error.' + fieldError.message, {fieldName: fieldName});
-                    }
-                } else if (httpResponse.data && httpResponse.data.message) {
-                    addErrorAlert(httpResponse.data.message, httpResponse.data.message, httpResponse.data);
-                } else {
-                    addErrorAlert(httpResponse.data);
-                }
-                break;
-
-            case 404:
-                addErrorAlert('Not found','error.url.not.found');
-                break;
-
-            default:
-                if (httpResponse.data && httpResponse.data.message) {
-                    addErrorAlert(httpResponse.data.message);
-                } else {
-                    addErrorAlert(angular.toJson(httpResponse));
-                }
-            }
-        });
-
-        $scope.$on('$destroy', function () {
-            if(angular.isDefined(cleanHttpErrorListener) && cleanHttpErrorListener !== null){
-                cleanHttpErrorListener();
-                vm.alerts = [];
-            }
-        });
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .provider('AlertService', AlertService);
-
-    function AlertService () {
-        this.toast = false;
-        /*jshint validthis: true */
-        this.$get = getService;
-
-        this.showAsToast = function(isToast) {
-            this.toast = isToast;
-        };
-
-        getService.$inject = ['$timeout', '$sce'];
-
-        function getService ($timeout, $sce) {
-            var toast = this.toast,
-                alertId = 0, // unique id for each alert. Starts from 0.
-                alerts = [],
-                timeout = 5000; // default timeout
-
-            return {
-                factory: factory,
-                isToast: isToast,
-                add: addAlert,
-                closeAlert: closeAlert,
-                closeAlertByIndex: closeAlertByIndex,
-                clear: clear,
-                get: get,
-                success: success,
-                error: error,
-                info: info,
-                warning : warning
-            };
-
-            function isToast() {
-                return toast;
-            }
-
-            function clear() {
-                alerts = [];
-            }
-
-            function get() {
-                return alerts;
-            }
-
-            function success(msg, params, position) {
-                return this.add({
-                    type: 'success',
-                    msg: msg,
-                    params: params,
-                    timeout: timeout,
-                    toast: toast,
-                    position: position
-                });
-            }
-
-            function error(msg, params, position) {
-                return this.add({
-                    type: 'danger',
-                    msg: msg,
-                    params: params,
-                    timeout: timeout,
-                    toast: toast,
-                    position: position
-                });
-            }
-
-            function warning(msg, params, position) {
-                return this.add({
-                    type: 'warning',
-                    msg: msg,
-                    params: params,
-                    timeout: timeout,
-                    toast: toast,
-                    position: position
-                });
-            }
-
-            function info(msg, params, position) {
-                return this.add({
-                    type: 'info',
-                    msg: msg,
-                    params: params,
-                    timeout: timeout,
-                    toast: toast,
-                    position: position
-                });
-            }
-
-            function factory(alertOptions) {
-                var alert = {
-                    type: alertOptions.type,
-                    msg: $sce.trustAsHtml(alertOptions.msg),
-                    id: alertOptions.alertId,
-                    timeout: alertOptions.timeout,
-                    toast: alertOptions.toast,
-                    position: alertOptions.position ? alertOptions.position : 'top right',
-                    scoped: alertOptions.scoped,
-                    close: function (alerts) {
-                        return closeAlert(this.id, alerts);
-                    }
-                };
-                if(!alert.scoped) {
-                    alerts.push(alert);
-                }
-                return alert;
-            }
-
-            function addAlert(alertOptions, extAlerts) {
-                alertOptions.alertId = alertId++;
-                var that = this;
-                var alert = this.factory(alertOptions);
-                if (alertOptions.timeout && alertOptions.timeout > 0) {
-                    $timeout(function () {
-                        that.closeAlert(alertOptions.alertId, extAlerts);
-                    }, alertOptions.timeout);
-                }
-                return alert;
-            }
-
-            function closeAlert(id, extAlerts) {
-                var thisAlerts = extAlerts ? extAlerts : alerts;
-                return closeAlertByIndex(thisAlerts.map(function(e) { return e.id; }).indexOf(id), thisAlerts);
-            }
-
-            function closeAlertByIndex(index, thisAlerts) {
-                return thisAlerts.splice(index, 1);
-            }
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    var jhiAlert = {
-        template: '<div class="alerts" ng-cloak="">' +
-                        '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
-                            '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre ng-bind-html="alert.msg"></pre></uib-alert>' +
-                        '</div>' +
-                  '</div>',
-        controller: jhiAlertController
-    };
-
-    angular
-        .module('bolgApp')
-        .component('jhiAlert', jhiAlert);
-
-    jhiAlertController.$inject = ['$scope', 'AlertService'];
-
-    function jhiAlertController($scope, AlertService) {
-        var vm = this;
-
-        vm.alerts = AlertService.get();
-        $scope.$on('$destroy', function () {
-            vm.alerts = [];
-        });
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .factory('notificationInterceptor', notificationInterceptor);
-
-    notificationInterceptor.$inject = ['$q', 'AlertService'];
-
-    function notificationInterceptor ($q, AlertService) {
-        var service = {
-            response: response
-        };
-
-        return service;
-
-        function response (response) {
-            var alertKey = response.headers('X-bolgApp-alert');
-            if (angular.isString(alertKey)) {
-                AlertService.success(alertKey, { param : response.headers('X-bolgApp-params')});
-            }
-            return response;
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .factory('errorHandlerInterceptor', errorHandlerInterceptor);
-
-    errorHandlerInterceptor.$inject = ['$q', '$rootScope'];
-
-    function errorHandlerInterceptor ($q, $rootScope) {
-        var service = {
-            responseError: responseError
-        };
-
-        return service;
-
-        function responseError (response) {
-            if (!(response.status === 401 && (response.data === '' || (response.data.path && response.data.path.indexOf('/api/account') === 0 )))) {
-                $rootScope.$emit('bolgApp.httpError', response);
-            }
-            return $q.reject(response);
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
-        .factory('authExpiredInterceptor', authExpiredInterceptor);
-
-    
-    authExpiredInterceptor.$inject = ['$rootScope', '$q', '$injector', '$document'];
-
-    function authExpiredInterceptor($rootScope, $q, $injector, $document) {
-        var service = {
-            responseError: responseError
-        };
-
-        return service;
-
-        function responseError(response) {
-            // If we have an unauthorized request we redirect to the login page
-            // Don't do this check on the account API to avoid infinite loop
-            if (response.status === 401 && angular.isDefined(response.data.path) && response.data.path.indexOf('/api/account') === -1) {
-                var Auth = $injector.get('Auth');
-                var to = $rootScope.toState;
-                var params = $rootScope.toStateParams;
-                Auth.logout();
-                if (to.name !== 'accessdenied') {
-                    Auth.storePreviousState(to.name, params);
-                }
-                var LoginService = $injector.get('LoginService');
-                LoginService.open();
-            } else if (response.status === 403 && response.config.method !== 'GET' && getCSRF() === '') {
-                // If the CSRF token expired, then try to get a new CSRF token and retry the old request
-                var $http = $injector.get('$http');
-                return $http.get('/').finally(function() { return afterCSRFRenewed(response); });
-            }
-            return $q.reject(response);
-        }
-
-        function getCSRF() {
-            var doc = $document[0];
-            if (doc) {
-                var name = 'CSRF-TOKEN=';
-                var ca = doc.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) === ' ') {c = c.substring(1);}
-
-                    if (c.indexOf(name) !== -1) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-            }
-            return '';
-        }
-
-        function afterCSRFRenewed(oldResponse) {
-            if (getCSRF() !== '') {
-                // retry the old request after the new CSRF-TOKEN is obtained
-                var $http = $injector.get('$http');
-                return $http(oldResponse.config);
-            } else {
-                // unlikely get here but reject with the old response any way and avoid infinite loop
-                return $q.reject(oldResponse);
-            }
-        }
-    }
-})();
-;
-(function() {
-    'use strict';
-
-    angular
-        .module('bolgApp')
         .factory('stateHandler', stateHandler);
 
-    stateHandler.$inject = ['$rootScope', '$state', '$sessionStorage',  '$window',
-        'Auth', 'Principal', 'VERSION'];
+    stateHandler.$inject = ['$rootScope', '$state', '$window', 'Principal', 'VERSION'];
 
-    function stateHandler($rootScope, $state, $sessionStorage,  $window,
-        Auth, Principal, VERSION) {
+    function stateHandler($rootScope, $state,  $window,
+         Principal, VERSION) {
         return {
             initialize: initialize
         };
@@ -2526,11 +1768,6 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
                     event.preventDefault();
                     $window.open(toState.url, '_self');
                 }
-
-                if (Principal.isIdentityResolved()) {
-                    Auth.authorize();
-                }
-
                 
             });
 
@@ -2561,6 +1798,60 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
 
     angular
         .module('bolgApp')
+        .controller('NavbarController', NavbarController);
+
+    NavbarController.$inject = ['$state'];
+
+    function NavbarController ($state) {
+        var vm = this;
+        vm.isNavbarCollapsed = true;
+
+        vm.toggleNavbar = function() {
+            vm.isNavbarCollapsed = !vm.isNavbarCollapsed;
+        }
+
+        vm.collapseNavbar = function() {
+            vm.isNavbarCollapsed = true;
+        }
+    }
+})();
+;
+(function() {
+    'use strict';
+
+    angular
+        .module('bolgApp')
+        .directive('activeLink', activeLink);
+
+    function activeLink() {
+        var directive = {
+            restrict: 'A',
+            link: linkFunc
+        };
+
+        return directive;
+
+        function linkFunc(scope, element, attrs) {
+            var clazz = attrs.activeLink;
+            var path = attrs.href;
+            path = path.substring(1); //hack because path does bot return including hashbang
+            scope.location = location;
+            scope.$watch('location.path()', function(newPath) {
+                if (path === newPath) {
+                    element.addClass(clazz);
+                } else {
+                    element.removeClass(clazz);
+                }
+            });
+        }
+    }
+})();
+;
+(function() {
+    'use strict';
+
+    angular
+        .module('bolgApp')
         .config(httpConfig);
 
     httpConfig.$inject = ['$urlRouterProvider', '$httpProvider', 'httpRequestInterceptorCacheBusterProvider', '$urlMatcherFactoryProvider'];
@@ -2576,9 +1867,9 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
 
         $urlRouterProvider.otherwise('/');
 
-        $httpProvider.interceptors.push('errorHandlerInterceptor');
-        $httpProvider.interceptors.push('authExpiredInterceptor');
-        $httpProvider.interceptors.push('notificationInterceptor');
+        // $httpProvider.interceptors.push('errorHandlerInterceptor');
+        // $httpProvider.interceptors.push('authExpiredInterceptor');
+        // $httpProvider.interceptors.push('notificationInterceptor');
         // jhipster-needle-angularjs-add-interceptor JHipster will add new application http interceptor here
 
         $urlMatcherFactoryProvider.type('boolean', {
@@ -2602,21 +1893,58 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
     stateConfig.$inject = ['$stateProvider'];
 
     function stateConfig($stateProvider) {
+        $stateProvider.state('home', {
+            parent: 'app',
+            url: '/',
+            data: {
+                authorities: [],
+                pageTitle: '微步'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/common/home/home.html',
+                    controller: 'HomeController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
+    }
+})();
+;
+(function() {
+    'use strict';
+
+    angular
+        .module('bolgApp')
+        .controller('HomeController', HomeController);
+
+    HomeController.$inject = ['$scope'];
+
+    function HomeController ($scope ) {
+        var vm = this;
+        
+
+    }
+})();
+;
+(function() {
+    'use strict';
+
+    angular
+        .module('bolgApp')
+        .config(stateConfig);
+
+    stateConfig.$inject = ['$stateProvider'];
+
+    function stateConfig($stateProvider) {
         $stateProvider.state('app', {
             abstract: true,
             views: {
                 'navbar@': {
-                    templateUrl: 'app/layouts/navbar/navbar.html',
+                    templateUrl: 'app/common/navbar/navbar.html',
                     controller: 'NavbarController',
                     controllerAs: 'vm'
                 }
-            },
-            resolve: {
-                authorize: ['Auth',
-                    function (Auth) {
-                        return Auth.authorize();
-                    }
-                ]
             }
         });
     }
@@ -2631,12 +1959,9 @@ u.attributes.url=n.url,u.id=n.objectId,u}return e._objectEach(n,function(t,r){n[
         .constant('DEBUG_INFO_ENABLED', false)
 ;
 })();
-;(function(){angular.module('bolgApp').run(['$templateCache', function($templateCache) {$templateCache.put('app/home/home.html','<div ng-cloak><div class="row"><div class="col-md-4 wb-people"><!-- <span class="hipster img-responsive img-rounded"></span> --> <i class="iconfont wb-people-body">&#xe602;</i> <i class="iconfont wb-people-head">&#xe601;</i></div><div class="col-md-8"><h1>Welcome to weibu!</h1><p class="lead">This is my bolg</p><div ng-switch="vm.isDay"><div class="alert alert-success" ng-switch-when="true">day</div><div class="alert alert-success" ng-switch-when="false">night</div><div class="alert alert-success" ng-switch-when="true">You are logged in as user "{{vm.account.login}}".</div><div class="alert alert-warning" ng-switch-when="false">If you want to <a class="alert-link" href="" ng-click="vm.login()">sign in</a>, you can try the default accounts:<br>- Administrator (login="admin" and password="admin")<br>- User (login="user" and password="user").</div><div class="alert alert-warning" ng-switch-when="false">You don\'t have an account yet? <a class="alert-link" ui-sref="register">Register a new account</a></div></div></div></div></div>');
-$templateCache.put('app/show/demo1.html','<div><div class="row"><div class="col-md-12"><div ng-switch="vm.isDay"><div class="alert alert-success" ng-switch-when="true"><div class="container demo-1"><div class="content"><div id="large-header" class="large-header"><canvas id="demo-canvas"></canvas><h1 class="main-title">\u5FAE\u6B65</h1></div></div></div></div><div class="alert alert-success" ng-switch-when="false">night</div></div></div></div></div>');
-$templateCache.put('app/tools/fingerprint.html','<html><head><meta charset="utf-8"><title>\u6307\u7EB9\u6570\u636E</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Access-Control-Allow-Origin" content="*"><style type="text/css">#content {margin: 50px;}\r\n            .bold{font-weight: bold;}</style></head><body><div id="content"></div><div id="info"></div><!-- <script src="fingerPrintJs/frms-fingerprint-origin.js"></script> --><!-- <script src="fingerPrintJs/frms-finger-origin-min.js"></script> --><script src="https://service.udcredit.com:10000/sdk/device-fingerprint/web?partnerCode=1000000000TEST&appKey=9cWbNgUqiL91raHPVmrP"></script><script type="text/JavaScript">(function() {\r\n                var _UDCREDIT_TRACEID = "";\r\n                var _UDCREDIT_DEVICEID = "";\r\n                var tmpCount = 10;//\u5B9A\u65F6\u5668 0.5\u79D2\u542F\u52A8\u4E00\u6B21\uFF0C\u505A\u591A\u5C1D\u8BD510\u6B21\r\n      \r\n        \r\n                var onloadFunction = function(){\r\n                    if(document.cookie){\r\n                        fillData(document.cookie);\r\n                        var str = "UDCREDIT_TRACEID : " + _UDCREDIT_TRACEID + "</br>" +\r\n                            "UDCREDIT_DEVICEID : "+_UDCREDIT_DEVICEID\r\n          var info ="\u6B63\u5728\u83B7\u53D6\u8BBE\u5907\u6307\u7EB9";\r\n          if(_UDCREDIT_TRACEID!=""&&_UDCREDIT_DEVICEID!=""){\r\n            document.getElementById("content").innerHTML=str;\r\n            if(tmpCount-- >0){\r\n             setTimeout(getInfo,100);\r\n          } \r\n          }else{\r\n             document.getElementById("content").innerHTML=info;\r\n             setTimeout(onloadFunction,100);\r\n            }\r\n                       \r\n                    }else{\r\n            setTimeout(onloadFunction,100);\r\n          }\r\n                }\r\n                window.onload =onloadFunction;\r\n\r\n                var fillData = function (str){\r\n                    var _list  = (str + "").split(" ").join("").split(";");\r\n                    for(var i=0;i<_list.length;i++){\r\n                        var _listSplit=_list[i].split("=");\r\n                        if(_listSplit.length==2){\r\n                            if(_listSplit[0]=="UDCREDIT_TRACEID"){\r\n                                _UDCREDIT_TRACEID = _listSplit[1];\r\n                            }else if(_listSplit[0]=="UDCREDIT_DEVICEID"){\r\n                                _UDCREDIT_DEVICEID = _listSplit[1];\r\n                            }\r\n                        } \r\n                    }\r\n                    return false;\r\n                }\r\n                var getInfo = function (){\r\n                    var _URL = "https://service.udcredit.com:10000/api/device-fingerprint?platform=2&traceid="+_UDCREDIT_TRACEID;\r\n                    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance\r\n                  var isIE = getBrowserVersion();\r\n                    if(isIE=="IE7"||isIE=="IE8"){\r\n            xmlhttp = new ActiveXObject("microsoft.XMLHTTP");\r\n          }\r\n                    xmlhttp.onreadystatechange=state_Change;\r\n                    xmlhttp.open("GET",_URL,true);\r\n                    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");\r\n                    xmlhttp.send(null);\r\n                    function state_Change(){                       \r\n                        if(xmlhttp.readyState==4){\r\n                            if (xmlhttp.status==200){\r\n                                if(xmlhttp.responseText){\r\n                                    var json =JSON.parse(xmlhttp.responseText);\r\n                                    document.getElementById("content").innerHTML = \r\n                                        document.getElementById("content").innerHTML+"</br>"+\r\n                                        "</br>evercookie : "+json.fp_evercookie_code+\r\n                                        "</br>canvas : "+json.fp_canvas_code+\r\n                                        "</br></br>info : "+JSON.stringify(json)\r\n                                }\r\n                                \r\n                            }else if(xmlhttp.status==401){\r\n                                \r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n                var getBrowserVersion = function(){     \r\n            var userAgent = navigator.userAgent.toLowerCase();   \r\n            if(userAgent.match(/msie ([\\d.]+)/)!=null){\r\n              uaMatch = userAgent.match(/msie ([\\d.]+)/);               \r\n              return \'IE\'+parseInt(uaMatch[1]);        \r\n            }else if(userAgent.match(/(trident)\\/([\\w.]+)/)){\r\n                uaMatch = userAgent.match(/trident\\/([\\w.]+)/);\r\n                switch (uaMatch[1]){\r\n              case "4.0": return "IE8" ;break; \r\n              case "5.0": return "IE9" ;break; \r\n              case "6.0": return "IE10";break;\r\n              case "7.0": return "IE11";break;                                \r\n              default:return "undefined" ;            \r\n                        }  \r\n                  }       \r\n            return "undefined";  \r\n          }\r\n            })()</script></body></html>');
-$templateCache.put('app/components/login/login.html','<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;</button><h4 class="modal-title">Sign in</h4></div><div class="modal-body"><div class="row"><div class="col-md-4 col-md-offset-4"><h1>Sign in</h1></div><div class="col-md-8 col-md-offset-2"><div class="alert alert-danger" ng-show="vm.authenticationError"><strong>Failed to sign in!</strong> Please check your credentials and try again.</div></div><div class="col-md-6"><form class="form" role="form" ng-submit="vm.login($event)"><div class="form-group"><label for="username">Login</label><input type="text" class="form-control" id="username" placeholder="Your username" ng-model="vm.username"></div><div class="form-group"><label for="password">Password</label><input type="password" class="form-control" id="password" placeholder="Your password" ng-model="vm.password"></div><div class="form-group"><label for="rememberMe"><input type="checkbox" id="rememberMe" ng-model="vm.rememberMe" checked="checked"> <span>Remember me</span></label></div><button type="submit" class="btn btn-primary">Sign in</button></form><p></p><div class="alert alert-warning"><a class="alert-link" href="" ng-click="vm.requestResetPassword()">Did you forget your password?</a></div><div class="alert alert-warning">You don\'t have an account yet? <a class="alert-link" href="" ng-click="vm.register()">Register a new account</a></div></div><div class="col-md-6"><br><jh-social ng-provider="google"></jh-social><jh-social ng-provider="facebook"></jh-social><jh-social ng-provider="twitter"></jh-social><!-- jhipster-needle-add-social-button --></div></div></div>');
-$templateCache.put('app/layouts/error/accessdenied.html','<div ng-cloak><div class="row"><div class="col-md-4"><span class="hipster img-responsive img-rounded"></span></div><div class="col-md-8"><h1>Error Page!</h1><div class="alert alert-danger">You are not authorized to access the page.</div></div></div></div>');
-$templateCache.put('app/layouts/error/error.html','<div ng-cloak><div class="row"><div class="col-md-4"><span class="hipster img-responsive img-rounded"></span></div><div class="col-md-8"><h1>Error Page!</h1><div ng-show="errorMessage"><div class="alert alert-danger">{{errorMessage}}</div></div></div></div></div>');
-$templateCache.put('app/layouts/navbar/navbar.html','<nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" ng-click="vm.toggleNavbar()"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand wb-navbar-title wb-span-spacing" href="#/" ng-click="vm.collapseNavbar()"><!-- <img class="logo-img" src="content/images/logo-jhipster-a30deb26b4.png"/> --> <i class="iconfont">&#xe600;</i> <span class="">\u5FAE\u6B65</span> <span style="display: none" class="navbar-version">v{{VERSION}}</span></a></div><div class="navbar-collapse" uib-collapse="vm.isNavbarCollapsed" ng-switch="vm.isAuthenticated()"><ul class="nav navbar-nav navbar-right"><li ui-sref-active="active"><a ui-sref="home" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-home"></span> <span class="hidden-sm">\u4E3B\u9875</span></a></li><!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here --><li ng-class="{active: vm.$state.includes(\'account\')}" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="account-menu"><span><span class="glyphicon glyphicon-wrench"></span> <span class="hidden-sm">\u5C0F\u5DE5\u5177 </span><b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><li ui-sref-active="active"><a ui-sref="baiduyun" ng-click="vm.collapseNavbar()"><span>\u767E\u5EA6\u4E91</span>&nbsp;</a></li><li ui-sref-active="active"><a ui-sref="weather" ng-click="vm.collapseNavbar()"><span class="glyphicon"></span>&nbsp; <span>\u5929\u6C14</span></a></li><li ui-sref-active="active" ng-switch-when="true"><a ui-sref="sessions" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-cloud"></span>&nbsp; <span>Sessions</span></a></li><li ui-sref-active="active" ng-switch-when="true"><a href="" ng-click="vm.logout()" id="logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp; <span>Sign out</span></a></li><li ui-sref-active="active" ng-switch-when="false"><a href="" ng-click="vm.login()" id="login"><span class="glyphicon glyphicon-log-in"></span>&nbsp; <span>Sign in</span></a></li><li ui-sref-active="active" ng-switch-when="false"><a ui-sref="register" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp; <span>Register</span></a></li></ul></li><li ng-class="{active: vm.$state.includes(\'admin\')}" has-authority="ROLE_ADMIN" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="admin-menu"><span><span class="glyphicon glyphicon-tower"></span> <span class="hidden-sm">Administration</span> <b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><li ui-sref-active="active"><a ui-sref="user-management" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-user"></span>&nbsp; <span>User management</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-metrics" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; <span>Metrics</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-health" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-heart"></span>&nbsp; <span>Health</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-configuration" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; <span>Configuration</span></a></li><li ui-sref-active="active"><a ui-sref="audits" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-bell"></span>&nbsp; <span>Audits</span></a></li><li ui-sref-active="active"><a ui-sref="logs" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-tasks"></span>&nbsp; <span>Logs</span></a></li><li ng-hide="vm.inProduction || vm.swaggerDisabled" ui-sref-active="active"><a ui-sref="docs" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-book"></span>&nbsp; <span>API</span></a></li><!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here --></ul></li><li ng-class="{active: vm.$state.includes(\'entity\')}" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="entity-menu"><span><span class="glyphicon glyphicon-flash"></span> <span class="hidden-sm">\u524D\u7AEF\u901F\u62A5 </span><b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here --><li ui-sref-active="active"><a href="http://old.75team.com/weekly/issue1.html" target="_blank" ng-click="vm.collapseNavbar()"><span class="glyphicon"></span>&nbsp; <span>\u5468\u62A5</span></a></li><li ui-sref-active="active"><a href="http://www.kancloud.cn/jsfront/month/82796" target="_blank" ng-click="vm.collapseNavbar()"><span class="glyphicon"></span>&nbsp; <span>\u6708\u62A5</span></a></li></ul></li></ul></div></div></nav>');
-$templateCache.put('app/tools/baiduyun/baiduyun.html','<div><div class="row"><div class="col-md-12"><button ng-click="vm.getBaiduyun()">\u5237\u65B0</button><div id="info">{{vm.info}}</div></div></div></div>');
-$templateCache.put('app/tools/weather/weather.html','<div><div class="row"><div class="col-md-12"><div id="info"></div><div id="map" style="height:600px"></div></div></div></div>');}]);})();
+;(function(){angular.module('bolgApp').run(['$templateCache', function($templateCache) {$templateCache.put('app/tools/fingerprint.html','<html><head><meta charset="utf-8"><title>\u6307\u7EB9\u6570\u636E</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Access-Control-Allow-Origin" content="*"><style type="text/css">#content {margin: 50px;}\r\n            .bold{font-weight: bold;}</style></head><body><div id="content"></div><div id="info"></div><!-- <script src="fingerPrintJs/frms-fingerprint-origin.js"></script> --><!-- <script src="fingerPrintJs/frms-finger-origin-min.js"></script> --><script src="https://service.udcredit.com:10000/sdk/device-fingerprint/web?partnerCode=1000000000TEST&appKey=9cWbNgUqiL91raHPVmrP"></script><script type="text/JavaScript">(function() {\r\n                var _UDCREDIT_TRACEID = "";\r\n                var _UDCREDIT_DEVICEID = "";\r\n                var tmpCount = 10;//\u5B9A\u65F6\u5668 0.5\u79D2\u542F\u52A8\u4E00\u6B21\uFF0C\u505A\u591A\u5C1D\u8BD510\u6B21\r\n      \r\n        \r\n                var onloadFunction = function(){\r\n                    if(document.cookie){\r\n                        fillData(document.cookie);\r\n                        var str = "UDCREDIT_TRACEID : " + _UDCREDIT_TRACEID + "</br>" +\r\n                            "UDCREDIT_DEVICEID : "+_UDCREDIT_DEVICEID\r\n          var info ="\u6B63\u5728\u83B7\u53D6\u8BBE\u5907\u6307\u7EB9";\r\n          if(_UDCREDIT_TRACEID!=""&&_UDCREDIT_DEVICEID!=""){\r\n            document.getElementById("content").innerHTML=str;\r\n            if(tmpCount-- >0){\r\n             setTimeout(getInfo,100);\r\n          } \r\n          }else{\r\n             document.getElementById("content").innerHTML=info;\r\n             setTimeout(onloadFunction,100);\r\n            }\r\n                       \r\n                    }else{\r\n            setTimeout(onloadFunction,100);\r\n          }\r\n                }\r\n                window.onload =onloadFunction;\r\n\r\n                var fillData = function (str){\r\n                    var _list  = (str + "").split(" ").join("").split(";");\r\n                    for(var i=0;i<_list.length;i++){\r\n                        var _listSplit=_list[i].split("=");\r\n                        if(_listSplit.length==2){\r\n                            if(_listSplit[0]=="UDCREDIT_TRACEID"){\r\n                                _UDCREDIT_TRACEID = _listSplit[1];\r\n                            }else if(_listSplit[0]=="UDCREDIT_DEVICEID"){\r\n                                _UDCREDIT_DEVICEID = _listSplit[1];\r\n                            }\r\n                        } \r\n                    }\r\n                    return false;\r\n                }\r\n                var getInfo = function (){\r\n                    var _URL = "https://service.udcredit.com:10000/api/device-fingerprint?platform=2&traceid="+_UDCREDIT_TRACEID;\r\n                    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance\r\n                  var isIE = getBrowserVersion();\r\n                    if(isIE=="IE7"||isIE=="IE8"){\r\n            xmlhttp = new ActiveXObject("microsoft.XMLHTTP");\r\n          }\r\n                    xmlhttp.onreadystatechange=state_Change;\r\n                    xmlhttp.open("GET",_URL,true);\r\n                    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");\r\n                    xmlhttp.send(null);\r\n                    function state_Change(){                       \r\n                        if(xmlhttp.readyState==4){\r\n                            if (xmlhttp.status==200){\r\n                                if(xmlhttp.responseText){\r\n                                    var json =JSON.parse(xmlhttp.responseText);\r\n                                    document.getElementById("content").innerHTML = \r\n                                        document.getElementById("content").innerHTML+"</br>"+\r\n                                        "</br>evercookie : "+json.fp_evercookie_code+\r\n                                        "</br>canvas : "+json.fp_canvas_code+\r\n                                        "</br></br>info : "+JSON.stringify(json)\r\n                                }\r\n                                \r\n                            }else if(xmlhttp.status==401){\r\n                                \r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n                var getBrowserVersion = function(){     \r\n            var userAgent = navigator.userAgent.toLowerCase();   \r\n            if(userAgent.match(/msie ([\\d.]+)/)!=null){\r\n              uaMatch = userAgent.match(/msie ([\\d.]+)/);               \r\n              return \'IE\'+parseInt(uaMatch[1]);        \r\n            }else if(userAgent.match(/(trident)\\/([\\w.]+)/)){\r\n                uaMatch = userAgent.match(/trident\\/([\\w.]+)/);\r\n                switch (uaMatch[1]){\r\n              case "4.0": return "IE8" ;break; \r\n              case "5.0": return "IE9" ;break; \r\n              case "6.0": return "IE10";break;\r\n              case "7.0": return "IE11";break;                                \r\n              default:return "undefined" ;            \r\n                        }  \r\n                  }       \r\n            return "undefined";  \r\n          }\r\n            })()</script></body></html>');
+$templateCache.put('app/common/home/home.html','<div ng-cloak><div class="row"><div class="col-md-4 wb-people"><!-- <span class="hipster img-responsive img-rounded"></span> --> <i class="iconfont wb-people-body">&#xe602;</i> <i class="iconfont wb-people-head">&#xe601;</i></div><div class="col-md-8"><h1>&nbsp;</h1><p class="lead">\u51CC\u6CE2\u5FAE\u6B65\uFF0C\u7F57\u889C\u751F\u5C18\uFF01</p><div ng-switch="vm.isDay"></div></div></div></div>');
+$templateCache.put('app/common/navbar/navbar.html','<nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" ng-click="vm.toggleNavbar()"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand wb-navbar-title wb-span-spacing" href="#/" ng-click="vm.collapseNavbar()"><!-- <img class="logo-img" src="content/images/logo-jhipster-a30deb26b4.png"/> --> <i class="iconfont">&#xe600;</i> <span class="">\u5FAE\u6B65</span> <span style="display: none" class="navbar-version">v{{VERSION}}</span></a></div><div class="navbar-collapse" uib-collapse="vm.isNavbarCollapsed" ng-switch="vm.isAuthenticated()"><ul class="nav navbar-nav navbar-right"><li ui-sref-active="active"><a ui-sref="home" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-home"></span> <span class="hidden-sm">\u4E3B\u9875</span></a></li><!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here --><li ng-class="{active: vm.$state.includes(\'account\')}" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="account-menu"><span><span class="glyphicon glyphicon-wrench"></span> <span class="hidden-sm">\u5C0F\u5DE5\u5177 </span><b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><li ui-sref-active="active"><a ui-sref="baiduyun" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-cloud"></span>&nbsp; <span>\u767E\u5EA6\u4E91</span></a></li><li ui-sref-active="active"><a ui-sref="weather" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-globe"></span>&nbsp; <span>\u5929\u6C14</span></a></li><li ui-sref-active="active"><a ui-sref="showDemo" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-gbp"></span>&nbsp; <span>\u7C92\u5B50</span></a></li></ul></li><li ng-class="{active: vm.$state.includes(\'admin\')}" has-authority="ROLE_ADMIN" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="admin-menu"><span><span class="glyphicon glyphicon-tower"></span> <span class="hidden-sm">Administration</span> <b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><li ui-sref-active="active"><a ui-sref="user-management" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-user"></span>&nbsp; <span>User management</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-metrics" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; <span>Metrics</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-health" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-heart"></span>&nbsp; <span>Health</span></a></li><li ui-sref-active="active"><a ui-sref="jhi-configuration" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; <span>Configuration</span></a></li><li ui-sref-active="active"><a ui-sref="audits" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-bell"></span>&nbsp; <span>Audits</span></a></li><li ui-sref-active="active"><a ui-sref="logs" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-tasks"></span>&nbsp; <span>Logs</span></a></li><li ng-hide="vm.inProduction || vm.swaggerDisabled" ui-sref-active="active"><a ui-sref="docs" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-book"></span>&nbsp; <span>API</span></a></li><!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here --></ul></li><li ng-class="{active: vm.$state.includes(\'entity\')}" uib-dropdown class="dropdown pointer"><a class="dropdown-toggle" uib-dropdown-toggle href="" id="entity-menu"><span><span class="glyphicon glyphicon-flash"></span> <span class="hidden-sm">\u524D\u7AEF\u901F\u62A5 </span><b class="caret"></b></span></a><ul class="dropdown-menu" uib-dropdown-menu><!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here --><li ui-sref-active="active"><a href="http://old.75team.com/weekly/issue1.html" target="_blank" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-tree-conifer"></span>&nbsp; <span>\u5468\u62A5</span></a></li><li ui-sref-active="active"><a href="http://www.kancloud.cn/jsfront/month/82796" target="_blank" ng-click="vm.collapseNavbar()"><span class="glyphicon glyphicon-tree-deciduous"></span>&nbsp; <span>\u6708\u62A5</span></a></li></ul></li></ul></div></div></nav>');
+$templateCache.put('app/tools/baiduyun/baiduyun.html','<div><div class="row"><div class="col-md-12"><button ng-click="vm.getBaiduyun()" ng-disabled="vm.wait" style="margin-bottom: 20px">\u5237\u65B0</button><div ng-hide="vm.wait" ng-repeat="ent in vm.info"><a href="{{ent.url}}" target="_blank">{{ent.time}}</a></div><div ng-show="vm.wait">waiting...</div></div></div></div>');
+$templateCache.put('app/tools/showDemo/showDemo.html','<div><div class="row"><div class="col-md-12"><div ng-switch="vm.isDay"><div ng-switch-when="true"><div id="large-header" class="wb-large-header"><canvas id="demo-canvas"></canvas><h1 class="main-title">\u5FAE\u6B65</h1></div></div><div ng-switch-when="false">night</div></div></div></div></div>');
+$templateCache.put('app/tools/weather/weather.html','<div><div class="row" style="height: 100%"><span ng-bind-html="vm.info" class="wb-weather-tmp"></span><div id="wb_my_map" ng-click="vm.mapClick()"></div></div></div>');}]);})();
