@@ -5,13 +5,11 @@
         .module('bolgApp', [
             'ngResource',
             'ngCookies',
-            'ngAria',
-            'ngCacheBuster',
-            'ngFileUpload',
             'ui.bootstrap',
-            'ui.bootstrap.datetimepicker',
             'ui.router',
             'infinite-scroll',
+            'ngSanitize',
+            'oc.lazyLoad',
             // jhipster-needle-angularjs-add-module JHipster will add new module here
             'angular-loading-bar'
         ])

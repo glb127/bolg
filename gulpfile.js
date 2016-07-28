@@ -53,10 +53,14 @@ gulp.task('copy', function () {
             merge: true
         }))
         .pipe(gulp.dest(config.dist)),
-        gulp.src([config.app + 'robots.txt', config.app + 'favicon.ico', config.app + '.htaccess', config.app + 'json/**'], { dot: true })
+        gulp.src([config.app + 'robots.txt', config.app + 'favicon.ico', config.app + '.htaccess'], { dot: true })
         .pipe(plumber({errorHandler: handleErrors}))
         .pipe(changed(config.dist))
-        .pipe(gulp.dest(config.dist))
+        .pipe(gulp.dest(config.dist)),
+        gulp.src(config.app + 'no-min/**', { dot: true })
+        .pipe(plumber({errorHandler: handleErrors}))
+        .pipe(changed(config.dist+ 'no-min'))
+        .pipe(gulp.dest(config.dist+ 'no-min'))
     );
 });
 

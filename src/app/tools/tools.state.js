@@ -40,7 +40,13 @@
                     controller: 'WeatherController',
                     controllerAs: 'vm'
                 }
-            }
+            },
+            resolve:{
+                loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                    // you can lazy load files for an existing module
+                    return $ocLazyLoad.load('./no-min/echarts.min.js');
+                }]
+            } 
         });
         $stateProvider.state('showDemo', {
             parent: 'tools',

@@ -40,7 +40,7 @@ module.exports = function() {
         //append html templates
         .pipe(gulpIf('**/app.js', footer(templates)))
         //会导致打包太慢
-        //.pipe(gulpIf('*.js', jsTask()))
+        .pipe(gulpIf('*.js', jsTask()))
         .pipe(gulpIf('*.css', cssTask()))
         .pipe(gulpIf('*.html', htmlmin({collapseWhitespace: true})))
         .pipe(gulpIf('**/*.!(html)', rev()))

@@ -6,10 +6,11 @@
         .controller('WeatherController', WeatherController);
 
 
-    WeatherController.$inject = [ '$timeout', '$sce', 'MyApi'];
+    WeatherController.$inject = [ '$timeout', 'MyApi'];
 
-    function WeatherController ($timeout,$sce,MyApi) {
+    function WeatherController ($timeout,MyApi) {
     	var vm = this;
+    	var locPath = "./no-min/map/";
     	var tempSave = {};
     	var waitTime=5;	//重新查询间隔几分钟
         var provinces = ['shanghai', 'hebei','shanxi','neimenggu','liaoning','jilin','heilongjiang','jiangsu','zhejiang','anhui','fujian','jiangxi','shandong','henan','hubei','hunan','guangdong','guangxi','hainan','sichuan','guizhou','yunnan','xizang','shanxi1','gansu','qinghai','ningxia','xinjiang', 'beijing', 'tianjin', 'chongqing', 'xianggang', 'aomen'];
@@ -17,7 +18,7 @@
 		var myChart = echarts.init(document.getElementById('wb_my_map'));
 		var currentIdx=-1;
 
-		vm.info = $sce.trustAsHtml("");
+		vm.info = "";
 
 		var getTem = function(data){
 			if(data.error){
@@ -42,14 +43,14 @@
 		}
 		var getWeather = function(city){
 			if(tempSave[city]&&tempSave[city].data){
-				vm.info = $sce.trustAsHtml(getInfo(tempSave[city].data));
+				vm.info = getInfo(tempSave[city].data);
 			}else{
 				vm.info = "";
 			}
 		}
 
 		function showChina() {	
-			$.get('./json/map/china.json', function (chinaJson) {
+			$.get(locPath+'china.json', function (chinaJson) {
 			    echarts.registerMap('china', chinaJson);			    
 			    myChart.setOption({
 				    title: {
@@ -96,7 +97,7 @@
 		function showProvince() {
 		    var name = provinces[currentIdx];
 			myChart.showLoading();
-		    $.get('./json/map/' + name + '.json', function (geoJson) {
+		    $.get(locPath + name + '.json', function (geoJson) {
 				var _eachtmp=[];
 				var AllCount=0;
 				for(var i=0;i<geoJson.features.length;i++){

@@ -5,22 +5,16 @@
         .module('bolgApp')
         .config(httpConfig);
 
-    httpConfig.$inject = ['$urlRouterProvider', '$httpProvider', 'httpRequestInterceptorCacheBusterProvider', '$urlMatcherFactoryProvider'];
+    httpConfig.$inject = ['$urlRouterProvider', '$httpProvider', '$urlMatcherFactoryProvider'];
 
-    function httpConfig($urlRouterProvider, $httpProvider, httpRequestInterceptorCacheBusterProvider, $urlMatcherFactoryProvider) {
+    function httpConfig($urlRouterProvider, $httpProvider, $urlMatcherFactoryProvider) {
         
         //enable CSRF
         $httpProvider.defaults.xsrfCookieName = 'CSRF-TOKEN';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
         
-        //Cache everything except rest api requests
-        httpRequestInterceptorCacheBusterProvider.setMatchlist([/.*api.*/, /.*protected.*/], true);
-
         $urlRouterProvider.otherwise('/');
 
-        // $httpProvider.interceptors.push('errorHandlerInterceptor');
-        // $httpProvider.interceptors.push('authExpiredInterceptor');
-        // $httpProvider.interceptors.push('notificationInterceptor');
         // jhipster-needle-angularjs-add-interceptor JHipster will add new application http interceptor here
 
         $urlMatcherFactoryProvider.type('boolean', {

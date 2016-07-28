@@ -6253,8 +6253,8 @@ Social button
 .wb-people .wb-people-head {
   font-size: 8vw;
   position: absolute;
-  top: 7.5vw;
-  left: 12vw;
+  top: 15vw;
+  left: 24.3vw;
   color: #f5f5f5;
   -webkit-transition: color 1s;
   -o-transition: color 1s;
@@ -6269,7 +6269,9 @@ Social button
 
 @media (min-width: 992px) {
   .wb-people .wb-people-head {
-    font-size: 4vw; }
+    font-size: 4vw;
+    top: 7.5vw;
+    left: 12vw; }
   .wb-people .wb-people-body {
     font-size: 24vw; } }
 

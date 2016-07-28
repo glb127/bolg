@@ -438,8 +438,8 @@ Social button
     .wb-people-head{
         font-size: 8vw;
         position: absolute;
-        top: 7.5vw;
-        left: 12vw;
+        top: 15vw;
+        left: 24.3vw;
         color: #f5f5f5;
         @include transition(color 1s);
     }
@@ -453,6 +453,8 @@ Social button
     @media (min-width: 992px) {
         .wb-people-head{
             font-size: 4vw;
+            top: 7.5vw;
+            left: 12vw;
         }
         .wb-people-body{
             font-size: 24vw;

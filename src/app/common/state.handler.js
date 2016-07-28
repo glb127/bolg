@@ -5,10 +5,9 @@
         .module('bolgApp')
         .factory('stateHandler', stateHandler);
 
-    stateHandler.$inject = ['$rootScope', '$state', '$window', 'Principal', 'VERSION'];
+    stateHandler.$inject = ['$rootScope', '$state', '$window', 'VERSION'];
 
-    function stateHandler($rootScope, $state,  $window,
-         Principal, VERSION) {
+    function stateHandler($rootScope, $state,  $window, VERSION) {
         return {
             initialize: initialize
         };
