@@ -42,7 +42,7 @@
                 }
             },
             resolve:{
-                loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                load_echarts: ['$ocLazyLoad', function($ocLazyLoad) {
                     // you can lazy load files for an existing module
                     return $ocLazyLoad.load('./no-min/echarts.min.js');
                 }]
@@ -63,6 +63,20 @@
                 }
             }
         });
-
+        $stateProvider.state('film', {
+            parent: 'tools',
+            url: '/film',
+            data: {
+                authorities: [],
+                pageTitle: '电影'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/tools/film/film.html',
+                    controller: 'FilmController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
     }
 })();

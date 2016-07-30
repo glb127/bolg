@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+            ng-click="vm.cancel()">&times;</button>
+    <h4 class="modal-title">截图</h4>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+    	<div style="width:90%;margin: 0 auto;" >
+        	<a ng-repeat="player in vm.ent.player" target="_blank" href="{{player}}" class="wb-mr5">在线{{$index+1}}</a>
+        	<a ng-repeat="magnet in vm.ent.magnet" target="_blank" href="{{magnet}}" class="wb-mr5">下载{{$index+2}}</a>
+        </div>
+        <img ng-repeat="ent in vm.ent.img.other" src="{{ent}}" style="width:90%;margin: 0 auto;display: block;"></div>
+    </div>
+</div>

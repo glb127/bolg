@@ -3,25 +3,30 @@
 
     angular
         .module('bolgApp')
-        .factory('LeanCloud', LeanCloud);
+        .factory('apiLeanCloud', apiLeanCloud);
 
-    LeanCloud.$inject = ['$q'];
+    apiLeanCloud.$inject = ['$q','myfLocalStorage'];
        
-    function LeanCloud ($q) {
+    function apiLeanCloud ($q,myfLocalStorage) {
         AV.init({
             appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
             appKey: 'rQV77q18DvrAp5oPClWJESP7'
         });
         var service = {
-            functions : function(fname){
+            functions : function(fname){                
                 var deferred = $q.defer();
-                AV.Cloud.run('baiduyuns', {}, {
-                    success: function(data) {
-                        deferred.resolve(data);
-                    },error:function(error){
-                        deferred.reject(error);
-                    }
-                });
+                if(myfLocalStorage.get("LeanCloud_"+fname)){
+                    deferred.resolve(JSON.parse(myfLocalStorage.get("LeanCloud_"+fname)));
+                }else{
+                    AV.Cloud.run(fname, {}, {
+                        success: function(data) {
+                            myfLocalStorage.set("LeanCloud_"+fname,JSON.stringify(data),30*60*1000);
+                            deferred.resolve(data);
+                        },error:function(error){
+                            deferred.reject(error);
+                        }
+                    });
+                }
                 return deferred.promise;
             }
         }

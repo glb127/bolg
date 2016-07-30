@@ -6,16 +6,24 @@
         .controller('BaiduyunController', BaiduyunController);
 
 
-    BaiduyunController.$inject = ['LeanCloud'];
+    BaiduyunController.$inject = ['apiLeanCloud'];
 
-    function BaiduyunController (LeanCloud) {
+    function BaiduyunController (apiLeanCloud) {
         var vm = this;
+        var password="blg"
         vm.info = [];
         vm.wait = false;
 
         vm.getBaiduyun = function(){
+            if(!vm.pw){
+                vm.pw=prompt("请输入密码");
+            }
+            if(vm.pw!==password){
+                vm.wait=true;
+                return;
+            }
             vm.wait=true;
-            LeanCloud.functions("baiduyuns").then(
+            apiLeanCloud.functions("baiduyuns").then(
                 function(data){
                     data.sort(function(a,b){return new Date(b.time)-new Date(a.time)});
                     var chongfu={};

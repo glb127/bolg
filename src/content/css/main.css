@@ -6300,3 +6300,11 @@ Social button
   height: 500px; }
   #wb_my_map:focus {
     outline: none; }
+
+.wb-mr5 {
+  margin-right: 5px; }
+
+.wb-text-hidden {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; }

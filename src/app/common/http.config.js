@@ -3,7 +3,11 @@
 
     angular
         .module('bolgApp')
-        .config(httpConfig);
+        .config(httpConfig)
+        .config( ['$compileProvider',function( $compileProvider ){   
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|sms|magnet):/);
+            // Angular v1.2 之前使用 $compileProvider.urlSanitizationWhitelist(...)
+        }]);
 
     httpConfig.$inject = ['$urlRouterProvider', '$httpProvider', '$urlMatcherFactoryProvider'];
 

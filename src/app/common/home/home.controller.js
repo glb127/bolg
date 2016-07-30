@@ -9,7 +9,7 @@
 
     function HomeController ($scope ) {
         var vm = this;
-        
+        vm.isPhone = navigator.userAgent.match(/(iPhone|iPod|Android|ios|iPad|SymbianOS)/i);
 
     }
 })();

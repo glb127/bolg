@@ -7,6 +7,85 @@ var superagent = require('superagent'),
 	url = require('url'),
 	async = require('async');
 
+AV.Cloud.define('film66', function(request, response) {
+	
+  var bingfa = 10,
+  	minId = 1600,
+    maxId = 2000,
+    crawlUrl = "www.renren66.com",
+    locPage = "/movie/id_{{num}}.html",
+    btime = +new Date,
+    urls_1 = [],
+    allFilmList = [];;
+
+  for(var i = minId; i < maxId; i++) {
+    urls_1.push('http://' + crawlUrl + locPage.replace('{{num}}', i));
+  }
+
+  var emptyCount = 0;
+  var fetchUrl = function(url_1, callback) {
+    if(emptyCount>bingfa){    
+        callback(null);
+        return;
+    }
+    superagent.get(url_1).end(function(err, sres) {
+      var $ = cheerio.load(sres.text);
+      if($("[data-thread-key]").length==0){
+        emptyCount++;
+        callback(null);
+        return;
+      }
+      
+      var _imgs = [],
+        _player = [],
+        _magnet = [],
+        _baiduyun = {href:"",password:""};
+      for(var i = 1; i < $("img[alt]").length ; i++) {
+        _imgs.push($("img[alt]").eq(i).attr("src"))
+      }
+
+      for(var i=$("#player a").length;i--;){
+        var _href=$("#player a").eq(i).attr("href")
+        if(_href.match( /http:\/\/pan.baidu.com\/[\w\/\.?=]*/gi)){
+          _baiduyun.href=_href;
+          _baiduyun.password=$("#player a").eq(i).parent().find("strong").text()
+        }else if(_href.indexOf("play")==1){
+          _player.unshift(url.resolve("http://" + crawlUrl, _href));
+        }else if(_href.indexOf("magnet")==0){
+          if(_magnet.indexOf(_href)==-1){
+            _magnet.unshift(_href);
+          }
+        }
+        
+      }
+      var _robj={
+        id: $("[data-thread-key]").attr("data-thread-key"),
+        name: $(".movie-title").text(),
+        img: {
+          main: $("img[alt]").eq(0).attr("src"),
+          other: _imgs
+        },
+        player:_player,
+        baiduyun:_baiduyun,
+        magnet:_magnet,
+        uptime:$(".table-striped td").eq(9).text().substr(0,10),
+        star:$(".table-striped td").eq(15).html()
+      }
+      allFilmList.push(_robj)
+      callback(null);
+    });
+  };
+
+
+  async.mapLimit(urls_1, bingfa, function(url_1, callback) {
+    fetchUrl(url_1, callback);
+  }, function(err, result) {
+    console.log('共' + allFilmList.length + '部电影，用时'+((new Date)-btime)/1000+'秒。');
+    response.success(allFilmList);
+  });
+});
+
+
 AV.Cloud.define('baiduyuns', function(request, response) {
 	var cnodeUrl = 'http://www.baiduyuns.com/forum-36-1.html';
 	superagent.get(cnodeUrl).end(function(err, sres) {

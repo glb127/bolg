@@ -1,0 +1,22 @@
+<div>
+    <div class="row" >
+    	<div>
+    		排序:<select ng-model="vm.option" ng-options="key as value for (key,value) in vm.options" ng-change="vm.changeOptions()"></select><input ng-model="vm.sortType" type="checkbox" ng-change="vm.changeOptions()"/>倒序&nbsp;
+            <input ng-model="vm.selectInfo" ng-keyup="vm.selectKeyup($event)" style="width:100px;"></input><button ng-click="vm.select()" style="margin-left: 10px;">查询</button>
+    	</div>
+        <div infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
+            <div ng-repeat="ent in vm.showFile " id="{{ent.id}}" style="float:left;margin: 10px;overflow: hidden;width: 200px;height: 360px;">
+            	<span style="width: 200px;" class="wb-text-hidden" title="{{ent.name}}">{{ent.name}}</span>
+                </br>        
+                百度云：<a target="_blank" href="{{ent.baiduyun.href}}">{{ent.baiduyun.password}}</a>；<span ng-bind-html=ent.star></span>
+                <div style="width: 200px;" class="wb-text-hidden">
+                	<a ng-repeat="player in ent.player" target="_blank" href="{{player}}" class="wb-mr5">在线{{$index}}</a>
+                	<a ng-repeat="magnet in ent.magnet" target="_blank" href="{{magnet}}" class="wb-mr5">下载{{$index}}</a>
+                </div>
+            	<!-- <a ng-show="ent.uptime">上映时间：{{ent.uptime}}；</a> -->
+            	
+            	<img width="200" height="300" src="{{ent.img.main}}" ng-click="vm.showPic(ent)">
+        	</div>
+        </div>
+    </div>
+</div>

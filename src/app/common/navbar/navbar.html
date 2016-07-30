@@ -23,8 +23,8 @@
                     </a>
                 </li>
                 <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
-                <li ng-class="{active: vm.$state.includes('account')}" uib-dropdown class="dropdown pointer">
-                    <a class="dropdown-toggle" uib-dropdown-toggle href="" id="account-menu">
+                <li ng-class="{active: vm.$state.includes('tools')}" uib-dropdown class="dropdown pointer">
+                    <a class="dropdown-toggle" uib-dropdown-toggle href="" >
                         <span>
                             <span class="glyphicon glyphicon-wrench"></span>
                             <span class="hidden-sm">
@@ -50,6 +50,12 @@
                             <a ui-sref="showDemo" ng-click="vm.collapseNavbar()">
                                 <span class="glyphicon glyphicon-gbp"></span>&nbsp;
                                 <span>粒子</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a ui-sref="film" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon glyphicon-gbp"></span>&nbsp;
+                                <span>电影</span>
                             </a>
                         </li>
                     </ul>

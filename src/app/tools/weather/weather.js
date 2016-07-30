@@ -6,9 +6,10 @@
         .controller('WeatherController', WeatherController);
 
 
-    WeatherController.$inject = [ '$timeout', 'MyApi'];
+    WeatherController.$inject = [ '$timeout', 'apiOpen'];
 
-    function WeatherController ($timeout,MyApi) {
+    function WeatherController ($timeout,apiOpen) {
+    	console.log(load_echarts)
     	var vm = this;
     	var locPath = "./no-min/map/";
     	var tempSave = {};
@@ -120,7 +121,7 @@
 								}					
 							}
 						}else{
-							MyApi.baiduWeather({location:_cityName},function(data){
+							apiOpen.baiduWeather({location:_cityName},function(data){
 								_eachtmp.push({
 									name:_cityName,
 									value:getTem(data)

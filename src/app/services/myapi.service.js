@@ -3,11 +3,11 @@
 
     angular
         .module('bolgApp')
-        .factory('MyApi', MyApi);
+        .factory('apiOpen', apiOpen);
 
-    MyApi.$inject = ['$resource'];
+    apiOpen.$inject = ['$resource'];
 
-    function MyApi ($resource) {
+    function apiOpen ($resource) {
         var service = $resource('http://api.map.baidu.com/telematics/v3/weather', {}, {
             'baiduWeather': { 
                 method: 'JSONP', 
