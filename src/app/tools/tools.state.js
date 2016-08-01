@@ -78,5 +78,35 @@
                 }
             }
         });
+        $stateProvider.state('gif', {
+            parent: 'tools',
+            url: '/gif',
+            data: {
+                authorities: [],
+                pageTitle: 'gif图'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/tools/gif/gif.html',
+                    controller: 'GifController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
+        $stateProvider.state('novel', {
+            parent: 'tools',
+            url: '/novel',
+            data: {
+                authorities: [],
+                pageTitle: '小说'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/tools/novel/novel.html',
+                    controller: 'NovelController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
     }
 })();

@@ -54,8 +54,20 @@
                         </li>
                         <li ui-sref-active="active">
                             <a ui-sref="film" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-gbp"></span>&nbsp;
+                                <span class="glyphicon"></span>&nbsp;
                                 <span>电影</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active" style="display:none;">
+                            <a ui-sref="gif" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon"></span>&nbsp;
+                                <span>gif</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a ui-sref="novel" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon"></span>&nbsp;
+                                <span>小说</span>
                             </a>
                         </li>
                     </ul>

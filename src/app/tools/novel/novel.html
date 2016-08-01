@@ -1,0 +1,14 @@
+<div>    
+    <div class="row" >
+    	<div>
+            <select ng-model="vm.option" ng-options="key as value for (key,value) in vm.options" ng-change="vm.changeOptions()"></select><input ng-model="vm.sortType" type="checkbox" ng-change="vm.changeOptions()"/>倒序&nbsp;
+            <input ng-model="vm.selectInfo" ng-keyup="vm.selectKeyup($event)" style="width:40px;"></input><button ng-click="vm.select()" style="margin-left: 5px;">查询</button>
+            跳过<input ng-model="vm.passNum"  style="width:40px;"></input>
+        </div>
+        <div infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
+            <div ng-repeat="ent in vm.showFile">
+            	<a href="http://www.an77la.com/article-show-id-{{ent.id}}.html" target="_blank">{{$index+1}}、{{ent.name}}</a>
+        	</div>
+        </div>
+    </div>
+</div>

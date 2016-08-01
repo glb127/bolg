@@ -6,17 +6,20 @@
         .controller('BaiduyunController', BaiduyunController);
 
 
-    BaiduyunController.$inject = ['apiLeanCloud'];
+    BaiduyunController.$inject = ['apiLeanCloud','myfLocalStorage'];
 
-    function BaiduyunController (apiLeanCloud) {
+    function BaiduyunController (apiLeanCloud,myfLocalStorage) {
         var vm = this;
         var password="blg"
         vm.info = [];
         vm.wait = false;
 
         vm.getBaiduyun = function(){
-            if(!vm.pw){
+            if(myfLocalStorage.get("pw")){
+                vm.pw=myfLocalStorage.get("pw");
+            }else{
                 vm.pw=prompt("请输入密码");
+                myfLocalStorage.set("pw",vm.pw,5*60*1000);
             }
             if(vm.pw!==password){
                 vm.wait=true;

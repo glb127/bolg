@@ -20,10 +20,14 @@
         }
         var get = function(key){
             if(storage){
-                if(+new Date<=storage.getItem(key+"__overtime")){
-                    return storage.getItem(key);
+                if(storage.getItem(key+"__overtime")){
+                    if(+new Date<=storage.getItem(key+"__overtime")){
+                        return storage.getItem(key);
+                    }else{
+                        return null;
+                    }
                 }else{
-                    return null;
+                    return storage.getItem(key);
                 }
             }else{
                 return null
