@@ -5,10 +5,19 @@
             <input ng-model="vm.selectInfo" ng-keyup="vm.selectKeyup($event)" style="width:40px;"></input><button ng-click="vm.select()" style="margin-left: 5px;">查询</button>
             跳过<input ng-model="vm.passNum"  style="width:40px;"></input>
         </div>
-        <div infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
-            <div ng-repeat="ent in vm.showFile">
-            	<a href="http://www.an77la.com/article-show-id-{{ent.id}}.html" target="_blank">{{$index+1}}、{{ent.name}}</a>
-        	</div>
+        <div ng-if="!vm.infoShow" class="view" style="overflow: hidden;">
+            <ol contenteditable="true">
+                <li ng-repeat="ent in vm.showFile">
+                    <a ng-click="vm.goTo(ent.id)">{{ent.name}}({{ent.page}})</a>
+                </li>
+            </ol>
+        </div>
+        <div ng-if="vm.infoShow" class="view" infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
+            <ol contenteditable="true">
+                <li ng-repeat="ent in vm.showFile">
+                    <a href="http://www.an77la.com/article-show-id-{{ent.id}}.html" target="_blank">{{ent.name}}</a>
+                </li>
+            </ol>
         </div>
     </div>
 </div>

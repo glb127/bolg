@@ -7,11 +7,14 @@ var superagent = require('superagent'),
   async = require('async');
 
 var atime = +new Date;
-var crawlUrl = "www.an77la.com",locPage = "/article-list-id-20-page-{{num}}.html",//1-426
-    bingfa = 25,
-    oldstart=1;
-var pageJson = null; 
-
+var p_crawlUrl = "www.an77la.com",
+    p_locPage = "/article-list-id-{{id}}-page-{{num}}.html",//1-426
+    p_bingfa = 25,
+    p_fengye = 100,
+    p_indexName="index.json";
+var p_pageJson = require("./"+p_crawlUrl+'/'+p_indexName);
+    p_pageJson = p_pageJson.sort(function(a,b){return a.id-b.id;})
+    
 function main(){
   var mkdirPath=function(loc) {
     fs.exists(loc, function(exists) {    
@@ -28,7 +31,7 @@ function main(){
   }
   var save=function(fileName, info, callback) {
     fileName = fileName.replace(/[/\\:*?<>\"|]/g, "");
-    fs.writeFile(crawlUrl + "/" + fileName, info, function(err) {
+    fs.writeFile(p_crawlUrl + "/" + fileName, info, function(err) {
   	if(err) console.log(err);
 		if(callback){
       		callback(null);
@@ -46,9 +49,30 @@ function main(){
     });
   }
 
-  //var pub_liunNow=1,pub_allList=[],pub_oldList=0;
-  var getPicLun = function(Length,lunNum){
-      mkdirPath(crawlUrl);
+  var getByPageId = function(id,index){
+    if(!id){
+      id=p_pageJson[0].id;
+      index=0;
+    }
+    var pageAll = 0;
+    for(var i=p_pageJson.length;i--;){
+      if(p_pageJson[i].id==id){
+        pageAll=p_pageJson[i].page;
+        if(index!==undefined){
+          index=i;
+        }
+      }
+    }
+    if(pageAll==0){
+      console.log("id错误");
+    }else{
+      console.log("id:"+id+"开始，共"+pageAll+"页")
+      getPicLun(p_fengye,~~(pageAll/p_fengye)+1,id,index);
+    }
+  }
+  var getPicLun = function(Length,lunNum,idname,pageindex){
+      if(!idname||!Length||!lunNum){return;}
+      mkdirPath(p_crawlUrl);
       var pub_liunNow=1,
           pub_allList=[],
           pub_oldList=0,
@@ -58,9 +82,9 @@ function main(){
         var btime = +new Date,
             urls_1=[];
         for(var i = start; i < end; i++) {
-          urls_1.push('http://' + crawlUrl + locPage.replace('{{num}}', i));
+          urls_1.push('http://' + p_crawlUrl + p_locPage.replace('{{id}}', idname).replace('{{num}}', i));
         }
-        async.mapLimit(urls_1, bingfa, function(url_1, callback) {
+        async.mapLimit(urls_1, p_bingfa, function(url_1, callback) {
           superagent.get(url_1).end(function(err, sres) {
             if(sres){
               var href=cheerio.load(sres.text)("[href]");
@@ -80,82 +104,76 @@ function main(){
           });
         }, function(err, result) {
           
-          console.log(start+'~' + (end-1) + '页，共' + (pub_allList.length-pub_oldList) + '有用链接，用时'+((new Date)-btime)/1000+'秒。');
+          console.log(idname+":"+start+'~' + (end-1) + '页，共' + (pub_allList.length-pub_oldList) + '有用链接，用时'+((new Date)-btime)/1000+'秒。');
           pub_oldList=pub_allList.length;
           if(lunObj&&lunObj.lunNum>=(++pub_liunNow)){
               getPic(start+lunObj.Length,end+lunObj.Length,lunObj);
           }else{
-            save(1+"~"+(end-1)+".json",JSON.stringify(pub_allList));
+            save(idname+".json",JSON.stringify(pub_allList));
             //console.log(pub_allList)
             console.log('一共' + pub_allList.length + '有用链接，'+((new Date)-atime)/1000+'秒。');
+            pageindex++;
+            if(pageindex!==undefined&&pageindex<p_pageJson.length){
+              getByPageId(p_pageJson[pageindex].id,pageindex);
+            }
           }
         });
       }
 
-      getPic(oldstart,oldstart+Length,{
+      getPic(1,Length+1,{
         Length:Length,
         lunNum:lunNum
       });
   }
 
   
-  var getIdNum = function(){
-    var urls_1=[];
+  var reload_index = function(){
+    console.log("原有");
+    getPageCount(p_pageJson);
+    var urls_1=[],pub_allList=[];
     for(var i = 0; i < 100; i++) {
-      urls_1.push('http://'+crawlUrl+'/article-list-id-{{list}}-page-1.html'.replace('{{list}}', i));
+      urls_1.push(i);
     }
-    var getIdNumType = function (num) {
-      superagent.get(urls_1[num]).end(function(err, sres) {
+    async.mapLimit(urls_1, p_bingfa, function(url_1, callback) {
+      superagent.get('http://'+p_crawlUrl+'/article-list-id-{{list}}-page-1.html'.replace('{{list}}', url_1)).end(function(err, sres) {
         if(sres){
           var $ = cheerio.load(sres.text)
           var href=$(".end").text();
           if(href>0){
             pub_allList.push({
-              id:num,
+              id:url_1,
               page:href,
               name:$(".place a").text()
             });
           }
         }
-        if(num<urls_1.length-1){
-          console.log(num++);
-          getIdNumType(num);
-        }else{
-          save("index.json",JSON.stringify(pub_allList));
-          console.log(pub_allList.length);
-          console.log("获取列表"+((new Date)-atime)/1000+'秒。');
-        }
+        callback(null)
       });
-    }
-
-    getIdNumType(0);
+    }, function(err, result) {      
+      save(p_indexName,JSON.stringify(pub_allList));
+      console.log("新生成");
+      getPageCount(pub_allList)
+      console.log("用时"+((new Date)-atime)/1000+'秒。');
+    });
   }
 
-  var getPageInfo=function(page){
-    var json=require('./'+crawlUrl+"/"+page+".json");
-    var count=0;
-    var error=[];
-    for(var i=0;i<json.length;i++){
-      var _tmp=json[i].text.substring(json[i].text.indexOf("【")+1,json[i].text.indexOf("】"));
-      if(_tmp!=""&&_tmp[0]!="【"){
-        count++;
-      }else{
-        error.push(json[i].text);
-      }
+  var getPageCount=function(allJson) {
+    var pagecount=0;
+    for(var i=allJson.length;i--;){
+      pagecount+=(+allJson[i].page);
     }
-    console.log(json.length,count);
-    console.log(error)
-    console.log("获取"+page+"内容"+((new Date)-atime)/1000+'秒。');
+    console.log("获取"+allJson.length+"个大类，共"+pagecount+"页");
+
   }
 
   return{
-    getIdNum:getIdNum,
-    getPicLun:getPicLun,
-    getPageInfo:getPageInfo
+    reload_index:reload_index,//刷新index页面
+    getPicLun:getPicLun,//.getPicLun(100,12)
+    getByPageId:getByPageId//.getByPageId(6) 不传id就是全部
   }
 }
 
 var x=main();
-//x.getIdNum();
-x.getPicLun(100,5);
-//x.getPageInfo(20);
+//x.reload_index();
+//x.getPicLun(100,12);
+x.getByPageId(39,1)

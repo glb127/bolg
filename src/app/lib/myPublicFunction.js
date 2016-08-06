@@ -9,6 +9,9 @@
         var storage = window.localStorage;
         var set = function(key,value,time){
             if(storage){
+                if(angular.isObject(key)){
+                    key=JSON.stringify(key);
+                }
                 storage.setItem(key,value);
                 if(time){
                     storage.setItem(key+"__overtime",+new Date+time);
@@ -18,16 +21,16 @@
                 return false;
             }
         }
-        var get = function(key){
+        var get = function(key,isObj){
             if(storage){
                 if(storage.getItem(key+"__overtime")){
                     if(+new Date<=storage.getItem(key+"__overtime")){
-                        return storage.getItem(key);
+                        return isObj?JSON.parse(storage.getItem(key)):storage.getItem(key);
                     }else{
                         return null;
                     }
                 }else{
-                    return storage.getItem(key);
+                    return isObj?JSON.parse(storage.getItem(key)):storage.getItem(key);
                 }
             }else{
                 return null

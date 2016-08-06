@@ -95,7 +95,7 @@
         });
         $stateProvider.state('novel', {
             parent: 'tools',
-            url: '/novel',
+            url: '/novel/:id',
             data: {
                 authorities: [],
                 pageTitle: '小说'

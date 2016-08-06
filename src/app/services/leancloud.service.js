@@ -16,11 +16,11 @@
             functions : function(fname){                
                 var deferred = $q.defer();
                 if(myfLocalStorage.get("LeanCloud_"+fname)){
-                    deferred.resolve(JSON.parse(myfLocalStorage.get("LeanCloud_"+fname)));
+                    deferred.resolve(myfLocalStorage.get("LeanCloud_"+fname,true));
                 }else{
                     AV.Cloud.run(fname, {}, {
                         success: function(data) {
-                            myfLocalStorage.set("LeanCloud_"+fname,JSON.stringify(data),30*60*1000);
+                            myfLocalStorage.set("LeanCloud_"+fname,data,30*60*1000);
                             deferred.resolve(data);
                         },error:function(error){
                             deferred.reject(error);
