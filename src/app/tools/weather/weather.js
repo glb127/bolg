@@ -3,13 +3,26 @@
 
     angular
         .module('bolgApp')
+        .directive('compile', compile)
         .controller('WeatherController', WeatherController);
 
 
     WeatherController.$inject = [ '$timeout', 'apiOpen'];
+compile.$inject = [ '$compile'];
+function compile($compile) {
+  return function(scope, element, attrs) {
+    scope.$watch(
+      function(scope) {
+        return scope.$eval(attrs.compile);
+      },
+      function(value) {
+        element.html(value);
+        $compile(element.contents())(scope);
+      }
+   )};
+  }
 
     function WeatherController ($timeout,apiOpen) {
-    	console.log(load_echarts)
     	var vm = this;
     	var locPath = "./no-min/map/";
     	var tempSave = {};
@@ -18,7 +31,7 @@
 		var provincesText = ['上海', '河北', '山西', '内蒙古', '辽宁', '吉林','黑龙江',  '江苏', '浙江', '安徽', '福建', '江西', '山东','河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州', '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆', '北京', '天津', '重庆', '香港', '澳门'];
 		var myChart = echarts.init(document.getElementById('wb_my_map'));
 		var currentIdx=-1;
-
+		vm.name='<a ng-click="alert(\'aa\')">aa</a>'
 		vm.info = "";
 
 		var getTem = function(data){

@@ -6,18 +6,18 @@
             跳过<input ng-model="vm.passNum"  style="width:40px;"></input>
         </div>
         <div ng-if="!vm.infoShow" class="view" style="overflow: hidden;">
-            <ol contenteditable="true">
-                <li ng-repeat="ent in vm.showFile">
-                    <a ng-click="vm.goTo(ent.id)">{{ent.name}}({{ent.page}})</a>
-                </li>
-            </ol>
+            <div><a ng-click="vm.goTo('6&7&8&9&10&11&12&13')">1、图片合集</a></div>
+            <div><a ng-click="vm.goTo('14&15&16&17&18&19&20&21')">2、小说合集</a></div>
+            <div><a ng-click="vm.goTo('38&39&40&41&42')">3、bt</a></div>
+            <div><a ng-click="vm.goTo('57&59&60&61&62&63&64')">4、杂图</a></div>
+            <!-- <div ng-repeat="ent in vm.showFile">
+                <a ng-click="vm.goTo(ent.id)">{{$index}}、{{ent.name}}({{ent.page}})</a>
+            </div> -->
         </div>
         <div ng-if="vm.infoShow" class="view" infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
-            <ol contenteditable="true">
-                <li ng-repeat="ent in vm.showFile">
-                    <a href="http://www.an77la.com/article-show-id-{{ent.id}}.html" target="_blank">{{ent.name}}</a>
-                </li>
-            </ol>
+             <div ng-repeat="ent in vm.showFile">
+                <a href="http://www.an77la.com/article-show-id-{{ent.id}}.html" target="_blank">{{$index+1}}、{{ent.name}}</a>
+            </div>
         </div>
     </div>
 </div>

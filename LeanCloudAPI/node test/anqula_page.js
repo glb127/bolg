@@ -145,6 +145,15 @@ function main(){
               page:href,
               name:$(".place a").text()
             });
+          }else if($(".num").length>0){
+            href=$(".num").eq($(".num").length-1).text();
+            if(href>0){
+              pub_allList.push({
+                id:url_1,
+                page:href,
+                name:$(".place a").text()
+              });
+            }
           }
         }
         callback(null)
@@ -176,4 +185,4 @@ function main(){
 var x=main();
 //x.reload_index();
 //x.getPicLun(100,12);
-x.getByPageId(39,1)
+x.getByPageId(52,1)

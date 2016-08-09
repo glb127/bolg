@@ -6,10 +6,11 @@
         .controller('NovelController', NovelController);
 
 
-    NovelController.$inject = [ '$state','$stateParams','apiLoadLoc','myfLocalStorage'];
-    function NovelController ($state,$stateParams,apiLoadLoc,myfLocalStorage) {
+    NovelController.$inject = [ '$state','$stateParams','$q','apiLoadLoc','myfLocalStorage'];
+    function NovelController ($state,$stateParams,$q,apiLoadLoc,myfLocalStorage) {
     	var vm = this;
     	var loadPage=50;
+
         vm.passNum=0;
     	vm.allFile=[];
     	vm.showFile=[];
@@ -31,11 +32,29 @@
     	}
         var getId=function(id) {
             vm.infoShow = true;
-            apiLoadLoc.get('./no-min/an77la/'+id+'.json').then(function(data){
-                vm.allFile = data;
-                vm.changeOptions();
-                
-            }); 
+            if(id.split("&").length>1){
+                var getList=[];
+                for(var i=id.split("&").length;i--;){
+                    getList.push(apiLoadLoc.get('./no-min/an77la/'+id.split("&")[i]+'.json'))
+                }
+                $q.all(getList).then(function(data){
+                    for(var i=data.length;i--;){
+                        vm.allFile=vm.allFile.concat(data[i])
+                    }
+                    console.log(vm.allFile.length);
+                    vm.changeOptions();
+                    
+                }); 
+  
+            }else{
+                apiLoadLoc.get('./no-min/an77la/'+id+'.json').then(function(data){
+                    vm.allFile = data;
+                    vm.changeOptions();
+                    
+                }); 
+            }
+           
+            
         }
 
         vm.goTo=function(id){

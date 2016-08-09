@@ -7,9 +7,9 @@ var superagent = require('superagent'),
   async = require('async');
 var atime = +new Date;
 var crawlUrl = "a.acgluna.com",locPage = "/archives/{{num}}",//1-20000
-    bingfa = 20,
-    oldstart=1;
-
+    bingfa = 10,
+    locJson =  require("./"+crawlUrl+'/10001~20000.json'),
+    oldstart=+locJson[locJson.length-1]+1;
 function main(){
   var mkdirPath=function(loc) {
     fs.exists(loc, function(exists) {    
@@ -43,55 +43,134 @@ function main(){
       	}
     });
   }
-
-  var pub_liunNow=1,pub_allList=[],pub_oldList=0;
-  var getPicLun = function(Length,lunNum){
+  var dqxc=0;
+  var pub_liunNow=1,pub_allList=[],pub_oldList=0,timeOut;
+  var getPicLun = function(Length,lunNum,mxc){
+      //denglu()
       mkdirPath(crawlUrl);
       pub_liunNow=1,pub_allList=[],pub_oldList=0;
       getPic(oldstart,oldstart+Length,{
         Length:Length,
         lunNum:lunNum
-      });
+      },mxc);
   }
 
-  var getPic = function(start,end,lunObj){
+  var getPic = function(start,end,lunObj,mxc){
     var btime = +new Date,
         urls_1=[];
     for(var i = start; i < end; i++) {
-      urls_1.push('http://' + crawlUrl + locPage.replace('{{num}}', i));
+      urls_1.push({
+        url:'http://' + crawlUrl + locPage.replace('{{num}}', i),
+        id:i
+      });
     }
-    async.mapLimit(urls_1, bingfa, function(url_1, callback) {
-      superagent.get(url_1).end(function(err, sres) {
-        if(sres){
+    var repNum={};
+    var getInfo=function(url_1, callback) {
+      superagent.get(url_1.url).timeout(5000).end(function(err, sres) {
+        if(err){
+          if(repNum[url_1.id]){
+            repNum[url_1.id]++;
+          }else{
+            repNum[url_1.id]=0
+          }
+          if(repNum[url_1.id]>5){
+            callback(null)
+          }else{
+            getInfo(url_1, callback)            
+          }
+          return;
+        }
+        else if(sres){
           var $ = cheerio.load(sres.text)
-
-			     var canonical=$('[rel="canonical"]').attr("href");
-          if(canonical==url_1){
-            pub_allList.push(url_1);
-            //save(title+".html",$(".content").html(),callback);
+           var canonical=$('[rel="canonical"]').attr("href");
+          if(canonical==url_1.url){
+            pub_allList.push(url_1.id);            
+            save("10001~20000.json",JSON.stringify(locJson.concat(pub_allList.sort(function(a,b){return a-b}))))
           }
         }
-        callback(null)        
+        callback(null)
       });
-    }, function(err, result) {
-      
+    }
+    async.mapLimit(urls_1, bingfa, getInfo, function(err, result) {
+      if(dqxc!=mxc){return;}
       console.log(start+'~' + (end-1) + '页，共' + (pub_allList.length-pub_oldList) + '有用链接，用时'+((new Date)-btime)/1000+'秒。');
       pub_oldList=pub_allList.length;
+      clearTimeout(timeOut);
       if(lunObj&&lunObj.lunNum>=(++pub_liunNow)){
-          getPic(start+lunObj.Length,end+lunObj.Length,lunObj);
+
+          // timeOut=setTimeout(function(){
+          //   dqxc++;
+          //   console.log('用时超过5倍，请重试')
+          //   oldstart=end;
+          //   setTimeout(function(){
+          //     getPicLun(100,100,dqxc)
+          //   },10000);
+          // },((new Date)-btime)*5+10000)
+          setTimeout(function(){
+            getPic(start+lunObj.Length,end+lunObj.Length,lunObj);
+          },10000);
       }else{
-        save(1+"~"+(end-1)+".json",JSON.stringify(pub_allList));
+        save(oldstart+"~"+(end-1)+".json",JSON.stringify(pub_allList.sort(function(a,b){return a-b})));
 
         console.log('一共' + pub_allList.length + '有用链接，'+((new Date)-atime)/1000+'秒。');
       }
     });
   }
+  var timexc =function(){
+    setTimeout(function(){
+      console.log("已过"+(new Date-atime)/1000+"秒");
+      timexc();
+    },10000)
+  }
+  var getOneByOne=function() {
+    var btime = +new Date,
+        urls_1=[];
+    for(var i = oldstart; i < 20000; i++) {
+      urls_1.push({
+        url:'http://' + crawlUrl + locPage.replace('{{num}}', i),
+        id:i
+      });
+    }
+    var getOne=function(num) {
+      var ctime = +new Date;
+      clearTimeout(timeOut);
+      timeOut=setTimeout(function(){
+        console.log("重试");
+        getOne(num); 
+      },10000)
+      superagent.get(urls_1[num].url).end(function(err, sres) {
+        console.log(urls_1[num].url)
+        if(new Date-ctime>10000){return;}
+        if(sres){
+          var $ = cheerio.load(sres.text)
+
+           var canonical=$('[rel="canonical"]').attr("href");
+          if(canonical==urls_1[num].url){
+            console.log("get:"+urls_1[num].id)
+            save("10001~20000.json",JSON.stringify(locJson.concat([urls_1[num].id])));
+          }
+        }
+        num++;
+        setTimeout(function(){
+          getOne(num); 
+        },100);
+      });
+    }
+    getOne(0);
+  }
   return{
     getPic:getPic,
-    getPicLun:getPicLun
+    getPicLun:getPicLun,
+    timexc:timexc,
+    getOneByOne:getOneByOne
   }
 }
-
+process.on('SIGINT', (code) => {
+  console.log(`About to exit with code: ${code}`);
+  process.exit(errorList)
+});
 var x=main();
-x.getPicLun(10,10);
+x.getPicLun(100,100,0);
+//x.getOneByOne()
+x.timexc();
 

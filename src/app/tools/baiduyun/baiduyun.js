@@ -10,21 +10,10 @@
 
     function BaiduyunController (apiLeanCloud,myfLocalStorage) {
         var vm = this;
-        var password="blg"
         vm.info = [];
         vm.wait = false;
 
         vm.getBaiduyun = function(){
-            if(myfLocalStorage.get("pw")){
-                vm.pw=myfLocalStorage.get("pw");
-            }else{
-                vm.pw=prompt("请输入密码");
-                myfLocalStorage.set("pw",vm.pw,5*60*1000);
-            }
-            if(vm.pw!==password){
-                vm.wait=true;
-                return;
-            }
             vm.wait=true;
             apiLeanCloud.functions("baiduyuns").then(
                 function(data){
