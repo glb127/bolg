@@ -1,0 +1,8 @@
+{
+	"dom":[{
+		"limit":"1~500",
+		"url":"https://cnodejs.org/?tab=all&page={{index}}.html",
+		"title":".issue em",
+		"href":".topic_title_wrapper .topic_title"
+	}]
+}

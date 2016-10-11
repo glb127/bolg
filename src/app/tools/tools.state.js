@@ -27,6 +27,7 @@
                 }
             }
         });
+
         $stateProvider.state('weather', {
             parent: 'tools',
             url: '/weather',
@@ -46,23 +47,9 @@
                     // you can lazy load files for an existing module
                     return $ocLazyLoad.load('./no-min/echarts.min.js');
                 }]
-            } 
-        });
-        $stateProvider.state('showDemo', {
-            parent: 'tools',
-            url: '/showDemo',
-            data: {
-                authorities: [],
-                pageTitle: '天气'
-            },
-            views: {
-                'content@': {
-                    templateUrl: 'app/tools/showDemo/showDemo.html',
-                    controller: 'ShowDemoController',
-                    controllerAs: 'vm'
-                }
             }
         });
+
         $stateProvider.state('film', {
             parent: 'tools',
             url: '/film',
@@ -78,21 +65,23 @@
                 }
             }
         });
-        $stateProvider.state('gif', {
+
+        $stateProvider.state('za', {
             parent: 'tools',
-            url: '/gif',
+            url: '/za',
             data: {
                 authorities: [],
-                pageTitle: 'gif图'
+                pageTitle: '抓爬杂货铺'
             },
             views: {
                 'content@': {
-                    templateUrl: 'app/tools/gif/gif.html',
-                    controller: 'GifController',
+                    templateUrl: 'app/tools/za/za.html',
+                    controller: 'ZaController',
                     controllerAs: 'vm'
                 }
             }
         });
+
         $stateProvider.state('novel', {
             parent: 'tools',
             url: '/novel/:id',
@@ -104,6 +93,22 @@
                 'content@': {
                     templateUrl: 'app/tools/novel/novel.html',
                     controller: 'NovelController',
+                    controllerAs: 'vm'
+                }
+            }
+        });
+
+         $stateProvider.state('picfall', {
+            parent: 'tools',
+            url: '/picfall',
+            data: {
+                authorities: [],
+                pageTitle: '瀑布流'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/tools/picfall/picfall.html',
+                    controller: 'PicfallController',
                     controllerAs: 'vm'
                 }
             }

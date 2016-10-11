@@ -23,7 +23,7 @@
     	}
 
     	function init() {
-            $q.all([apiLoadLoc.get('./no-min/allfilm.json'),
+            $q.all([apiLoadLoc.get('./no-min/film66.json'),
                     apiLeanCloud.functions("film66")])
             .then(function(data){
                 if(!data[1]||data[1].length==0){

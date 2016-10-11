@@ -1,0 +1,12 @@
+{
+	"dom":[{
+		"limit":"1~20",
+		"url":"http://ldgif.net/page/{{index}}",
+		"title":".issue em",
+		"href":".focus"
+	},{
+		"title":".article-title",
+		"info":".article-content",
+		"remove":".asb"
+	}]
+}

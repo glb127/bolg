@@ -1,0 +1,7 @@
+{
+	"dom":[{
+		"limit":"1~60",
+		"url":"http://www.w3ctech.com/topic/all?page={{index}}",
+		"href":".topic_title a"
+	}]
+}

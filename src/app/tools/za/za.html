@@ -1,0 +1,23 @@
+<div>
+    <div class="wb-topoption">
+        <select style="height:24px;" ng-model="vm.showType" ng-options="key as value.title for (key,value) in vm.showTypeList" ng-change="vm.getJson()"></select>
+        <input placeholder="{{vm.limit_placeholder}}" style="width:60px;" ng-keyup="vm.keyup($event)" ng-model="vm.showTypeList[vm.showType].value" type="text"></input>
+        <!-- <select style="height:24px;"   ng-change="vm.changeFilter()">
+            <option value="">全部</option>
+            <option ng-repeat="ent in vm.indexList | indexFilter:vm.showTypeList[vm.showType].filter" value="{{ent}}">{{ent}}</option>
+        </select> -->
+        <button ng-click="vm.changeFilter()">go</button>
+        <button ng-click="vm.savePage()">保存</button>
+    </div>
+    <div>
+        <div  infinite-scroll='vm.loadMore()' infinite-scroll-distance='2' style="overflow: hidden;">
+            <div ng-if="ent.info" ng-repeat="ent in vm.showInfo" id="{{ent.index}}">
+                <div style="font-weight: bold;font-size:24px;">{{ent.index}}、{{ent.title}}<a href="{{ent.url}}" ng-show="ent.url" style="margin-left: 10px;">go</a></div>
+                <div ng-bind-html="ent.info" ></div>
+            </div>
+            <div  ng-if="!ent.info" ng-repeat="ent in vm.showInfo" id="{{ent.index}}">
+                <div>{{ent.index}}、<a href="{{ent.url}}">{{ent.title}}</a></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -134,3 +134,5 @@ Desktop.ini
 # ESLint
 ######################
 .eslintcache
+src/no-min/za/
+LeanCloudAPI/node_test/zhongzi/select.json

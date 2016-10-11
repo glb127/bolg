@@ -1,7 +1,6 @@
 @charset "UTF-8";
 $icon-font-path: "../fonts/";
 @import "../bower_components/sass-css3-mixins/css3-mixins.scss";
-@import "../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 @import "_iconfont.scss";
 
 
@@ -409,7 +408,8 @@ Social button
         font-size: 24px;
     }
     span {
-        font-size: 24px;        
+        font-size: 24px;
+        font-family: cursive;
     }
 }
 
@@ -449,7 +449,7 @@ Social button
         background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgb(0, 0, 0)), to(rgb(245, 245, 245)));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-    }    
+    }
     @media (min-width: 992px) {
         .wb-people-head{
             font-size: 4vw;
@@ -497,4 +497,20 @@ Social button
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+.wb-picfall{
+    margin:10px;
+    img{
+        background:#D9D9D9;
+        border::#CCC 1px solid;
+        display:inline-block;
+        width:24%;
+        margin:0.5%;
+    }
+}
+.wb-topoption{
+    position:fixed;
+    top:15px;
+    z-index:9999;
+    margin-left:60px;
 }

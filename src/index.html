@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
+    <base target="_blank">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -23,7 +24,7 @@
     <![endif]-->
     <div ui-view="navbar" ng-cloak></div>
     <div class="container wb-navbar-mt">
-        <div class="well" ui-view="content">
+        <div class="" ui-view="content">
             <!-- Angular views -->
         </div>
 
@@ -61,23 +62,21 @@
     <!-- build:js app/app.js  -->
     <!-- inject:js -->
     <script src="app/app.module.js"></script>
+    <script src="app/tools/za/za.js"></script>
     <script src="app/tools/weather/weather.js"></script>
     <script src="app/tools/tools.state.js"></script>
-    <script src="app/tools/showDemo/showDemo.controller.js"></script>
+    <script src="app/tools/picfall/picfall.js"></script>
     <script src="app/tools/novel/novel.js"></script>
-    <script src="app/tools/gif/gif.js"></script>
     <script src="app/tools/film/film.js"></script>
     <script src="app/tools/baiduyun/baiduyun.js"></script>
+    <script src="app/services/myPublicFunction.js"></script>
     <script src="app/services/myapi.service.js"></script>
     <script src="app/services/loadloc.service.js"></script>
     <script src="app/services/leancloud.service.js"></script>
-    <script src="app/lib/TweenLite.min.js"></script>
-    <script src="app/lib/myPublicFunction.js"></script>
-    <script src="app/lib/EasePack.min.js"></script>
+    <script src="app/lib/breathing-halftone.pkgd.js"></script>
     <script src="app/lib/av-min-1.0.0.js"></script>
     <script src="app/common/state.handler.js"></script>
     <script src="app/common/navbar/navbar.controller.js"></script>
-    <script src="app/common/navbar/active-link.directive.js"></script>
     <script src="app/common/http.config.js"></script>
     <script src="app/common/home/home.state.js"></script>
     <script src="app/common/home/home.controller.js"></script>

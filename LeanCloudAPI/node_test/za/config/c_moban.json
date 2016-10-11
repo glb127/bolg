@@ -1,0 +1,18 @@
+{
+	"charset":"gbk",
+	"save":true,
+	"dom":[{
+		"limit":"1~31",
+		"url":"http://www.mobanwang.com/mb/special/blog/List_{{index}}.html",
+		"href":".divBoxH129 a"
+	},{
+		"title":"h1",
+		"baseurl":true,
+		"save":{
+			"type":"img",
+			"dom":".preview img",
+			"dom2":".mbPicOn img",
+			"name":"h1"
+		}
+	}]
+}

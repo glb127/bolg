@@ -1,0 +1,7 @@
+{
+	"dom":[{
+		"limit":"1~20000",
+		"url":"http://a.acgluna.com/archives/{{index}}",
+		"href":"[rel='canonical']"
+	}]
+}

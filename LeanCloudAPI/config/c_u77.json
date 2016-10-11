@@ -1,0 +1,9 @@
+{
+	"dom":[{
+		"limit":"1~12000",
+		"url":"http://www.u77.com/game/{{index}}",
+		"title":"#game-box .title:eq(0)",
+		"info":"#game_box_left,#game_box_right",
+		"baseurl":true
+	}]
+}

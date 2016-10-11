@@ -1,0 +1,8 @@
+{
+	"dom":[{
+		"limit":"1~200",
+		"url":"http://old.75team.com/weekly/issue{{index}}.html",
+		"title":".issue em",
+		"info":"#content"
+	}]
+}

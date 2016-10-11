@@ -13,6 +13,14 @@
         vm.info = [];
         vm.wait = false;
 
+        vm.select = function(){
+            if(vm.selectValue){
+                apiLeanCloud.functions("magnetSelect",{name:vm.selectValue}).then(function(data) {
+                    vm.selectDate=data
+                });
+            }
+        }
+
         vm.getBaiduyun = function(){
             vm.wait=true;
             apiLeanCloud.functions("baiduyuns").then(

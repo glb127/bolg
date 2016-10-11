@@ -10,13 +10,13 @@
             <a class="navbar-brand wb-navbar-title wb-span-spacing" href="#/" ng-click="vm.collapseNavbar()">
                 <!-- <img class="logo-img" src="content/images/logo-jhipster.png"/> -->
                 <i class="iconfont">&#xe600;</i>
-                <span class="">微步</span>
+                <span class="">weibu</span>
                 <span style="display: none" class="navbar-version">v{{VERSION}}</span>
             </a>
         </div>
         <div class="navbar-collapse" uib-collapse="vm.isNavbarCollapsed" ng-switch="vm.isAuthenticated()">
             <ul class="nav navbar-nav navbar-right">
-                <li ui-sref-active="active">
+                <li style="display:none;" ui-sref-active="active">
                     <a ui-sref="home" ng-click="vm.collapseNavbar()">
                         <span class="glyphicon glyphicon-home"></span>
                         <span class="hidden-sm">主页</span>
@@ -34,66 +34,29 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li ui-sref-active="active">
-                            <a ui-sref="baiduyun" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-cloud"></span>&nbsp;
-                                <span>百度云</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a ui-sref="weather" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-globe"></span>&nbsp;
-                                <span>天气</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a ui-sref="showDemo" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-gbp"></span>&nbsp;
-                                <span>粒子</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a ui-sref="film" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
-                                <span>电影</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active" style="display:none;">
-                            <a ui-sref="gif" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
-                                <span>gif</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a ui-sref="novel" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon"></span>&nbsp;
-                                <span>小说</span>
+                        <li ng-repeat="ent in vm.toolsList" ui-sref-active="active">
+                            <a ui-sref="{{ent.id}}" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon glyphicon-{{ent.pic}}"></span>&nbsp;
+                                <span>{{ent.name}}</span>
                             </a>
                         </li>
                     </ul>
-                </li>            
-                <li ng-class="{active: vm.$state.includes('entity')}" uib-dropdown class="dropdown pointer">
+                </li>
+                <li style="display: none;" ng-class="{active: vm.$state.includes('entity')}" uib-dropdown class="dropdown pointer">
                     <a class="dropdown-toggle" uib-dropdown-toggle href="" id="entity-menu">
                         <span>
                             <span class="glyphicon glyphicon-flash"></span>
                             <span class="hidden-sm">
-                                前端速报
+                                demo
                             </span>
                             <b class="caret"></b>
                         </span>
                     </a>
                     <ul class="dropdown-menu" uib-dropdown-menu>
-                        <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->                        
-                        <li ui-sref-active="active" >
-                            <a href="http://old.75team.com/weekly/issue1.html" target="_blank" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-tree-conifer"></span>&nbsp;
-                                <span>周报</span>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active" >
-                            <a href="http://www.kancloud.cn/jsfront/month/82796" target="_blank" ng-click="vm.collapseNavbar()">
-                                <span class="glyphicon glyphicon-tree-deciduous"></span>&nbsp;
-                                <span>月报</span>
+                        <li ui-sref-active="active">
+                            <a ui-sref="showDemo" ng-click="vm.collapseNavbar()">
+                                <span class="glyphicon glyphicon-gbp"></span>&nbsp;
+                                <span>粒子</span>
                             </a>
                         </li>
                     </ul>

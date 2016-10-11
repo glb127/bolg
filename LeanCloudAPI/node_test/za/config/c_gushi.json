@@ -1,0 +1,13 @@
+{
+	"dom":[{
+		"limit":"1",
+		"url":"http://www.92gushi.com",
+		"href":".time a"
+	},{
+		"href":".maglisttitle a"
+	},{
+		"title":"h1",
+		"info":".blkContainerSblkCon",
+		"remove":".contentAd"
+	}]
+}
