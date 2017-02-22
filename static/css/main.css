@@ -1,0 +1,344 @@
+body{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:0;
+    padding: 0;
+    background: #F0F0F0;
+}
+
+.step{
+    display: none;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 1;
+    max-height: 88%;
+    height: 88%;
+    overflow: auto;
+}
+#step4{
+    max-height: 100%;
+    height: 100%;
+    position: absolute;
+    filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+   -moz-background-size:100% 100%;
+}
+#step11{
+    height: 100%;
+    max-height: 100%;
+    background: #000;
+}
+#uploaddemo1{
+    background: url('../images/sfz_zmd.png');
+    background-size:100% 100%;
+    filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+   -moz-background-size:100% 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100001;
+    display: none;
+}
+#uploaddemo2{
+    background: url('../images/sfz_fmd.png');
+    background-size:100% 100%;
+    filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+   -moz-background-size:100% 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100001;
+    display: none;
+}
+.front{
+    position: relative;
+    margin: 20px 20px 0 20px;
+}
+.submit-div{
+    position: absolute;
+    margin: 0 5%;
+    bottom: 0;
+    height: 10%;
+    width: 90%;
+}
+.upload-img{
+    width: 100%;
+}
+.upload-input {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 100;
+}
+.big-title{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 2px;
+    height: 40px;
+    line-height: 40px;
+}
+.small-title{
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+.agreement{
+    margin: 10px 20px;
+}
+.agreement input{
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+.agreement label{
+    color: #000;
+}
+.submit-btn {
+    border:  transparent 1px solid;
+    border-radius: 4px;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    display: block;
+    cursor: pointer;
+}
+.end-btn{
+    border:  transparent 1px solid;
+    border-radius: 100px;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    background: #12addd;
+    display: block;
+    cursor: pointer;
+    margin-left: 25%;
+    width: 50%;
+    height: 50px;
+    line-height: 50px;
+}
+.suinfo-pan{
+    display: none;
+    width: 30px;
+}
+.check-info{
+    font-size: 16px;
+    background: #fff;
+    padding: 15px 20px;
+    margin-bottom: 1px;
+    color: #555;
+}
+.check-info .title{
+    display: inline-block;
+    width: 80px;
+}
+#cname{
+    border: 0;
+    width: 150px;
+    color: #12addd;
+    font-size: 18px;
+    line-height: 20px;
+}
+.take-info{
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+}
+.take-index{
+    font-weight: bold;
+    margin-right: 4px;
+    font-size: 18px;
+}
+.take-picinfo{
+    position: absolute;
+    top: 50px;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+    color: #FAA056;
+}
+.take-num{
+    margin-top: 10px;
+    font-size: 60px;
+    text-align: center;
+    letter-spacing: 2px;
+    font-weight: bold;
+    color:#FAA056;
+}
+.take-numinfo{
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
+    color: #12abbb;
+}
+.submit-hidebtn {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 100;
+}
+#like-num{
+    margin-top: 50%;
+    text-align: center;
+    font-size: 64px;
+    color: #fff;
+}
+.xsd{
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+}
+.suinfo{
+    text-align: center;
+    font-size: 25px;
+    color: #fff;
+    border: #fff 1px solid;
+    display: inline-block;
+    margin: 50px 24%;
+    padding: 3% 1%;
+    width: 50%;
+    border-radius: 4px;
+}
+#quan{
+    width: 80%;
+    margin: 25% 10% 0 10%;
+    top:0;
+    position: absolute;
+}
+#video_pan{
+    margin: 0;
+    border: 1px solid #000000;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#video_show{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    top: -100%;
+}
+#kuang{
+    position: absolute;
+    float: left;
+    top: 0;
+    width: 320px;
+    height: 30px;
+    text-align: center;
+    color:#fff;
+    z-index:1001;
+}
+#canvas_show{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    z-index: 1;
+}
+#snap{
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    margin-left: -30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    background: #fff;
+    border: none;
+}
+#snap_in{
+    position: absolute;
+    bottom: 35px;
+    left: 50%;
+    margin-left: -25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background: #fff;
+    border: 2px solid #000;
+}
+
+
+/*弹出框*/
+.error_tip_frame {
+    position: fixed;
+    z-index: 10001;
+    top:0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    opacity: .8;
+    background-color: #333;
+}
+.error_tip_frame .error_tip_inner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    -webkit-transform:translate(-50%,-50%);
+    -moz-transform:translate(-50%,-50%);
+    -o-transform:translate(-50%,-50%);
+    -ms-transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%);
+    width: 50%;
+    padding: 30px 50px;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+/*公共*/
+a:link {
+    text-decoration:none;
+}
+.link {
+    color: #12abbb;
+    cursor: pointer;
+}
+.line10{
+    height: 10px;
+    line-height: 10px;
+}
+.line20{
+    height: 20px;
+    line-height: 20px;
+}
+.line50{
+    height: 50px;
+    line-height: 50px;
+}
+.f-bold{
+    font-weight: bold;
+}
+.c-orange{
+    color: #ff7800;
+}
+.fs14{
+    font-size: 14px;
+}

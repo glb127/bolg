@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="css/main.css">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+</head>
+<body>
+	<div id="step1" class="step">
+		<!-- <input type="file"  id="upload" capture="camcorder" accept="video/*" name="" value="" > -->
+		<div class="front">
+			<input id="upload1" style="display: none;" class="upload-input" type="file" capture="camera" accept="image/*" name="" value="" >
+			<img src="images/sfz_zm.png" class="upload-img" id="uploadpic1" >
+		</div>
+		<div class="front">
+			<input id="upload2" style="display: none;" class="upload-input" type="file" capture="camera" accept="image/*" name="" value="" >
+			<img src="images/sfz_fm.png" class="upload-img" id="uploadpic2" >
+		</div>
+		<div id="uploaddemo1"></div>
+		<div id="uploaddemo2"></div>
+		<div class="agreement">
+			<span class="fs14">使用即同意<a class="link" href="idsafeUserAgreement.html" target="_black">《用户协议》</a></span>
+		</div>
+		<div class="submit-div">
+			<button type="submit" class="submit-btn" id="submit1" >下一步</button>
+		</div>
+	</div>
+	<div id="step2" class="step">
+		<div class="line20"></div>
+		<div class="big-title">身份证详细信息</div>
+		<div class="small-title">请确认您的信息，姓名可点击修改哦</div>
+		<div class="check-info">
+			<span class="title">姓&nbsp;&nbsp;&nbsp;名</span>
+			<input id="cname"></input>
+			<img id="cname_edit" src="images/edit.png" style="width: 20px;">
+		</div>
+		<div class="check-info">
+			<span class="title">身份证</span>
+			<span id="ccard"></span>
+		</div>
+		<div class="check-info">
+			<span class="title">有效期</span>
+			<span id="ctime"></span>
+		</div>
+		<div class="line50"></div>
+		<div class="submit-div">
+			<button type="submit" class="submit-btn" id="submit2" >下一步</button>
+		</div>
+	</div>
+	<div id="step3" class="step">
+
+		<div class="take-picinfo">录制时请脸部保持居中</div>
+		<img src="images/hand_take.png" class="upload-img">
+		<div class="take-numinfo">请用普通话缓慢朗读以下数字</div>
+		<div class="take-num">1234</div>
+		<div class="submit-div">
+			<button type="submit" class="submit-btn" id="submit3" >开始录制</button>
+			<input type="file" class="submit-btn submit-hidebtn" id="upload3" capture="camcorder" accept="video/*" name="" value="" >
+		</div>
+	</div>
+	<div id="step4" class="step">
+		<!-- <img class="kedu" src="images/kedu.png" > -->
+		<img id="quan" src="images/num_step5.png" >
+		<div id="like-num">91%</div>
+		<div class="xsd">相似度</div>
+		<div class="suinfo">
+			<img id="suinfo_T" class="suinfo-pan" src="images/btn_tg.png" style="display: inline;">
+			<img id="suinfo_F" class="suinfo-pan" src="images/btn_btg.png">
+			<img id="suinfo_C" class="suinfo-pan" src="images/btn_rs.png">
+			<span id="suinfo_info">认证通过</span>
+		</div>
+		<div class="line50"></div>
+		<button type="submit" class="end-btn" id="submit4" >返回</button>
+	</div>
+	<div id="step11" class="step">
+		<div id="video_pan">
+			<video id="video_show" autoplay></video>
+			<canvas id="canvas_show"></canvas>
+			<div id="kuang">dsfsfsdfdsfsfsdfsdfsdfsdfdsfsd</div>
+		</div>
+		<button id="snap"></button>
+		<button id="snap_in"></button>
+	</div>
+	<script src="./js/jquery-3.1.1.min.js"></script>
+	<script src="./js/md5.js"></script>
+	<script src="./js/main.js"></script>
+</body>
+</html>
