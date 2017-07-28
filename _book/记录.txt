@@ -1,0 +1,267 @@
+工作
+    友商H5
+        http://hx.wecube.com/layout.html#/view/wallet/redirect.html?forwardUrl=face&source=account-center&token=e31b8ab41ec616bedc5817d405ff5655
+        http://shieldweb.linkface.cn  DS5d
+        http://shieldweb.linkface.cn  fdle
+    微信账号
+        有盾网络：账号（chenlh@yintong.com.cn),密码（youdun1010)
+        大数据风控圈：账号（chenhj@udcredit.com)密码（youdun1010)
+    key
+        //测试
+        url: "http://10.1.30.51:8000/idsafe-front/frontserver/4.2/api/",
+        pub_key: "4ad2c7c4-f9fa-456b-92cd-056d5e5bcd59",
+        security_key: "2e6b6da8-77b9-4268-a8ba-8ff47ca7e6b6",
+        //正式
+        url:"https://idsafe-auth.udcredit.com/frontserver/4.2/api/",
+        pub_key:"6b1ae3c6-dc99-426b-ad86-9a99929681dc",
+        security_key:"b2a73e13-82d6-4244-8d6b-347a29f2c3d4",
+    iconfont
+        739144227@qq.com lmj8428268
+    身份证
+        王庆娅 41142119891219730X
+    授权采集账号
+        201702202052/p7P6TxRW
+    海贝
+        http://buyerplus.ihappyplus.cn/
+    jira
+        wangmin wm090901
+    图片前缀
+        data:image/jpg;base64,
+    jhipster
+        npm install -g generator-jhipster
+
+
+
+工作杂
+    #设备指纹
+        $secretKey,$partnerCode,
+        https://service.udcredit.com:10000/api/device-fingerprint
+        https://testfp.udcredit.com
+
+    #nginx#
+        C:\loc\nginx-1.6.3\nginx.exe
+
+    #ssh key#
+        cd C:\Program Files\Git\usr\bin
+        ssh-keygen -t rsa -C "guolb@udcredit.com"
+        C:\Users\Sarah\.ssh\7.2
+        ssh -i C:\Users\Sarah\.ssh\fb guolb@10.20.107.130 -p 29418
+
+    refs/for/
+        pscp -i C:/Users/Sarah/.ssh/id_rsa -p -P 29418 guolb@10.20.107.130:hooks/commit-msg ./hooks/
+
+    #复制到服务器#
+        scp fingerprint.html root@10.10.111.240:/usr/share/nginx/html/
+
+    #host#
+        C:\Windows\System32\drivers\etc
+
+    #极验验证#
+        hush@udcredit.com   youdun1024
+
+    #打包#
+        mvn clean && mvn package -Pprod -Dmaven.test.skip=true
+
+    #npm#
+        npm install --registry=http://193.168.201.182:7001
+        --registry=https://registry.npm.taobao.org
+        --registry=http://registry.npmjs.org
+
+    #MongoDB#
+        mongod.exe --logpath "C:/Program Files/MongoDB/log/mongodb.log" --logappend --dbpath "C:/Program Files/MongoDB/data" --directoryperdb --serviceName MongoDB -install
+
+        mongod.exe --remove --serviceName "MongoDB"
+        net start MongoDB
+
+    #密码#
+        crm3.0 http://mng.udcredit.com:9090/manage/welcome.do#1004/4001
+            guolb
+            123456
+        https://new-my.udcredit.com
+            201508190509
+            密码123456
+            201609195681
+            123456
+            201703064613
+        2.0正式 console.udcredit.com
+            201510214616
+            youdun1024
+        10.10.111.129
+            201509228790
+            youdun1024
+        3.0正式 180.76.129.155:12000  sv.udcredit.com:12000
+            201605208578 youdun1025
+            201601141404 yd123456
+        超级商户站https://super.udcredit.com/#/login
+            88888888
+            youdun1024
+        测试 193.168.201.182:8181
+        自动化测试 180.76.129.155:9292
+
+
+        google
+            glb127glb@gmail.com
+            G
+
+        https://portaltest.tongdun.cn/dashboard/trend/riskTrend.htm
+        demo@uubee.com
+        uubee603
+
+        WIFI(UDCREDIT):1234567+
+        WIFI(LLYT):1234567890
+
+        https://portaltest-credit.tongdun.cn/login
+        demo2@uubee.com
+        abc123
+
+
+
+代码
+    //插入js
+    (function(){
+        var oHead = document.getElementsByTagName('HEAD').item(0);
+        var oScript= document.createElement("script");
+        oScript.type = "text/javascript";
+        oScript.src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js";
+        oHead.appendChild( oScript);
+    })()
+
+    //判断黑白
+    double copy_detect_rgb(unsigned char* buf, int width, int height,int threshold) {
+        long count = width * height;
+        short *a = new short[count];
+        double total = 0;
+        for (int i = 0; i < count; i++) {
+            short delta = 0;
+            short _r,_g,_b;
+            _r = *buf++;
+            _g = *buf++;
+            _b = *buf++;
+            u = ceil(-0.148 * _r - 0.291 * _g + 0.439 * _b + 128);
+            v = ceil(0.439 * _r - 0.368 * _g - 0.071 * _b + 128);
+            delta = u+v;
+            a[i] = delta;
+            total += delta;
+        }
+        double aver = total / count;
+        long num = 0;
+        for (int i = 0; i < count; i++) {
+            int delta = fabs(aver - a[i]);
+            if (delta > threshold)
+                num++;
+        }
+        delete[] a;
+        return (double) num / (double) count;
+    }
+
+
+
+game
+    psp:http://gamesforpgd.ctfile.com/u/12482749/18395117
+    不思议
+        冒险之森 铁血+吸血鬼+特种兵 勇者圣铸
+        英雄之村 佐罗+夜刃+女王 异界+毁灭+传奇 冰银河/航海士 60地震术+Z斩,夜刃80双个虫蛋,901灯芯
+        遗落圣坛 铁血+地狱火+舰长 毁灭+传奇+异界 仙人掌 静电+瓦解+时停+毁灭+砍最后+空投
+        废弃边陲 死骑+特种+巫妖 光骑+异界+位面 死灵
+        竞技场 斯巴达+佐罗+女王 毁灭+传奇+异界
+        低语之森 特种+吸血+巫妖 异界+勇者+传奇 仙人掌
+        圣者之塔 佐罗+悟空+女王 异界+毁灭+传奇
+        沙漠绿洲 传销娜+匹诺曹+冒险者 元素领主+大精灵王
+        血腥要塞 特种/铁血+吸血鬼+巫妖王 洞穴+勇者 恶魔的鸡尾酒 暴君,火神,巫妖,骑士,魅魔
+        德古拉 佐罗+悟空/圣斗士+女王 异界+毁灭+传奇 手镯+胸甲+戒指+鞋子+斗篷
+        阿瓦隆 机械师+佣兵首领+夜刃 位面先知+大精灵王+剑圣 大工程师药剂
+        骷髅岛 同冒险之森 仙人掌
+        海岛港 同上
+
+
+
+vpm配置
+    美国免费        free.la01.33ss.website
+    美国免费2       free.la02.33ss.website
+    美国            vip.la01.33ss.website
+    香港            vip.hk01.33ss.website
+    香港2           vip.hk02.33ss.website
+    新加坡          vip.sg01.33ss.website
+    日本            vip.jp01.33ss.website
+    日本(NETFLIX)   vip.jp02.33ss.website
+    法国(不计流量)  vip.fr01.33ss.website
+
+    服务器端口：37129
+    加密方式：chacha20
+    密码：JcqAxQ
+    协议：origin
+    协议参数：
+    混淆：plain
+
+
+
+杂记
+    旅游
+        ↑杭州-湖州↑
+        　　每天27趟动车，其中高铁32趟，最快21分钟
+        　　玩什么：南浔古镇、安吉竹乡、百间楼、荻港
+        　　吃什么：湖州大馄饨、千张包子、太湖白虾
+
+        ↑杭州-济南↑
+        　　每天16趟高铁，最快3小时24分钟
+        　　玩什么：趵突泉、大明湖、千佛山、芙蓉街
+        　　吃什么：奶汤蒲菜、把子肉、盘丝饼
+
+        ↑杭州-南昌↑ 180
+        　　每天43趟高铁，最快2小时14分钟
+        　　玩什么：滕王阁、鄱阳湖、中山路步行街
+        　　吃什么：牛杂粉、懒人凉粉、帝煌鸭脚
+
+        ↑杭州-长沙↑
+        　　每天29趟高铁，最快3小时36分钟
+        　　玩什么：天心阁、黄兴路步行街、岳麓山、湘江
+        　　吃什么：臭豆腐、鸭血粉丝、向群锅饺
+
+        ↑杭州-怀化↑
+        　　每天4趟高铁，最快6小时9分钟  530
+        　　玩什么：凤凰古城、凤凰山、侗寨
+        　　吃什么：米豆腐、洪江血耙鸭、芷江鸭
+
+        ↑杭州-合肥↑
+        　　每天13趟高铁，最快2小时20分钟
+        　　玩什么：徽园、大蜀山公园、三河古镇
+        　　吃什么：煎蛋锅贴、鸭油烧饼
+
+        ↑杭州-武汉↑
+        　　每天3趟高铁，最快4小时40分钟
+        　　玩什么：武汉大学（樱花季）、江汉路、黄鹤楼、汉正街
+        　　吃什么：热干面、鸭脖子、灌汤包
+
+    qq:783314116  poppy 电话:18671732747
+
+        783314116   ________落__ 女   成员  5933837 宁波广本缤智车友会
+        783314116   Angelina    女   创始人 14766795    郎阁12班
+        783314116   xx（宣）   女   成员  53556708
+        783314116   xx  女   成员  56046515
+        783314116   ________落__ 女   成员  58937468
+        783314116   ________落__ 女   成员  29795324 ★ 絕 版 娚 釹★
+        783314116   ︶ㄣ拽寶貝↗泪 女   成员  65160249 的日子据称
+        783314116   ________落__ 女   成员  84673476 2~5~班
+        783314116   09走红の落  女   成员  46115423 有一种羙丽叫曾经拥有
+        783314116   xx  女   成员  72449230 『髙叁え壹絆
+
+        angel123ina 783314116@qq.cn d46677134bef3aa2****************
+        love33258   783314116@qq.com    36ce3165579e9d85****************
+
+        love33258 33258love xinshenghuo22@yahoo.cn [Pconline]
+        love33258 | 76fb6965751a971c9f8c936b063d0563 | **@**.** | 369258321 [shengda]
+        love33258 76fb6965751a971c9f8c936b063d0563 **@**.** 369258321 [shengda]
+
+        xinshenghuo22@yahoo.cn      love***** 请登录后查看密码。
+        q33258i@163.com     love***** 请登录后查看密码。
+        xinshenghuo22@163.com       love***** 请登录后查看密码。
+        love33258   783314116@qq.com    36ce3165579e9d85**************** 请登录后查看密码。      Sorry
+        love33258   **@**.**    76fb6965751a971c**************** 请登录后查看密码。      多玩YY
+        love33258   **@**.**    76fb6965751a971c**************** 请登录后查看密码。      多玩YY
+
+    郭凌波 330203199112070618  26  男   1991-12-07  汉族  浙江宁波            未婚  浙江工业大学  大学本科    无   18767122363 18767122363 杭州有盾网络科技有限公司            2014-03-01  2015-03-01  杭州华业高科技产业园联合总支部 033001028003009034001   非公有制企业  其他  无   2016-04-14  20.0    是   2017-12 杭州华业高科技产业园联合总支部 无
+
+    浙江省宁波市鄞州中心区惠风东路188号 中国农业银行鄞州分行个人贷款中心 沈瑜 13486693410
+
+    1、60送240：本金返充（前4个月）：15元每月，馈赠金返充（后8个月）：30元每月；
+    3、150送200：分12个月返充，首月返充20元；后11个月，每月返充30元。

@@ -1,0 +1,367 @@
+git库
+    chalk/chalk: 彩色控制台字体
+    npm/validate-npm-package-name: 验证包名
+    tj/commander: 命令行执行  express作者
+    IndigoUnited/node-cross-spawn: shebang #!
+    jprichardson/node-fs-extra": 代替fs
+    substack/hyperquest": http多线程
+    npm/node-semver: 版本号比较
+    ForbesLindesay/tar-pack: 文件流压缩解压
+    raszi/node-tmp: 临时文件目录创建
+
+
+《js忍者秘籍》
+    js库组成
+        1、js语言的高级使用；
+        2、跨浏览器代码的精心构建；
+        3、当前能够聚众合一的最佳实践应用
+    权衡支持浏览器
+        1、目标受众的期望和需求
+        2、浏览器市场份额
+        3、支持该浏览器所需工作量
+    需要
+        1、测试
+        2、性能分析
+        3、调试技巧
+    1
+
+
+
+
+
+
+记录
+    《effective js 68条》
+        一：让自己习惯JavaScript
+            1.了解你使用的JavaScript版本——————使用严格模式
+            2.理解JavaScript的浮点数——————整数计算代替小数计算
+            3.当心隐式的强制转换——————计算时要确认类型
+            4.原始类型优于封装对象——————基本类型，隐式封装
+            5.避免对混合类型使用==运算符—————— +号，===
+            6.了解分号插入的局限——————熟知才能不用
+            7.视字符串为16位的代码单元序列——————16位代码单元，不是unicode代码点
+        二：变量作用域
+            8.尽量少用全局对象——————全局对象做特征检测
+            9.始终声明局部变量——————lint检测
+            10.避免使用with——————别用
+            11.熟练掌握闭包——————
+            12.理解变量声明提升——————for内部变量也会对外。函数级作用域。手动提升局部变量声明
+            13.使用立即调用的函数表达式创建局部作用域——————闭包存引用
+            14.当心命名函数表达式笨拙的作用域——————不要用var f=function g()
+            15.当心局部块函数声明笨拙的作用域——————if里面不要定义变量
+            16.避免使用eval创建局部变量——————
+            17.间接调用eval函数优于直接调用——————(0,eval)
+        三：使用函数
+            18.理解函数调用、方法调用及构造函数调用之间的不同——————
+            19.熟练掌握高阶函数——————将函数作为参数或返回值(sort,map)
+            20.使用call方法自定义接收者来调用方法——————
+            21.使用apply方法通过不同数量的参数调用函数——————
+            22.使用arguments创建可变参数的函数——————
+            23.永远不要修改arguments对象——————[].slice.call(arguments)
+            24.使用变量保存arguments的引用——————
+            25.使用bind方法提取具有确定接收者的方法——————
+            26.使用bind方法实现函数柯里化——————f(a,b,c) f.bind(bull,a,b)
+            27.使用闭包而不是字符串来封装代码——————
+            28.不要信赖函数对象的toString方法——————
+            29.避免使用非标准的栈检查属性——————
+        四：对象和原型
+            30.理解prototype、getPrototype Of和__proto__之间的不同——————
+            31.使用Object.getPrototypeOf函数而不要使用__proto__属性——————
+            32.始终不要修改__proto__属性——————不要动__proto__
+            33.使构造函数与new操作符无关——————
+            34.在原型中存储方法——————
+            35.使用闭包存储私有数据——————
+            36.只将实例状态存储在实例对象中——————
+            37.认识到this变量的隐式绑定问题——————function(){}.bind(this)
+            38.在子类的构造函数中调用父类的构造函数——————
+            39.不要重用父类的属性名——————
+            40.避免继承标准类——————
+            41.将原型视为实现细节——————
+            42.避免使用轻率的猴子补丁——————为缺失标准api提供polyfill
+        五：数组和字典
+            43.使用Object的直接实例构造轻量级的字典——————
+            44.使用null原型以防止原型污染——————Object.create(null) {__proto__:null}
+            45.使用hasOwnProperty方法以避免原型污染——————
+            46.使用数组而不要使用字典来存储有序集合——————
+            47.绝不要在Object.prototype中增加可枚举的属性——————
+            48.?避免在枚举期间修改对象——————
+            49.数组迭代要优先使用for循环而不是for...in循环——————
+            50.迭代方法优于循环——————some every可提前退出
+            51.在类数组对象上复用通用的数组方法——————Array.prototype.map.call("abc",)
+            52.数组字面量优于数组构造函数——————
+        六、库和API设计
+            53.保持一致的约定——————先宽再高
+            54.将undefined看做“没有值”——————
+            55.接收关键字参数的选项对象——————
+            56.避免不必要的状态——————不要直接改变内部变量
+            57.使用结构类型设计灵活的接口——————鸭子类型
+            58.区分数组对象和类数组对象——————
+            59.避免过度的强制转换——————
+            60.支持方法链——————
+        七、并发
+            61.不要阻塞I/O事件队列——————
+            62.在异步序列中使用嵌套或命名的回调函数——————
+            63.当心丢弃错误——————
+            64.对异步循环使用递归——————
+            65.不要在计算时阻塞事件队列——————
+            66.使用计数器来执行并行操作——————使用foreach计数器代替async([])
+            67.绝不要同步地调用异步的回调函数——————
+            68.使用promise模式清洁异步逻辑——————
+
+    《js高级程序设计》
+        b=a++;//先等再加  b=++a;//先加再等
+        元编程 ：编写在运行时操纵语言构件的代码
+        反射：一门语言拥有对自身的元编程能力就表现在反射
+        a&&b() b||""  短路
+        函数内部重写对象参数，会引用局部变量
+        垃圾收集：标记清除
+        shift()出,unshift(),reverse()
+        归并 reduce(prev,cur,index,array),reduceRight()
+        使用基本类型时会创建临时对象，装箱拆箱
+        永不使用boolean对象
+        text.replace(/[<>"&]/g,function(match,pos,original){
+            switch(match){
+                case "<": return "&lt;";
+            }
+        });
+        string.localeCompare(str);//支持中文大小比较
+        String.fromCharCode(104);//h 可用于加密
+        str.charCodeAt(0);//104 上面反向
+        Object.defineProperty(obj,"a",{
+            value:属性的值
+            writable:如果为false，属性的值就不能被重写,只能为只读
+            configurable:总开关，一旦为false，就不能再设置他的其他
+            enumerable:是否能在for...in循环中遍历出来或在Object.keys中列举出来。
+            get:获取
+            set:设置
+        })
+        var a;a自带configurable=false
+        构造函数中复制，原形prototype中共用
+        __proto__用Object.getPrototypeOf，指针指向原形
+        继承：B.prototype=new A();B.prototype.constructor=B;
+        class B extends A {} ===
+        Object.setPrototypeOf(B.prototype, A.prototype);Object.setPrototypeOf(B, A);===
+        function B(...s) {A.aplly(this,a)};B.prototype = Object.create(A.prototype);B.constructor = B
+        BOM:window,location,navigator,screen,history
+        能力检测：浏览器支持方法。 怪癖检测：浏览器存在什么bug。 用户代理检测：userAgent（电子欺骗）
+        Mozilla，IE抄的网景
+        Trident，引擎版本号，
+        DOM的NodeList基于DOM动态查询的结果，类数组
+
+        Polyfill（填缝剂，垫片）为旧浏览器增加新api，shim是指库。类优雅降级
+        服务端渲染：首屏渲染、同构
+        koa2 完全抛弃了generator和co的做法，而是使用async/await来做异步开发。
+        spa:单页面应用single-page application
+        webworker:前端多线程
+        Sizzle:jQuery里面的选择器引擎，向上兼容querySelectorAll这个API
+        渲染引擎:Firefox使用Geoko——Mozilla，Safari和Chrome都使用webkit——apple。
+        输入URL到页面加载
+            DNS解析：缓存及负载均衡
+            TCP连接：三次握手，HTTPS = HTTP + SSL(or TLS)
+            发送HTTP请求：请求行, 请求报头和请求正文
+            服务器处理请求并返回HTTP报文：状态码, 响应报头和响应报文
+            浏览器解析渲染页面：reflow(回流)和repain(重绘)
+        dom2,dom3用于扩展dom api，
+        ie事件冒泡（内而外），网景事件捕获流（外而内）老版本浏览器不支持
+        dom2级事件规定事件捕获、处于目标、事件冒泡
+        h5 postMessage
+        JSON.stringify({A:1,B:2},过滤,缩进) 对象内部toJSON方法
+        ajax核心XMLHttpRequest XHR
+        离线缓存：<html manifest="/offline.manifest">
+        cookie:20-50个 secure子域名下都能访问，但要SSL链接
+        子cookie 存键值对
+        createDocumentFragment 减少dom更新次数 还是innerHTML快
+        NaN唯一自己不等于自己 NaN!==NaN
+        7个假值 false、+0、-0、""、NaN、null、undefined
+
+    《深入浅出React》
+        组件就是状态机器
+        木偶组件和容器组件
+        状态state：组件内部去自己维护
+        属性props：外部在初始化组件时传入,只读的
+        每一次界面变化都是整体刷新，虚拟DOM（Virtual DOM）
+        单向数据流动：Flux、Reflux、Redux
+            Action > Dispatcher > Store > View > Action...
+        只读数据建立模型：Immutability（整套框架）
+            数据改变是新增数据
+        React Canvas是Flipboard出品的一套前端框架，所有的界面元素都通过Canvas来绘制
+        同步加载CommonJS：主要用于NodeJS
+        异步加载AMD：通过requirejs等工具适用于前端
+        Webpack 比browserify强大
+            同时支持CommonJS和AMD模块（对于新项目，推荐直接使用CommonJS）；
+            串联式模块加载器以及插件机制，让其具有更好的灵活性和扩展性，例如提供对CoffeeScript、ES6的支持；
+            可以基于配置或者智能分析打包成多个文件，实现公共模块或者按需加载；
+            支持对CSS，图片等资源进行打包，从而无需借助Grunt或Gulp；
+            开发时在内存中完成打包，性能更快，完全可以支持开发过程的实时打包需求；
+            对sourcemap有很好的支持，易于调试。
+        Web Components 是一套基础设施，不是一套规范
+            自定义元素 (Custom Elements)
+            HTML模板 (HTML Templates)
+            影子DOM  (Shadow DOM)
+            HTML导入 (HTML Imports)
+        JS类库实现了Web Components，那它就不是 Lib 了，而是 Polyfill
+        JSX只是一个比较高级但很直观的语法糖。和XML语法类似，但可以用大括号来加入js
+        render方法是被异步调用的，这可以保证同步的多个setState方法只会触发一次render
+        Babel进行JSX编译
+        diff O(n^3)降低到O(n) 基于以下两点
+            1、两个相同组件产生类似的DOM结构，不同的组件产生不同的DOM结构；
+            2、对于同一层次的一组子节点，它们可以通过唯一的id进行区分
+        （1）节点类型不同
+            删除前面的节点，然后创建并插入新的节点
+                renderA: <Header />
+                renderB: <Content />
+                => [removeNode <Header />], [insertNode <Content />]
+            逐层对同一层次的节点比较
+                A.parent.remove(A); D.append(A);——>
+                A.destroy();A = new A();A.append(new B());A.append(new C());D.append(A);
+        （2）节点类型相同
+            React会对属性进行重设从而实现节点的转换
+                renderA: <div id="before" />
+                renderB: <div id="after" />
+                => [replaceAttribute id "after"]
+            style属性稍有不同，其值并不是一个简单字符串而必须为一个对象
+                renderA: <div style={{color: 'red'}} />
+                renderB: <div style={{fontWeight: 'bold'}} />
+                => [removeStyle color], [addStyle font-weight 'bold']
+            每个节点唯一的标识（key）
+                key="C"
+        保持稳定的DOM结构会有助于性能的提升
+        声明组件
+            class TodoItem extends React.Component { ... } // ES6
+            function TodoItem() { ... } // 无状态组件 (State) => View
+
+    正则
+
+
+    高级技巧
+        跨域
+            cors 使用自定义的http头 options
+            图片带参
+            jsonp
+            nginx
+            comet：长轮训和流
+            SSE：new EventSource http
+            web sockets：new WebSocket ws:// wss:// 双向
+
+        常见攻击
+            1、XSS (Cross Site Script) ，跨站脚本攻击。被动式
+                出口入口转义
+            2、CSRF(Cross Site Request Forgery)，跨站点伪造请求。主动
+                SSL连接访问
+                请求带计算得到的验证码
+            3、cookie劫持，在页面中写到恶意站点的请求，并携带用户的cookie
+                通过 referer、token 或者 验证码 来检测用户提交。
+                尽量不要在页面的链接中暴漏任何与用户唯一号（用户id）有关的信息。
+                对于用户修改 删除 提交的操作最好都使用post 操作 。
+                避免全站通用的cookie 严格的设置cookie的域。
+
+        区块链
+            区块链被描述为“一个群集人工智能系统”
+            麦克斯韦妖是去中心化的基础
+            币圈去中心化是根本，链圈需要引入特权中心化
+
+        清除浮动
+            .clearfix:after{
+                centent:"";//设置内容为空
+                height:0;//高度为0
+                line-height:0;//行高为0
+                display:block;//将文本转为块级元素
+                visibility:hidden;//将元素隐藏
+                clear:both//清除浮动
+            }
+            .clearfix{
+                zoom:1;//为了兼容IE
+            }
+
+        一次执行函数
+            var type = function(obj) {
+              if (obj == null) {//undefined和null
+                return String(obj);
+              }
+              var class2type={};
+              "Boolean Number String Function Array Date RegExp Object Error".split(" ")
+                .map((name)=>{class2type["[object " + name + "]"] = name.toLowerCase();})
+              return typeof obj === "object" || typeof obj === "function" ?
+                class2type[class2type.toString.call(obj)] || "object" : typeof obj;
+            }
+
+            function once(func) {
+              var ran,
+                  result;
+              if (type(func)!=="function") {
+                throw new TypeError(funcErrorText);
+              }
+              return function() {
+                if (ran) {
+                  return result;
+                }
+                ran = true;
+                result = func.apply(this, arguments);
+                func = null;
+                return result;
+              };
+            }
+
+        错误记录
+            var img=new Image();
+            img.src="log.php?s"=encodeURIComponent(str);
+
+        1、安全的类型检测
+            Object.prototype.toString.call(obj)
+        2、作用域安全的构造函数
+            function A(name){
+                if(this instanceof A){
+                    this.name=name;
+                }else{
+                    return new A(name);
+                }
+            }
+            function B(value){
+                A.call(this,"n");
+                this.value=value;
+            }
+            B.prototype=new A();
+        3、惰性载入函数
+            运行时覆盖原有函数
+            声明时返回指定函数 匿名自执行
+        4、函数绑定
+            fn.bind(obj) 类似
+            function bind(fn,context){
+                return function(){
+                    fn.apply(obj,arguments);
+                }
+            }
+        5、函数柯里化
+            function curry(fn){
+                var args = Array.prototype.slice.call(arguments,1);
+                return function(){
+                    var innerArgs = Array.prototype.slice.call(arguments);
+                    var finalArgs = args.concat(innerArgs);
+                    return fn.apply(null,finalArgs);
+                }
+            }
+        6、数组分块
+            function chunk(_array,process,context){
+                var array=_array.concat();
+                setTimeout(function(){
+                    var item = array.shift();
+                    process.call(context,item);
+                    if(array.length>0){
+                        setTimeout(arguments.callee,100);
+                    }
+                },100);
+            }
+        7、节流
+            function throttle(method,context){
+                clearTimeout(method.tId);
+                method.tId=setTimeout(function(){
+                    method.call(context);
+                },100);
+            }
+
+
+
+
+vue2 react angular2比较，优缺点
+react的diff启发式算法、redux的enhancer、middleware等
+redux + react+ typescript + rxjs + react-redux + antd+webpack

@@ -1,0 +1,286 @@
+
+1、过滤器
+    大小写：| uppercase  | lowercase
+    小数：| number:2 //自动千分逗号
+    货币：| currency (: "$")
+    时间：| date('yyyy-MM-dd hh:mm:ss')
+    数组过滤：| filter:'e'  | filter:'!e'
+    对象数组过滤：| filter:{'id': '1', 'name': 'a'}
+    输出json：| json  <pre></pre>标签
+    截取数组：| limitTo:2
+    对象数组排序：| orderBy: 'id' (: true) //倒序
+    过滤：| filter:nametext  | filter:{$:all, name:nametext, b:btext}
+    自定义过滤：| filter:fn  $scope.fn = function(str) { return str[0] == str[0].toUpperCase(); }
+    自定义过滤器： | myFilter:a:b
+    .filter('myFilter', function() {
+        return function(input,a1,b1) {
+            return input.slice(a1,b1);
+        }
+    });
+    重载过滤器
+    .filter('myFilter', function($filter) { // == .filter('myFilter', function(limitToFilter) 更好
+        var limitToFilter=$filter("limitTo");
+        return function(input,limit){
+            return limitToFilter(input,limit);
+        }
+    })
+
+    注：排序性能比过滤差，一般放在过滤之后。
+        item in fList=(list|filter:name)
+        不稳定的过滤器会返回10 $digest()错误，原因是系统希望得到稳定的值
+
+
+2、表单验证
+    1.必填项验证 required
+    2.最小长度 ng-minleng="5"
+    3.最大长度 ng-maxlength="20"
+    4.模式匹配 ng-pattern="/[a-zA-Z]/"
+    5.电子邮件 type="email"
+    6.数字 type="number"
+    7.URL type="url"
+    formName.inputFieldName.
+    错误信息 $error
+    未修改过为true $pristine;
+    修改过为true $dirty
+    无错误为true $valid
+    有错误为true $invalid
+    DEMO:
+        ng-show="form.email.$dirty && form.email.$invalid"
+            ng-show="form.email.$error.required"
+        ng-disabled="form.$invalid"
+    angular-messages
+        ng-messages="form.email.$error" (ng-messages-multiple) (ng-messages-include="errors.html")
+            ng-messages="required"
+    自定义：
+        ensure-unique="username"
+        $error.unique
+        .directive('ensureUnique', ['$http', function($http) {
+          return {
+            require: 'ngModel',
+            link: function(scope, ele, attrs, c) {
+              scope.$watch(attrs.ngModel, function() {
+                $http({
+                  method: 'POST',
+                  url: '/api/check/' + attrs.ensureUnique,
+                  data: {'field': attrs.ensureUnique}
+                }).success(function(data, status, headers, cfg) {
+                  c.$setValidity('unique', data.isUnique);
+                }).error(function(data, status, headers, cfg) {
+                  c.$setValidity('unique', false);
+                });
+              });
+            }
+          };
+        }]);
+    获取焦点后添加class，同时增加 $focused 属性
+        .directive('ngFocus', [function() {
+          var FOCUS_CLASS = "ng-focused";
+          return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function(scope, element, attrs, ctrl) {
+              ctrl.$focused = false;
+              element.bind('focus', function(evt) {
+                element.addClass(FOCUS_CLASS);
+                scope.$apply(function() {ctrl.$focused = true;});
+              }).bind('blur', function(evt) {
+                element.removeClass(FOCUS_CLASS);
+                scope.$apply(function() {ctrl.$focused = false;});
+              });
+            }
+          }
+        }])
+
+3、指令
+    .directive('ngFocus', [function() {
+        return {
+            restrict: 'A', //元素E，属性A，类C，注释M
+            priority: 0, //优先级，0-~越大越早执行
+            terminal: false, //为true时会让priority小的不执行
+            template:"", //html文本或者function(tElement,tAttrs)
+            templateUrl:"", //html文件路径或者function(tElement,tAttrs) 最好用$templateCach缓存
+            replace: false, //true会去掉原有div
+            scope: false, //true时会继承父级生成一个新的域，{}隔离独立的作用域（好）：
+                @将本地作用域和dom属性的值进行绑定(string)，与手动$observe效果相同
+                =将本地作用域与父级作用域数据双向绑定(ng-model)，类似设置两个watch
+                &与父级单项绑定(function)，等同$parse，可用作回调函数
+                {
+                    myLinkText: '@' //my-link-text="str"
+                    myUrl: '=', //my-url="othermodel" ng-model绑定
+                    myLinkText2: '@myLinkText' //绑定其他
+                },
+            transclude: false, //true时会把dom的内容放到ng-transclude里面给html用
+            controller: "", //sting或function($scope){} ($scope,$element,$attrs,$transclude),暴露api
+            controllerAs:: "", //As "vm",var vm=this;本质使用$scope.vm代替原有$scope
+            require:: "", //另一个（字符）或一组（数组）指令，作为link第四个值；前缀?没找到控制器则会将null传给link防报错，^上游指令链中查找，一般用?^或?
+            compile: function(tElement,tAttrs,transcludeFn){
+                return function(scope,ele,attrs,controller){};
+            }, //编译函数，如果设置了则会忽略link，负责对模板DOM进行转换，不要进行DOM事件监听
+            link: function(scope,ele,attrs,//SomeController(require),//ngModel(require:'?ngModel'数据绑定、验证、css更新等不实际操作dom的事件)), //链接函数，类controller，不暴露API，负责作用域与dom进行链接
+
+        }
+    }])
+
+    (1)、controller(控制器):$scope; //写业务逻辑，通过暴露的api与其他指令进行数据交互
+    (2)、compile(编译):ele; //仅仅操作dom，不能用作用域
+    (3)、link(链接):scope,ele; //负责作用域与dom联动
+
+4、内置指令
+    布尔
+        ng-disabled: input(text,checkbox,radio,number,url,email,submit),textarea,select,button
+        ng-readonly: //同上
+        ng-checked: input(checkbox)
+        ng-selected: option
+    类布尔
+        ng-href: a
+        ng-src: img
+    子作用域
+        ng-app: ng-controller:
+        ng-include: html
+        ng-switch: (ng-switch-when ng-switch-default)
+        ng-view: //优先级1000，屏蔽其他指令
+        ng-if: //dom不存在
+        ng-repeat: ($index 序号,$first 第一个,$middle 中间几个,$last 最后,$even 偶,$odd 奇,! 反向)
+        ng-init:
+        {{}}: //类ng-bind但会有闪烁
+        ng-bind:
+        ng-cloak: //防止闪烁
+        ng-bind-template: (="{{a}}{{b}}") //可以绑定多个
+        ng-model: //最好使用$scope下的对象
+        ng-show: ng-hide:
+        ng-change: //配合ng-model使用
+        ng-form: (ng-valid,ng-invlid,ng-pristion,ng-dirty,ng-submit,ng-click) //用于表单嵌套
+        ng-click:
+        ng-select: (ng-options)
+        ng-class:
+        ng-attr-(suffix): (ng-attr-index="{{i}}")
+
+5、模块加载
+    .factory .directive 实际运行时如下
+    .config(function($provide,$compileProvider){
+        $provide.factory
+        $compileProvider.directive
+    })
+    .constant //会在配置前执行
+    .run //运行块，类似main，难进行单元测试，与应用高度耦合
+
+6、服务
+    factory: 创建、配置服务的最快捷方法
+    service: 注册一个支持构造函数的服务，为服务对象注册构造函数。
+        var se = function(){this.a=1;};
+        se.prototype.fn=function(){this.a=2;};
+    provider: 所有构建服务的方法都构建在这儿，需要config进行配置就用这个，第二个参数可以是对象/函数/数组
+        .factory("fn",function(){A:{};return A;})==.provider("fn",{A:{},$get:function(){return this.A;})
+        .config(function(fnProvider){fnProvider.A={a:1}})
+    constant: 将常量注册为服务，用于配置数据，可以通过config配置
+    value: 将值注册为服务，用于注册服务对象或函数
+    decorator: 装饰器，扩展服务，要覆盖原有的所有方法
+        .factory('githubService', function($http) {
+          var githubUrl = 'https://api.github.com';
+          return {
+            events: function() {
+              return $http({
+                method: 'JSONP',
+                url: githubUrl + '/users/' +
+                     'events' + '/' +
+                      path + '?callback=JSON_CALLBACK'
+              });
+            },
+            setUsername: function(username) {
+              githubUsername = username;
+            }
+          };
+        });
+
+        var githubDecorator = function($delegate) {
+          var events = function(path) {
+            var result = $delegate.events(path);
+            result.then(function() {
+              console.log(new Date() + "ms");
+            });
+            return result;
+          }
+          return {
+            setUsername: function(username) {
+              return $delegate.setUsername(username);
+            },
+            events: events
+          };
+        };
+
+        angular.module('myApp')
+        .config(function($provide) {
+          $provide.decorator('githubService', githubDecorator);
+        })
+
+7、跨域
+    jsonp:会生成<script src="url?callback=angular.callback._a">服务器返回angular.callbacks._a(data)，客户端js会完全开放
+    cors:$httpProvider.defaults.useXDomain=true;
+        delete $httpProvider.defaults.headers.common["X-Requested-with"]
+        服务端修改返回头，非简单请求会有预请求options
+    服务器代理:服务器作为中转,nginx
+
+8、显示
+    ngModel模板中: ng-model,x/data(:-_)ng(:-_)model
+    ng-bind-html-unsafe: 关掉html转义。避免用
+    ng-bind-html: 需要ngSanitize。避免用
+    ng-repeat上用ng-controllor,每个元素都有自己的控制器
+    ng-class-even和ng-class-odd,斑马纹==ng-class:"{a:!$index%2,b:$index%2}"
+    ng-click({{name}})是错误的，不用{{}}
+    ng-repeat-start和ng-repeat-end，循环开始和结束
+    ng-bind和{{}}一样是单向的，ng-model双向的
+    type 为 email、url、number 错误值不会获取
+    checkbox:ng-true-value  radio:na-model value
+    ng-options 可以呀 group by
+    隐藏空下拉框选择: <option style="display:none" value=""></option>
+    class ng-dirty修改过 ng-pristine没修改过 ng-valid验证正确 ng-invalid验证错误
+    每个ng-model都有自己的ngModelController自带$dirty等四个
+    原生浏览器校验无效：novalidate
+    ng-repeat string数组无法ng-model绑定
+    路由，若参数中有/ 则用*代替:
+    resolve可以返回promise，只要有一个reject了，页面就不会跳转
+
+9、安全
+    cookie监听、中间人攻击（获取cookie进行伪装）：https请求
+    跨站脚本攻击（XXS：用户提供内容未转义）：ng-bind-html
+    json注入攻击（通过script方式加载json然后执行）：为所有json添加")]}',\n"前缀
+    跨站请求伪造（XSRF img的src指向目标网站）：cookie中XSRF-TOKEN的token，返回header有X-XSRF-TOKEN的token
+
+10、性能，batarang
+    50ms处理2000个对比计算
+    1.保持监视器简单快速$watch：避免在监视表达式中访问DOM
+    2.限制监视器的数量：删除不必要的监控，用心琢磨UI界面，不监视隐藏元素，在受影响作用域明确的情况下使用$digest代替$apply，删除不用的监视器，少进入$digest，限制每个$digest循环的执行轮数
+    3.优化内存占用：避免深度监控（$wacth，true）
+    4.ng-repeat指令
+
+11、打包
+    1.提升网络相关性能
+        压缩静态资源 .controller("ctrl",['$scope','$a',function($scope,$a){}]);
+        模板预加载 run $templateCache.put("/a.tpl.html",'<div></div>');
+    2.优化首页
+        避免显示未经处理的模板 ng-cloak，ng-bind>默认值<
+        引用angularjs和应用脚本文件
+    3.浏览器支持
+        IE6完全不支持，ie7较难支持，ie8需要写（id="ng-app",少用<ng-app></ng-app>）
+
+
+
+课外知识：
+1、修改开始结束符号，默认为{{ }}
+    $interpolateProvider.startSymbol('__');
+    $interpolateProvider.endSymbol('__');
+2、UI-Router比ng-route：视图能嵌套，同一URL下支持多个视图
+3、url中的#，$locationProvider.html5Mode(true),需要后台重定向或者nginx配置error_page 404 /index.html;
+4、控制器类似原型继承，依赖注入就是加入模块
+5、restangular，后端接口定义配合
+6、拦截器，request、requestError、response、responseError
+7、angular.equals 比较对象
+8、url中有#，是为了不触发页面重载，history堆栈也会添加
+9、尽量用ng-href属性创建url（可动态）
+10、hashbang模式（有#）和html5模式（无#）
+11、OAuth 2.0 http和https？
+12、用户登录前$templateCache中不要有。退出时刷新浏览器清除缓存
+13、jquery要在angularjs之前加载
+14、编写指令，测试先行
+15、currency最好指定，不然国际化后会改变
+16、scpoe.$apply:dom事件，XHR响应触发回调，浏览器地址变化，计数器回调
