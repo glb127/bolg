@@ -310,11 +310,8 @@
                     setTimeout(function(){
                         lrz(file, {width: 800}).then(function (rst) {
                           that.timeList[1]=+rst.origin.lastModified;
-                            if(that.checkTime(rst,that.timeList)){
-                                $("#showEnd").html(that.checkTime(rst));
-                            }else{
-                                $("#showEnd").html("有效照片");
-                            }
+                            var mes=that.checkTime(rst,that.timeList);
+                            $("#showEnd").html(mes||"有效拍摄照片");
                             that.compress(rst.base64, index);
                         });
                     },10);
@@ -322,7 +319,7 @@
             }
         },
          //弹框
-        checkTime: function (rst,timeList) {
+        checkTime: function (rst,_timeLine) {
             if(!rst.origin.exifdata.DateTimeDigitized||!rst.origin.exifdata.DateTimeOriginal){
                 return "非拍摄照片";
             }
@@ -341,16 +338,16 @@
             // if(new Date()-rst.origin.lastModified>60*1000){
             //     return "非实时拍摄照片";
             // }
-            if(timeList[0]==timeList[1]){
+            if(_timeLine[0]==_timeLine[1]){
                 return "非实时拍摄照片(电脑上传)";
-            }else if(timeList[0]>timeList[1]){
+            }else if(_timeLine[0]>_timeLine[1]){
                 return "非实时拍摄照片(拍摄于较早时间)";
-            }else if(timeList[1]>=timeList[2]){
+            }else if(_timeLine[1]>=_timeLine[2]){
                 return "非实时拍摄照片(拍摄于较晚时间)";
-            }else if(timeList[2]-timeList[1]>5*1000){
+            }else if(_timeLine[2]-_timeLine[1]>5*1000){
                 return "非实时拍摄照片(图片处理时间过长)";
             }
-            return true;
+            return false;
         },
          //弹框
         ErrorTip: function () {
