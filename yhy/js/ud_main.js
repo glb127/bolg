@@ -294,7 +294,11 @@
                     reader.readAsDataURL(this.files[0]);
                 });
             }else{
+                $("#upload"+index).bind("click",function() {
+                    that.timeList=[+new Date()];
+                });
                 $("#upload"+index).bind("change",function() {
+                    that.timeList[2]=+new Date();
                     if(this.files.length&&this.files[0]){
                         that.ErrorTip.show("加载中",that.time2wait);
                     }else{
@@ -305,6 +309,8 @@
                     var file=this.files[0]
                     setTimeout(function(){
                         lrz(file, {width: 800}).then(function (rst) {
+                    that.timeList[1]=+rst.origin.lastModified;
+                    alert(that.timeList)
                             if(that.checkTime(rst)){
                                 $("#showEnd").html(that.checkTime(rst));
                             }else{
