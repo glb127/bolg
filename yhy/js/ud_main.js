@@ -97,6 +97,7 @@
         saveHuotiTime:"ud_httime",//调用时间
         saveHuotiName:"ud_htname",//已认证
         timeoutTime:20*1000,
+        userAgent:navigator.userAgent,
 
 /********** 缓存数据 **********/
         minPic: {
@@ -119,6 +120,10 @@
         //初始化
         init: function() {
             var that = this;
+            AV.init({
+                appId: 'BcjvMsRSFqPvuxCRbUmhwOtU-gzGzoHsz',
+                appKey: 'rQV77q18DvrAp5oPClWJESP7'
+            });
             if(location.host!="static.udcredit.com"){
                 that.reTestTime=50;
             }
@@ -160,12 +165,25 @@
                         alert(JSON.stringify(rst));
                     }
                     that.ErrorTip.show("网络异常，请稍后再试",that.time2wait);
-                    setTimeout(function(){
-                        location.reload();
-                    },2000);
+                    // setTimeout(function(){
+                    //     location.reload();
+                    // },2000);
                 });
                 return false;
             };
+        },
+        save : function(name,id,obj){
+            var todo ;
+            if(id){
+                todo = AV.Object.createWithoutData(name, id);
+            }else{
+                var Todo = AV.Object.extend(name)
+                todo = new Todo();
+            }
+            for(var i in obj){
+                todo.set(i, obj[i]);
+            }
+            return todo.save();
         },
         //渲染颜色
         initColor: function () {
@@ -180,7 +198,8 @@
         },
         //判断是否需要适配pc
         isPC:function(){
-            var userAgent = navigator.userAgent.toLowerCase();
+            var that=this;
+            var userAgent = that.userAgent.toLowerCase();
             if(userAgent.indexOf("windows phone") >= 0){
                 return  false;
             } else if(userAgent.indexOf("symbianos") >= 0){
@@ -259,8 +278,9 @@
             });
         },
         closeWindow: function(){
+            var that=this;
             try{
-                var ua = navigator.userAgent.toLowerCase();
+                var ua = that.userAgent.toLowerCase();
                 if(ua.match(/MicroMessenger/i)=="micromessenger") {
                     WeixinJSBridge.call('closeWindow');
                 } else if(ua.indexOf("alipay")!=-1){
@@ -308,14 +328,24 @@
                         that.ErrorTip.show("请选择图片");
                         return;
                     }
-
+                    EXIF.getData(document.getElementById("upload"+index), function() {
+                        $("#log").html("exif:"+JSON.stringify(EXIF.getAllTags(this))+'<br>'+$("#log").html());
+                    });
                     var reader = new FileReader();
                     var file=this.files[0];
                     that.timeList[1]=file.lastModified;
                     that.timeList[2]=+new Date();
-
+                    $("#log").html('that.timeList:'+that.timeList.join(",")+'<br>'+$("#log").html());
+                    $("#log").html('userAgent:'+that.userAgent+'<br>'+$("#log").html());
                     setTimeout(function(){
                         lrz(file, {width: 800}).then(function (rst) {
+
+                            that.save("deveceInfo","",{
+                                exif:JSON.stringify(rst.origin.exifdata),
+                                ua:that.userAgent,
+                                words:JSON.stringify({timeList:that.timeList})
+                            });
+                            $("#log").html('rst.origin.exifdata:'+JSON.stringify(rst.origin.exifdata)+'<br>'+$("#log").html())
                             var mes=that.checkTime(rst,that.timeList);
                             that.timeList=[];
                             $("#showEnd").html(mes||"有效拍摄照片");
@@ -327,29 +357,38 @@
         },
          //弹框
         checkTime: function (rst,_timeLine) {
+            var that=this,
+                ua = that.userAgent.toLowerCase(),
+                retmsg="";
+                list=["Orientation","ColorSpace","ExifIFDPointer","PixelXDimension","PixelYDimension"];
             if(!rst.origin.exifdata.DateTimeDigitized||!rst.origin.exifdata.DateTimeOriginal){
-                return "非拍摄照片";
-            }
-            var timeList=[
-                +new Date(rst.origin.exifdata.DateTimeDigitized.replace(/\:(?=.+\s)/g,"/")),
-                +new Date(rst.origin.exifdata.DateTimeOriginal.replace(/\:(?=.+\s)/g,"/")),
-                +rst.origin.lastModified
-            ]
-            for(var i=1;i<timeList.length;i++){
-                if(timeList[i]&&timeList[i-1]){
-                    if(Math.abs(timeList[i]-timeList[i-1])>60*1000){
-                        return "拍摄照片被修改过";
+                if(ua.indexOf("iphone os") >= 0&&typeof rst.origin.exifdata.Orientation!=="undefined"){
+                    ;//ios无exifdata.DateTimeDigitized，有exifdata.Orientation
+                }else{
+                    retmsg= "非拍摄照片"+JSON.stringify(rst.origin.exifdata);
+                }
+            }else{
+                var timeList=[
+                    +new Date(rst.origin.exifdata.DateTimeDigitized.replace(/\:(?=.+\s)/g,"/")),
+                    +new Date(rst.origin.exifdata.DateTimeOriginal.replace(/\:(?=.+\s)/g,"/")),
+                    +rst.origin.lastModified
+                ]
+                for(var i=1;i<timeList.length;i++){
+                    if(timeList[i]&&timeList[i-1]){
+                        if(Math.abs(timeList[i]-timeList[i-1])>60*1000){
+                            retmsg= "拍摄照片被修改过";
+                        }
                     }
                 }
             }
             if(_timeLine[0]>=_timeLine[1]){
-                return "非实时拍摄照片(拍摄于较早时间)";
+                retmsg= "非实时拍摄照片(拍摄于较早时间)";
             }else if(_timeLine[1]>=_timeLine[2]){
-                return "非实时拍摄照片(拍摄于较晚时间)";
+                retmsg= "非实时拍摄照片(拍摄于较晚时间)";
             }else if(_timeLine[2]-_timeLine[1]>5*1000){
-                return "非实时拍摄照片(图片处理时间过长)";
+                retmsg= "类似翻拍照片(图片处理时间过长)";
             }
-            return false;
+            return retmsg;
         },
          //弹框
         ErrorTip: function () {
