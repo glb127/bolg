@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+</head>
+<body>
+    <div id="step1" class="step" style="max-height:1200px;height:1200px;">
+        <div id="showEnd">v2</div>
+        <div class="front" >
+            <input id="upload1" class="upload-input" capture="camera" accept="image/*" type="file" name="" value="" >
+        </div>
+        <div class="line20"></div>
+        <div id="log"></div>
+    </div>
+    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+        function bind(){
+            $("#upload1").bind("change",function(event) {
+                $("#log").html("lastModified:"+this.files[0].lastModified+"<br>"+$("#log").html());
+                clearInputFile();
+            });
+        }
+        function clearInputFile(){
+            var file=$("#upload1");
+            file.after(file.clone().val(""));
+            file.remove();
+            bind();
+        }
+        bind();
+    </script>
+</body>
+</html>
