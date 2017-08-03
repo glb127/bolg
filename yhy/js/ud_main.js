@@ -294,6 +294,9 @@
             window.close();
             window.history.go(-1)
         },
+        showLog:function(str){
+            $("#log").html(str+"<br>"+$("#log").html());
+        },
         //绑定改变图片事件事件
         eventBindPic: function(index) {
             var that = this;
@@ -318,78 +321,115 @@
                     reader.readAsDataURL(this.files[0]);
                 });
             }else{
-                $("#upload"+index).bind("click",function() {
-                    that.timeList=[+new Date()];
+                $("#upload"+index).bind("click",function(event) {
+                    that.checkTime.step(0,+new Date());
                 });
-                $("#upload"+index).bind("change",function() {
-                    if(this.files.length&&this.files[0]){
+                $("#upload"+index).bind("change",function(event) {
+                    var that2=this;
+                    if(that2.files.length&&that2.files[0]){
                         that.ErrorTip.show("加载中",that.time2wait);
                     }else{
                         that.ErrorTip.show("请选择图片");
                         return;
                     }
-                    EXIF.getData(document.getElementById("upload"+index), function() {
-                        $("#log").html("exif:"+JSON.stringify(EXIF.getAllTags(this))+'<br>'+$("#log").html());
-                    });
-                    var reader = new FileReader();
-                    var file=this.files[0];
-                    that.timeList[1]=file.lastModified;
-                    that.timeList[2]=+new Date();
-                    $("#log").html('that.timeList:'+that.timeList.join(",")+'<br>'+$("#log").html());
-                    $("#log").html('userAgent:'+that.userAgent+'<br>'+$("#log").html());
-                    setTimeout(function(){
-                        lrz(file, {width: 800}).then(function (rst) {
+                    var file=document.getElementById('upload'+index).files[0];
+                    if(file.lastModified==that.tmp_filetime){
+                        // alert("重复")
+                    }
+                    that.tmp_filetime=file.lastModified;
+                    // console.log(file)
+                    that.checkTime.step(1,+file.lastModified);
+                    that.checkTime.step(2,+new Date());
 
-                            that.save("deveceInfo","",{
-                                exif:JSON.stringify(rst.origin.exifdata),
-                                ua:that.userAgent,
-                                words:JSON.stringify({timeList:that.timeList})
-                            });
-                            $("#log").html('rst.origin.exifdata:'+JSON.stringify(rst.origin.exifdata)+'<br>'+$("#log").html())
-                            var mes=that.checkTime(rst,that.timeList);
-                            that.timeList=[];
-                            $("#showEnd").html(mes||"有效拍摄照片");
-                            that.compress(rst.base64, index);
-                        });
-                    },10);
+                    lrz(file, {width: 800}).then(function (rst) {
+                        // that.save("deveceInfo","",{
+                        //     exif:JSON.stringify(rst.origin.exifdata),
+                        //     ua:that.userAgent,
+                        //     words:JSON.stringify({timeList:that.timeList})
+                        // });
+                        var mes=that.checkTime.get(rst);
+                        $("#showEnd").html(mes||"有效拍摄照片");
+                        that.compress(rst.base64, index);
+                    });
                 });
             }
         },
-         //弹框
-        checkTime: function (rst,_timeLine) {
-            var that=this,
-                ua = that.userAgent.toLowerCase(),
-                retmsg="";
-                list=["Orientation","ColorSpace","ExifIFDPointer","PixelXDimension","PixelYDimension"];
-            if(!rst.origin.exifdata.DateTimeDigitized||!rst.origin.exifdata.DateTimeOriginal){
-                if(ua.indexOf("iphone os") >= 0&&typeof rst.origin.exifdata.Orientation!=="undefined"){
-                    ;//ios无exifdata.DateTimeDigitized，有exifdata.Orientation
+         //验证
+        checkTime: new (function () {
+            this._timeLine=[];
+            this._timeLineOld=[];
+            this.showLog=function(str){
+                $("#log").html(str+"<br>"+$("#log").html());
+            },
+            this.step = function(index,value){
+                this._timeLine[index]=value;
+            }
+            this.get = function(rst){
+                var _timeLine=this._timeLine,
+                    ua = navigator.userAgent.toLowerCase(),
+                    retmsg="";
+                    iphoneList=["Orientation","ColorSpace","ExifIFDPointer","PixelXDimension","PixelYDimension"],
+                    exifdataCount=(function () {
+                        var _tmp=0;
+                        for(var i in rst.origin.exifdata){
+                            _tmp++;
+                        }
+                        return _tmp;
+                    })();
+                if(exifdataCount==0){//没有exif为非拍摄照片
+                    retmsg= "exif为空";
+                }else if(!rst.origin.exifdata.DateTimeDigitized||!rst.origin.exifdata.DateTimeOriginal||!rst.origin.lastModified){//iPhone没有拍摄时间
+                    if(ua.indexOf("iphone os") >= 0){
+                        if(exifdataCount==iphoneList.length){
+                            for(var i in rst.origin.exifdata){
+                                if(iphoneList.indexOf(i)==-1){
+                                    retmsg= "iphone拍摄信息有误";
+                                    break;
+                                }
+                            }
+                        }else{
+                            retmsg= "iphone拍摄信息有误";
+                        }
+                    }else{
+                        retmsg= "exif无拍摄时间，且不是iphone";
+                    }
                 }else{
-                    retmsg= "非拍摄照片"+JSON.stringify(rst.origin.exifdata);
-                }
-            }else{
-                var timeList=[
-                    +new Date(rst.origin.exifdata.DateTimeDigitized.replace(/\:(?=.+\s)/g,"/")),
-                    +new Date(rst.origin.exifdata.DateTimeOriginal.replace(/\:(?=.+\s)/g,"/")),
-                    +rst.origin.lastModified
-                ]
-                for(var i=1;i<timeList.length;i++){
-                    if(timeList[i]&&timeList[i-1]){
-                        if(Math.abs(timeList[i]-timeList[i-1])>60*1000){
-                            retmsg= "拍摄照片被修改过";
+                    // this.showLog(this._timeLineOld[1]);
+                    // this.showLog(this._timeLine[1]);
+                    // this.showLog(ua);
+                    var timeList=[
+                        +new Date(rst.origin.exifdata.DateTimeDigitized.replace(/\:(?=.+\s)/g,"/")),
+                        +new Date(rst.origin.exifdata.DateTimeOriginal.replace(/\:(?=.+\s)/g,"/")),
+                        +rst.origin.lastModified
+                    ]
+                    for(var i=1;i<timeList.length;i++){
+                        if(timeList[i]&&timeList[i-1]){
+                            if(Math.abs(timeList[i]-timeList[i-1])>10*1000){
+                                retmsg= "拍摄照片时间被修改过"+JSON.stringify(timeList);
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            if(_timeLine[0]>=_timeLine[1]){
-                retmsg= "非实时拍摄照片(拍摄于较早时间)";
-            }else if(_timeLine[1]>=_timeLine[2]){
-                retmsg= "非实时拍摄照片(拍摄于较晚时间)";
-            }else if(_timeLine[2]-_timeLine[1]>5*1000){
-                retmsg= "类似翻拍照片(图片处理时间过长)";
-            }
-            return retmsg;
-        },
+                if(!retmsg){
+
+                    if(this._timeLineOld[1]==this._timeLine[1]&&ua.indexOf("ucbrowser")>-1&&ua.indexOf("android")>-1){
+                      ;//安卓UC时间有时候会取到和上次一样
+                    }else{
+                      if(_timeLine[0]>=_timeLine[1]){
+                          retmsg= "非实时拍摄照片(拍摄于较早时间)";
+                      }else if(_timeLine[1]>=_timeLine[2]){
+                          retmsg= "非实时拍摄照片(拍摄于较晚时间)";
+                      }else if(_timeLine[2]-_timeLine[1]>10*1000){
+                          retmsg= "疑似翻拍照片(图片处理时间过长)";
+                      }
+                    }
+                }
+
+                this._timeLineOld=this._timeLine;
+                return retmsg;
+            };
+        })(),
          //弹框
         ErrorTip: function () {
             var dom = "<div  id='ErrorTipModal' class='error_tip_frame'><div class='error_tip_inner'>{{message}}</div></div>";
@@ -476,12 +516,15 @@
                 }
                 that.minPic[index] = cvs.toDataURL('image/jpeg');
                 $(".uploadpic"+index).attr("src",cvs.toDataURL('image/jpeg'));
-                that.clearInputFile(index);
                 $(".uploadinfo" + index).hide();
+                that.clearInputFile(index);
                 setTimeout(function(){
                     that.ErrorTip.show("",1);
                 },10);
              };
+             img.onerror=function(){
+                alert("onerror")
+             }
         },
         //压缩视频
         compressv: function(res, e) {
@@ -1028,7 +1071,7 @@
                     }
                     var thresholds=data.data.thresholds["1e-3"]+","+data.data.thresholds["1e-4"]+","+data.data.thresholds["1e-5"];
                     that.setEndShow(data.data.auth_result,data.data.similarity);
-                    that.pushCallback(data.data.auth_result,data.data.similarity,thresholds);
+                    that.pushCallback(data.data.auth_result,data.data.similarity,"","",thresholds);
                     that.showStep(5);
                 }
             }

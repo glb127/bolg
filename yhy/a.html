@@ -13,7 +13,7 @@
 </head>
 <body>
     <div id="step1" class="step" style="max-height:1200px;height:1200px;">
-        <div id="showEnd">v2</div>
+        <div id="showEnd">v3</div>
         <div class="front" >
             <input id="upload1" class="upload-input" capture="camera" accept="image/*" type="file" name="" value="" >
         </div>
@@ -22,19 +22,38 @@
     </div>
     <script src="./js/jquery.min.js"></script>
     <script type="text/javascript">
-        function bind(){
-            $("#upload1").bind("change",function(event) {
-                $("#log").html("lastModified:"+this.files[0].lastModified+"<br>"+$("#log").html());
-                clearInputFile();
-            });
+        // var old;
+        // function bind(){
+        //     $("#upload1").bind("change",function(event) {
+        //         if(this.files[0]==old){show("相同")}
+        //         old=this.files[0];
+        //         show("lastModified:"+this.files[0].lastModified)
+        //         // clearInputFile();
+        //     });
+        // }
+        function show(str){
+            $("#log").html(str+"<br>"+$("#log").html());
         }
-        function clearInputFile(){
-            var file=$("#upload1");
-            file.after(file.clone().val(""));
-            file.remove();
-            bind();
-        }
-        bind();
+        // function clearInputFile(){
+        //     var file=$("#upload1");
+        //     file.unbind();
+        //     file.after(file.clone().val(""));
+        //     file.remove();
+
+        //     bind();
+        // }
+        // bind();
+        document.getElementById('upload1').addEventListener('change', function() {
+          var upload = document.getElementById('upload1'); //每次要动态获取
+          var file = upload.files[0];
+          show(file.lastModified);
+
+          //解决上传相同文件不触发onchange事件
+          var clone = upload.cloneNode(true);
+          clone.onchange = arguments.callee; //克隆不会复制动态绑定事件
+          clone.value = '';
+          upload.parentNode.replaceChild(clone, upload);
+        }, false);
     </script>
 </body>
 </html>
