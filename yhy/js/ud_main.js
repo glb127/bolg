@@ -326,21 +326,19 @@
                 });
                 $("#upload"+index).bind("change",function(event) {
                     var that2=this;
-                    if(that2.files.length&&that2.files[0]){
+                    if(that2.files&&that2.files.length&&that2.files[0]){
                         that.ErrorTip.show("加载中",that.time2wait);
                     }else{
                         that.ErrorTip.show("请选择图片");
                         return;
                     }
-                    var file=document.getElementById('upload'+index).files[0];
-                    if(file.lastModified==that.tmp_filetime){
-                        // alert("重复")
+                    var file=that2.files[0];
+                    if(!that.checkTime.step(1,+file.lastModified)){
+                        that.ErrorTip.show("拍摄过快，请稍等几秒再进行拍摄",4000);
+                        that.clearInputFile(index);
+                        return
                     }
-                    that.tmp_filetime=file.lastModified;
-                    // console.log(file)
-                    that.checkTime.step(1,+file.lastModified);
                     that.checkTime.step(2,+new Date());
-
                     lrz(file, {width: 800}).then(function (rst) {
                         // that.save("deveceInfo","",{
                         //     exif:JSON.stringify(rst.origin.exifdata),
@@ -356,6 +354,7 @@
         },
          //验证
         checkTime: new (function () {
+            var ua = navigator.userAgent.toLowerCase();
             this._timeLine=[];
             this._timeLineOld=[];
             this.showLog=function(str){
@@ -363,10 +362,17 @@
             },
             this.step = function(index,value){
                 this._timeLine[index]=value;
+                if(index==1&&this._timeLineOld[index]==this._timeLine[index]&&ua.indexOf("ucbrowser")>-1&&ua.indexOf("android")>-1){
+                    return false;//安卓uc连拍会报错
+                }
+                return true;
             }
+            this.isAndroidUc=function () {
+                return ua.indexOf("ucbrowser")>-1&&ua.indexOf("android")>-1;
+            }
+
             this.get = function(rst){
                 var _timeLine=this._timeLine,
-                    ua = navigator.userAgent.toLowerCase(),
                     retmsg="";
                     iphoneList=["Orientation","ColorSpace","ExifIFDPointer","PixelXDimension","PixelYDimension"],
                     exifdataCount=(function () {
@@ -394,9 +400,6 @@
                         retmsg= "exif无拍摄时间，且不是iphone";
                     }
                 }else{
-                    // this.showLog(this._timeLineOld[1]);
-                    // this.showLog(this._timeLine[1]);
-                    // this.showLog(ua);
                     var timeList=[
                         +new Date(rst.origin.exifdata.DateTimeDigitized.replace(/\:(?=.+\s)/g,"/")),
                         +new Date(rst.origin.exifdata.DateTimeOriginal.replace(/\:(?=.+\s)/g,"/")),
@@ -413,7 +416,7 @@
                 }
                 if(!retmsg){
 
-                    if(this._timeLineOld[1]==this._timeLine[1]&&ua.indexOf("ucbrowser")>-1&&ua.indexOf("android")>-1){
+                    if(this._timeLineOld[1]==this._timeLine[1]&&this.isAndroidUc()){
                       ;//安卓UC时间有时候会取到和上次一样
                     }else{
                       if(_timeLine[0]>=_timeLine[1]){
@@ -426,7 +429,7 @@
                     }
                 }
 
-                this._timeLineOld=this._timeLine;
+                this._timeLineOld=this._timeLine.splice(0);
                 return retmsg;
             };
         })(),
@@ -520,7 +523,7 @@
                 that.clearInputFile(index);
                 setTimeout(function(){
                     that.ErrorTip.show("",1);
-                },10);
+                },that.checkTime.isAndroidUc()?7*1000:10);
              };
              img.onerror=function(){
                 alert("onerror")
