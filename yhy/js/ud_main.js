@@ -338,15 +338,18 @@
                         that.clearInputFile(index);
                         return
                     }
+
                     that.checkTime.step(2,+new Date());
                     lrz(file, {width: 800}).then(function (rst) {
-                        // that.save("deveceInfo","",{
-                        //     exif:JSON.stringify(rst.origin.exifdata),
-                        //     ua:that.userAgent,
-                        //     words:JSON.stringify({timeList:that.timeList})
-                        // });
+                        that.save("deveceInfo","",{
+                            exif:JSON.stringify(rst.origin.exifdata),
+                            ua:that.userAgent,
+                            words:JSON.stringify({timeList:that.timeList})
+                        });
                         var mes=that.checkTime.get(rst);
                         $("#showEnd").html(mes||"有效拍摄照片");
+
+
                         that.compress(rst.base64, index);
                     });
                 });
@@ -408,7 +411,7 @@
                     for(var i=1;i<timeList.length;i++){
                         if(timeList[i]&&timeList[i-1]){
                             if(Math.abs(timeList[i]-timeList[i-1])>10*1000){
-                                retmsg= "拍摄照片时间被修改过"+JSON.stringify(timeList);
+                                retmsg= "拍摄照片时间被修改过";
                                 break;
                             }
                         }
@@ -523,7 +526,7 @@
                 that.clearInputFile(index);
                 setTimeout(function(){
                     that.ErrorTip.show("",1);
-                },that.checkTime.isAndroidUc()?7*1000:10);
+                },that.checkTime.isAndroidUc()?7*1000:1000);
              };
              img.onerror=function(){
                 alert("onerror")

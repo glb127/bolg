@@ -73,6 +73,31 @@ git库
         whatwg-fetch:
 
 
+Sizzle选择器
+    构造函数
+        1.!Selector     return this
+        2.DOM元素       this[0]=selector
+        3.body          this[0]=document.body
+        4.Function      rootjQuery.ready
+        5.jQuery对象    this.selector=selector.selector
+        6.string
+            $('<div>')         document.createElement
+            $('<div>a</div>')  jQuery.buildFragment
+            $('#id')           document.getElementById
+            $('div>.a')        rootjQuery.find  y
+            $('div>.a',$(".")) context.find  y
+            $('div>.a',DOM)    this.constructor(context).find  y
+    块表达式
+        ID>Class>Name>Tag
+    快间关系（> " " + ~）
+        从右到左，对位置伪类只能从左到右
+    分割解析
+        chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g
+
+
+
+
+
 
 《js忍者秘籍》
     js库组成
@@ -90,32 +115,7 @@ git库
     1
 
 
-正则 位置/字符匹配 i大小写 g全文 m多行
-    ?       非贪婪模式
-    |       或
-    ^       开始 \n \r 之后的位置
-    $       结束 \n \r 之前的位置
-    \       转义
-    \b \B   单词/非单词边界
-    \f      换页  ==\x0c == \cL
-    \n      换行  ==\x0a == \cJ
-    \r      回车  ==\x0d == \cM
-    \t      制表符  ==\x09 == \cI
-    \v      垂直制表符  ==\x0b == \cK
-    \s \S   可见[\f\n\r\t\v]
-    \w \W   单词字符[A-Za-z0-9_]
-    {}      字符个数
-    *       =={0,}
-    +       =={1,}
-    ?       =={0,1}
-    [] [^]  符合/不符合单字符
-    \d \D   ==[0-9]/[^0-9]
-    .       除了\r\n
-    (?:)    a(?:b|c) == ab|ac
-    (?=)    a(?=b|c) == 匹配ab的a
-    (?!)    a(?:b|c) == 匹配ad的a
-    (?<=)   (?<=b|c)a == 匹配ba的a
-    (?<!)   a(?<!b|c)a == 匹配da的a
+
 
 
 
@@ -320,6 +320,34 @@ git库
         声明组件
             class TodoItem extends React.Component { ... } // ES6
             function TodoItem() { ... } // 无状态组件 (State) => View
+
+    正则表达式
+        位置/字符匹配 i大小写 g全文 m多行
+        ?       非贪婪模式
+        |       或
+        ^       开始 \n \r 之后的位置
+        $       结束 \n \r 之前的位置
+        \       转义
+        \b \B   单词/非单词边界
+        \f      换页  ==\x0c == \cL
+        \n      换行  ==\x0a == \cJ
+        \r      回车  ==\x0d == \cM
+        \t      制表符  ==\x09 == \cI
+        \v      垂直制表符  ==\x0b == \cK
+        \s \S   可见[\f\n\r\t\v]
+        \w \W   单词字符[A-Za-z0-9_]
+        {}      字符个数
+        *       =={0,}
+        +       =={1,}
+        ?       =={0,1}
+        [] [^]  符合/不符合单字符
+        \d \D   ==[0-9]/[^0-9]
+        .       除了\r\n
+        (?:)    a(?:b|c) == ab|ac
+        (?=)    a(?=b|c) == 匹配ab的a
+        (?!)    a(?:b|c) == 匹配ad的a
+        (?<=)   (?<=b|c)a == 匹配ba的a
+        (?<!)   a(?<!b|c)a == 匹配da的a
 
     高级技巧
         跨域
