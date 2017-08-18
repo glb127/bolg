@@ -28,13 +28,14 @@ git库
     react-seed
         react:
         react-dom:
+        react-scripts:
     react
         create-react-class:
         fbjs:
         loose-envify:
         object-assign:
         prop-types:
-    reat-scripts
+    react-scripts
         autoprefixer:
         babel-core:
         babel-eslint:
@@ -348,6 +349,7 @@ Sizzle选择器
         (?!)    a(?:b|c) == 匹配ad的a
         (?<=)   (?<=b|c)a == 匹配ba的a
         (?<!)   a(?<!b|c)a == 匹配da的a
+        () $1
 
     高级技巧
         跨域
@@ -378,12 +380,12 @@ Sizzle选择器
 
         清除浮动
             .clearfix:after{
-                centent:"";//设置内容为空
+                content:" ";//设置内容为空
                 height:0;//高度为0
                 line-height:0;//行高为0
                 display:block;//将文本转为块级元素
                 visibility:hidden;//将元素隐藏
-                clear:both//清除浮动
+                clear:both;//清除浮动
             }
             .clearfix{
                 zoom:1;//为了兼容IE

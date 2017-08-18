@@ -1168,7 +1168,7 @@
                 // that.closeWindow();
                 that.showStep(5);
             }
-        },
+        }, 
         setInfo:function(key,value){
             if(!key){
                 return;
@@ -1211,6 +1211,6 @@
 
     $(document).ready(function() {
         h5_upload.init();
-    });
+    })
 
 })();
