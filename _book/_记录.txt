@@ -1,3 +1,32 @@
+
+
+2.26日
+    目前6w一天
+    目标4500w
+
+    原有业务（云慧眼、数据服务、建模）：4月底银行上线一家
+    门禁：3月底杜克，租房行业，4月底租房上线一家
+    区块链：4月20日上线第一版本
+
+    门禁：
+        pad，广告机
+        客户端优先
+        体育场馆，公司考勤，小区门禁，会场签到
+            小区出门推送，体育场馆黑名单
+        每周五上午10点
+        技术一份周报
+
+    云慧眼：
+        调价，计费规则
+        用户画像指标新增
+
+    目标达成，5月出去玩下。
+
+帮助，充值体现，现有
+2个demo
+
+
+
 工作
     友商H5
         http://hx.wecube.com/layout.html#/view/wallet/redirect.html?forwardUrl=face&source=account-center&token=e31b8ab41ec616bedc5817d405ff5655
@@ -52,7 +81,7 @@
 
     #复制到服务器#
         scp fingerprint.html root@10.10.111.240:/usr/share/nginx/html/
-
+chrome://flags/
     #host#
         C:\Windows\System32\drivers\etc
 
@@ -74,6 +103,11 @@
         net start MongoDB
 
     #密码#
+        github
+            glb1278 glb123456
+
+
+
         crm
             admin Udcredit123
         crm3.0 http://mng.udcredit.com:9090/manage/welcome.do#1004/4001
