@@ -1,20 +1,33 @@
+烟、酒、糖、乐队、酒席  10w
 
 https://bomp.udcredit.com/boss-crm/crm/4.0/report/partner-report-day-list-amt?orderDate=2018-01-01%2F2018-06-01
 
 
-var gz=20800,gz_gjj=gz,gz_sb=14400;
-var qz=3500,li=0,sbm=21980;
+var gz=20800,gz_gjj=14400,gz_sb=14400*0.7;
 
-var l=gz-(gz_sb>sbm?sbm:gz_sb)*(0.7*0.105+0.12);
-if(l>83500){li=0.45*l-15080;}
-else if(l>58500){li=0.35*l-6730;}
-else if(l>38500){li=0.3*l-3805;}
-else if(l>12500){li=0.25*l-1880;}
-else if(l>8000){li=0.2*l-1255;}
-else if(l>5000){li=0.1*l-455;}
-else if(l>3500){li=0.03*l-105;}
+var qz=3500,li=0,gjj_max=21980,sb_max=21980;
+var shuilv={
+  1500:0.03,
+  4500:0.1,
+  9000:0.2,
+  35000:0.25,
+  55000:0.3,
+  80000:0.35,
+  10000000:0.45
+}
+var l=gz-Math.min(gz_sb,sb_max)*0.105-Math.min(gz_gjj,gjj_max)*0.12;
+var old=0;
+for(var ent in shuilv){
+  if((l-qz)>ent){
+    li+=(ent-old)*shuilv[ent];
+  }else{
+    li+=(l-qz-old)*shuilv[ent]
+    break;
+  }
+  old=ent;
+}
 
-var gjj=(gz_sb>sbm?sbm:gz_sb)*0.24;
+var gjj=Math.min(gz_gjj,gjj_max)*0.24;
 console.log(~~li,~~(l-li),~~gjj,~~(l-li+gjj))
 
 
