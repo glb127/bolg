@@ -26,7 +26,7 @@ ArrayBuffer
 
 es2015(es6):
     Default Parameters（默认参数） function(height = 50)
-    Template Literals （模板文本） `Your name is ${first} ${last}. `
+    Template Literals （模板文本） `Your name is ${first} ${last}. ``
     Multi-line Strings （多行字符串） `Then 换行 aabbcc`
     Destructuring Assignment （解构赋值） {username, password} = req.body
     Enhanced Object Literals （增强的对象文本） [ 'valueOf_' + getAccounts().join('_') ]
@@ -79,7 +79,7 @@ es2017(es8):
 
     2、字符串 (`)
         静态字符串使用单引号或反引号，不使用双引号。动态字符串使用反引号
-            'foobar'  `foo${a}bar`
+            'foobar'  `foo${a}bar``
 
     3、解构赋值 ({a}=obj)
         使用数组成员对变量赋值时，优先使用解构赋值

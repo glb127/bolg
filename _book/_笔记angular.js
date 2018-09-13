@@ -6,7 +6,7 @@
     时间：| date('yyyy-MM-dd hh:mm:ss')
     数组过滤：| filter:'e'  | filter:'!e'
     对象数组过滤：| filter:{'id': '1', 'name': 'a'}
-    输出json：| json  <pre></pre>标签
+    输出json：| json  <pre></pre>标签/
     截取数组：| limitTo:2
     对象数组排序：| orderBy: 'id' (: true) //倒序
     过滤：| filter:nametext  | filter:{$:all, name:nametext, b:btext}
