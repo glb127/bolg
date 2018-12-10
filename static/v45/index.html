@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/main.css?v=201812041">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+</head>
+<body>
+    <a class="help-center" href="../idsafeH5HelpCenter.html?v=201812041" target="_black">帮助</a>
+    <div id="step1" class="step">
+        <div class="step-content">
+            <img src="images/top1.png" class="img100" >
+            <div class="demo1" >
+                <input id="upload1" class="upload-input" type="file" capture="camera" accept="image/*" name="file" value="" >
+                <div class="" >
+                    <img src="images/demo1.png" id="uploadpic1" class="imgdemo" >
+                </div>
+                <div class="uploadok" id="uploadok1">
+                    <img src="images/okbig.png" >
+                    <span>上传成功</span>
+                </div>
+            </div>
+            <div class="show-info">*认证后无法修改，请拍摄本人身份证照片，不要反光</div>
+            <div class="demo2">
+                <input id="upload2" class="upload-input" type="file" capture="camera" accept="image/*" name="file" value="" >
+                <div class="">
+                    <img src="images/demo2.png" id="uploadpic2" class="imgdemo imgdemo-disable" >
+                </div>
+                <div class="uploadok" id="uploadok2">
+                    <img src="images/okbig.png" >
+                    <span>上传成功</span>
+                </div>
+            </div>
+        </div>
+        <div class="step-bottom">
+            <div class="agreement" id="agreement1">
+                <input type="checkbox" id="isagreement1"/><label for="isagreement1">我已阅读并同意<a class="link" id="agreement1_show" href="../idsafeUserAgreement.html?v=201812041" target="_black">《用户协议》</a></label>
+            </div>
+            <button type="submit" class="submit-btn" id="submit1" >下一步</button>
+        </div>
+    </div>
+    <div id="step3" class="step">
+        <div class="step-content">
+            <img src="images/top2.png" class="img100" >
+            <div class="pan2">
+                <img src="images/check_m.png" id="check_m" class="img100" >
+                <img src="images/check_w.png" id="check_w" class="img100" >
+                <div class="pan2-in">
+                    <div class="check-info">
+                        <span class="title">姓&nbsp;&nbsp;&nbsp;名</span>
+                        <input id="cname"></input>
+                        <span class="change-text">修改</span>
+                    </div>
+                    <div class="check-info">
+                        <span class="title">身份证</span>
+                        <input id="ccard" readonly></input>
+                    </div>
+                </div>
+            </div>
+            <div class="show-info">*认证后无法修改，请核对您的姓名</div>
+        </div>
+        <div class="step-bottom">
+            <button type="submit" class="submit-btn active" id="submit3" >已确认姓名无误</button>
+        </div>
+    </div>
+    <div id="step4" class="step">
+        <div class="step-content">
+            <div>
+                <img src="images/lizi1.png" class="lizi-img">
+                <img src="images/lizi2.png" class="lizi-img">
+                <img src="images/lizi3.png" class="lizi-img">
+            </div>
+            <div class="demo3">
+                <input id="upload4" class="upload-input" type="file" capture="camera" accept="image/*" name="file" value="" >
+                <img src="images/demo3.png" id="uploadpic4" class="imgdemo" >
+            </div>
+            <div class="show-info">*认证后无法修改，请拍摄清晰有效的手持身份证照片</div>
+        </div>
+        <div class="step-bottom">
+            <div class="agreement" id="agreement2" style="display:none;">
+                <input type="checkbox" id="isagreement2"/><label for="isagreement2">我已阅读并同意<a class="link" id="agreement2_show" href="../idsafeUserAgreement.html?v=201812041" target="_black">《用户协议》</a></label>
+            </div>
+            <button type="submit" class="submit-btn" id="submit4" >开始认证</button>
+        </div>
+    </div>
+    <div id="step5" class="step" >
+        <div class="step-content">
+            <div style="position: relative;">
+                <img src="images/top3.png" class="img100" >
+                <img id="quan" src="images/end.png" >
+                <div class="suinfo" id="suinfo_T" >认证通过</div>
+                <div class="suinfo" id="suinfo_F">认证不通过</div>
+            </div>
+        </div>
+        <div class="step-bottom">
+            <button type="submit" class="submit-btn" id="submit5" >结束认证</button>
+        </div>
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/aes.js"></script>
+    <script src="./js/md5.js"></script>
+    <script src="./js/ua-parser.min.js"></script>
+    <script src="./js/lrz.all.bundle.js"></script>
+    <script src="./js/main.min.js?v=201812041"></script>
+</body>
+</html>
