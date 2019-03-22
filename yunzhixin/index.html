@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>云知信</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8">
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Cache" content="no-cache">
+  <style type="text/css">
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .pan {
+    display: none;
+    height: 100%;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+  }
+
+  img
+  </style>
+</head>
+
+<body>
+  <div class="pan" id="step1">
+    <img class="image" src="images/1.png"></img>
+  </div>
+  <div class="pan" id="step2">
+    <img class="image" src="images/2.png"></img>
+  </div>
+  <div class="pan" id="step3">
+    <img class="image" src="images/3.png"></img>
+  </div>
+  <div class="pan" id="step4">
+    <img class="image" src="images/4.png"></img>
+  </div>
+  <div class="pan" id="step5">
+    <img class="image" src="images/5.png"></img>
+  </div>
+  <div class="pan" id="step6">
+    <img class="image" src="images/6.png"></img>
+  </div>
+  <div class="pan" id="step7">
+    <img class="image" src="images/7.png"></img>
+  </div>
+  <div class="pan" id="step8">
+    <img class="image" src="images/8.png"></img>
+  </div>
+  <div class="pan" id="step9">
+    <img class="image" src="images/9.png"></img>
+  </div>
+  <script src="zepto.min.js"></script>
+  <script>
+  (function() {
+
+    var getIndex = function() {
+      return location.hash.substring(1) || "1";
+    }
+    var showIndex = function(index) {
+      // location.hash = index+"";
+      if($("#step" + index)){
+          $(".pan").hide();
+        $("#step" + index).show();
+      }
+
+    }
+    var bind = function() {
+      // var that = this;
+      // this.obtn.onclick = function() {
+      //   location.hash = "123";
+      //   that.ospan.innerHTML = location.hash.substring(1);
+      //   console.log("onclick",location.hash.substring(1) || '')
+      // };
+      window.onhashchange = function() {
+        showIndex(getIndex()).show();
+      };
+      window.onclick = function() {
+        var newIndex = (+getIndex() + 1) + "";
+        location.hash = newIndex;
+        showIndex(newIndex).show();
+      };
+    };
+
+    function init() {
+      bind()
+      $("#step" + getIndex()).show();
+    }
+    init();
+
+  })();
+  </script>
+</body>
+
+</html>

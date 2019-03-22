@@ -1,0 +1,12 @@
+[debug] [2019-03-22T11:13:19.123Z] ----------------------------------------------------------------------
+[debug] [2019-03-22T11:13:19.129Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\guolb\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login --no-localhost
+[debug] [2019-03-22T11:13:19.129Z] CLI Version:   6.5.0
+[debug] [2019-03-22T11:13:19.129Z] Platform:      win32
+[debug] [2019-03-22T11:13:19.129Z] Node Version:  v8.12.0
+[debug] [2019-03-22T11:13:19.133Z] Time:          Fri Mar 22 2019 19:13:19 GMT+0800 (中国标准时间)
+[debug] [2019-03-22T11:13:19.133Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+[info] Visit this URL on any device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=184190696&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob
+[info] 
